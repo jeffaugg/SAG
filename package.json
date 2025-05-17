@@ -1,0 +1,28 @@
+{
+  "name": "my-turborepo",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "cross-env INFISICAL_DISABLE_UPDATE_CHECK=true infisical run -- turbo run dev --env-mode loose --no-daemon",
+    "db:build": "infisical run -- turbo run db:build",
+    "db:migrate:dev": "infisical run -- turbo run db:migrate:dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "docker-compose": "infisical run -- docker compose"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3",
+    "typescript": "5.8.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "npm@10.9.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

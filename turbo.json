@@ -1,0 +1,27 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "dependsOn": ["^db:build"],
+      "persistent": true,
+      "cache": false
+    },
+    "db:build": {
+      "outputs": ["dist/**"]
+    },
+    "db:migrate:dev": {
+      "outputs": ["dist/**"]
+    }
+  }
+}

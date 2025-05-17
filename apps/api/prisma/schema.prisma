@@ -13,20 +13,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Usuario {
-  id        String   @id  @db.Uuid @default(uuid())
+  id        String    @id @default(uuid()) @db.Uuid
   nome      String
   cargo     Cargo
-  cpf       String   @unique
+  cpf       String    @unique
   senha     String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   @@map("usuarios")
 }
-
 
 enum Cargo {
   Enfermeiro
