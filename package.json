@@ -4,8 +4,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "cross-env INFISICAL_DISABLE_UPDATE_CHECK=true infisical run -- turbo run dev --env-mode loose --no-daemon",
-    "db:build": "infisical run -- turbo run db:build",
-    "db:migrate:dev": "infisical run -- turbo run db:migrate:dev",
+    "db:build": "cross-env INFISICAL_DISABLE_UPDATE_CHECK=true infisical run -- turbo run db:build --env-mode loose --no-daemon",
+    "db:migrate:dev": "cross-env INFISICAL_DISABLE_UPDATE_CHECK=true infisical run -- turbo run db:migrate:dev --env-mode loose --no-daemon",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
