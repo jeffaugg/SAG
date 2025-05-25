@@ -1,7 +1,8 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { config } from 'src/shared/config/environments';
 import { AppModule } from './app.module';
+import { PaginateInterceptor } from './common/interceptors/pagination.interceptor';
 
 async function bootstrap() {
   const { ENVIRONMENT, DATABASE_URL } = config;
@@ -12,6 +13,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalInterceptors(new PaginateInterceptor(app.get(Reflector)));
   await app.listen(config.SERVER_PORT || 3000);
 }
 bootstrap();

@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -7,14 +8,19 @@ import { AuthDto } from './dto/auth.dto';
 
 import { compare, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { UsuarioRepository } from 'src/shared/database/repositories/usuarios.repositories';
 import { SignupDto } from './dto/signup.dto';
+import { SessionRepository } from 'src/shared/cache/session.repositories';
+import { IUsuarioRepository } from 'src/shared/database/repositories/interface/usuario-repository.interface';
+import { USUARIO_REPOSITORY } from 'src/common/constants';
+import { IAuthService } from './interface/auth-service.interface';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthService {
   constructor(
-    private readonly usuarioRepo: UsuarioRepository,
+    @Inject(USUARIO_REPOSITORY)
+    private readonly usuarioRepo: IUsuarioRepository,
     private jwtService: JwtService,
+    private readonly sessionRepository: SessionRepository,
   ) {}
   async authenticate(authDto: AuthDto) {
     const { cpf, senha } = authDto;
@@ -24,12 +30,10 @@ export class AuthService {
 
     const senhaValida = await compare(senha, usuario.senha);
 
-    if (!senhaValida) {
-      throw new UnauthorizedException('Credenciais inválidas');
-    }
+    if (!senhaValida) throw new UnauthorizedException('Credenciais inválidas');
 
     const token = await this.generateToken(usuario.id);
-
+    await this.sessionRepository.setUsuario(usuario, token);
     return { token };
   }
 
@@ -38,9 +42,7 @@ export class AuthService {
 
     const cpfJaCadastrado = await this.usuarioRepo.findByCpf(cpf);
 
-    if (cpfJaCadastrado) {
-      throw new ConflictException('CPF já cadastrado');
-    }
+    if (cpfJaCadastrado) throw new ConflictException('CPF já cadastrado');
 
     const senhaHash = await hash(senha, 12);
 
@@ -54,7 +56,7 @@ export class AuthService {
     });
 
     const token = await this.generateToken(usuario.id);
-
+    await this.sessionRepository.setUsuario(usuario, token);
     return { token };
   }
 

@@ -22,6 +22,14 @@ export class EnvironmentVariables {
   @Expose()
   @IsNumber()
   SERVER_PORT: number;
+
+  @Expose()
+  @IsString()
+  REDIS_HOST: string;
+
+  @Expose()
+  @IsString()
+  REDIS_PASSWORD: string;
 }
 
 const validateEnvironmentsVariables = (): EnvironmentVariables => {
