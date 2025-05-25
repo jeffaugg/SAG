@@ -13,7 +13,27 @@ services:
       POSTGRES_DB:  ${POSTGRES_DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - sag_network
   
+
+  redis:
+    image: redis:6.2
+    command: [
+      "redis-server",
+      "--requirepass", "${REDIS_PASSWORD}"
+    ]
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    container_name: myredis
+    restart: always
+    ports:
+      - "7008:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - sag_network
+
   adminer:
     image: adminer
     container_name: adminer
@@ -27,3 +47,7 @@ services:
       
 volumes:
   postgres-data:
+  redis_data:
+networks:
+  sag_network:
+    driver: bridge  

@@ -1,12 +1,20 @@
 import { Global, Module } from '@nestjs/common';
-import { UsersModule } from './modules/users/users.module';
+import { UsuariosModule } from './modules/usuarios/usuarios.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AuthGuard } from './modules/auth/auth.guard';
+import { PoliclinicasModule } from './modules/policlinicas/policlinicas.module';
+import { SessionModule } from './shared/cache/session.module';
 
 @Global()
 @Module({
-  imports: [UsersModule, DatabaseModule, AuthModule],
+  imports: [
+    UsuariosModule,
+    DatabaseModule,
+    AuthModule,
+    PoliclinicasModule,
+    SessionModule,
+  ],
   controllers: [],
   providers: [
     {

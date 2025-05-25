@@ -23,7 +23,82 @@ model Usuario {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
+  usuarioPoliclinicas UsuarioPoliclinica[]
+  usuarioUbs          UsuarioUbs[]
+
   @@map("usuarios")
+}
+
+model Policlinica {
+  id          String @id @default(uuid()) @db.Uuid
+  contato     String
+  nome        String
+  localizacao String
+
+  cnes String @unique
+  
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  usuarioPoliclinicas UsuarioPoliclinica[]
+
+  @@map("policlinica")
+}
+
+model UsuarioPoliclinica {
+  id String @id @default(uuid()) @db.Uuid
+
+  cnes        String
+  policlinica Policlinica @relation(fields: [cnes], references: [cnes], onDelete: NoAction)
+
+  usuarioId String  @db.Uuid
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: NoAction)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([cnes, usuarioId])
+  @@index([cnes], name: "idx_policlinica_cnes")
+  @@index([usuarioId], name: "idx_policlinica_usuario_id")
+  @@map("usuarios_policlinica")
+}
+
+model UBS {
+  id          String @id @default(uuid()) @db.Uuid
+  contato     String
+  nome        String
+  localizacao String
+
+  cnes String @unique
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  usuarioUbs UsuarioUbs[]
+
+  @@map("ubs")
+}
+
+model UsuarioUbs {
+  id String @id @default(uuid()) @db.Uuid
+
+  cnes String
+  ubs  UBS    @relation(fields: [cnes], references: [cnes], onDelete: NoAction)
+
+  usuarioId String  @db.Uuid
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: NoAction)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([cnes, usuarioId])
+  @@index([cnes], name: "idx_ubs_cnes")
+  @@index([usuarioId], name: "idx_ubs_usuario_id")
+  @@map("usuarios_ubs")
 }
 
 enum Cargo {

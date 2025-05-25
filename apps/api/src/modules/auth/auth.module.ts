@@ -4,6 +4,7 @@ import { config } from 'src/shared/config/environments';
 import { DatabaseModule } from 'src/shared/database/database.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AUTH_SERVICE } from 'src/common/constants';
 
 @Module({
   imports: [
@@ -15,6 +16,11 @@ import { AuthService } from './auth.service';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [
+    {
+      provide: AUTH_SERVICE,
+      useClass: AuthService,
+    },
+  ],
 })
 export class AuthModule {}
