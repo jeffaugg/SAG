@@ -20,6 +20,6 @@ import {
       useClass: PoliclinicasRepository,
     },
   ],
-  exports: [USUARIO_REPOSITORY, POLICLINICAS_REPOSITORY],
+  exports: [PrismaService, USUARIO_REPOSITORY, POLICLINICAS_REPOSITORY],
 })
 export class DatabaseModule {}
