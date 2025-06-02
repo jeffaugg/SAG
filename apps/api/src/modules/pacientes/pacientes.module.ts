@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { PacientesService } from './pacientes.service';
 import { PacientesController } from './pacientes.controller';
-import { PACIENTES_SERVICE } from 'src/common/constants';
+import { PACIENTES_SERVICE, PACIENTES_REPOSITORY } from 'src/common/constants';
+import { PacienteRepository } from 'src/shared/database/repositories/pacientes.repositories'; // ajuste o caminho conforme sua estrutura
 
 @Module({
   controllers: [PacientesController],
@@ -9,6 +10,10 @@ import { PACIENTES_SERVICE } from 'src/common/constants';
     {
       provide: PACIENTES_SERVICE,
       useClass: PacientesService,
+    },
+    {
+      provide: PACIENTES_REPOSITORY,
+      useClass: PacienteRepository,
     },
   ],
 })
