@@ -8,19 +8,19 @@ import { SessionModule } from './shared/cache/session.module';
 
 @Global()
 @Module({
-  imports: [
-    UsuariosModule,
-    DatabaseModule,
-    AuthModule,
-    PoliclinicasModule,
-    SessionModule,
-  ],
-  controllers: [],
-  providers: [
-    {
-      provide: 'APP_GUARD',
-      useClass: AuthGuard,
-    },
-  ],
+    imports: [
+        UsuariosModule,
+        DatabaseModule,
+        AuthModule,
+        PoliclinicasModule,
+        SessionModule,
+    ],
+    controllers: [],
+    providers: [
+        {
+            provide: 'APP_GUARD',
+            useClass: AuthGuard,
+        },
+    ],
 })
 export class AppModule {}

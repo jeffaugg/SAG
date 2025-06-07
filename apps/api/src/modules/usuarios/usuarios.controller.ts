@@ -6,13 +6,13 @@ import { USUARIOS_SERVICE } from 'src/common/constants';
 
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(
-    @Inject(USUARIOS_SERVICE)
-    private readonly usersService: IUsuariosService,
-  ) {}
+    constructor(
+        @Inject(USUARIOS_SERVICE)
+        private readonly usersService: IUsuariosService,
+    ) {}
 
-  @Get('/me')
-  async me(@Req() request: Request, @activeUserId() userId: string) {
-    return await this.usersService.getUsuariosById(userId);
-  }
+    @Get('/me')
+    async me(@Req() request: Request, @activeUserId() userId: string) {
+        return await this.usersService.getUsuariosById(userId);
+    }
 }
