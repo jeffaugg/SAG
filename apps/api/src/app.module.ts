@@ -10,21 +10,21 @@ import { ChatGateway } from './modules/websocket/chat/chat.gateway';
 
 @Global()
 @Module({
-  imports: [
-    UsuariosModule,
-    DatabaseModule,
-    AuthModule,
-    PoliclinicasModule,
-    SessionModule,
-    PacientesModule,
-  ],
-  controllers: [],
-  providers: [
-    {
-      provide: 'APP_GUARD',
-      useClass: AuthGuard,
-    },
-    ChatGateway,
-  ],
+    imports: [
+        UsuariosModule,
+        DatabaseModule,
+        AuthModule,
+        PoliclinicasModule,
+        SessionModule,
+        PacientesModule,
+    ],
+    controllers: [],
+    providers: [
+        {
+            provide: 'APP_GUARD',
+            useClass: AuthGuard,
+        },
+        ChatGateway,
+    ],
 })
 export class AppModule {}

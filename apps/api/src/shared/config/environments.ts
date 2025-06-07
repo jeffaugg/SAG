@@ -2,50 +2,50 @@ import { Expose, plainToInstance } from 'class-transformer';
 import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
 
 enum Environment {
-  development = 'development',
-  production = 'production',
+    development = 'development',
+    production = 'production',
 }
 type EnvironmentEnum = keyof typeof Environment;
 
 export class EnvironmentVariables {
-  @Expose()
-  @IsEnum(Environment)
-  ENVIRONMENT: EnvironmentEnum;
-  @Expose()
-  @IsString()
-  DATABASE_URL: string;
+    @Expose()
+    @IsEnum(Environment)
+    ENVIRONMENT: EnvironmentEnum;
+    @Expose()
+    @IsString()
+    DATABASE_URL: string;
 
-  @Expose()
-  @IsString()
-  JWT_SECRET: string;
+    @Expose()
+    @IsString()
+    JWT_SECRET: string;
 
-  @Expose()
-  @IsNumber()
-  SERVER_PORT: number;
+    @Expose()
+    @IsNumber()
+    SERVER_PORT: number;
 
-  @Expose()
-  @IsString()
-  REDIS_HOST: string;
+    @Expose()
+    @IsString()
+    REDIS_HOST: string;
 
-  @Expose()
-  @IsString()
-  REDIS_PASSWORD: string;
+    @Expose()
+    @IsString()
+    REDIS_PASSWORD: string;
 }
 
 const validateEnvironmentsVariables = (): EnvironmentVariables => {
-  cleanEnv(process.env);
+    cleanEnv(process.env);
 
-  const configInstance = plainToInstance(EnvironmentVariables, process.env, {
-    enableImplicitConversion: true,
-    excludeExtraneousValues: true,
-    exposeDefaultValues: true,
-  });
+    const configInstance = plainToInstance(EnvironmentVariables, process.env, {
+        enableImplicitConversion: true,
+        excludeExtraneousValues: true,
+        exposeDefaultValues: true,
+    });
 
-  const errors = validateSync(configInstance, {});
+    const errors = validateSync(configInstance, {});
 
-  if (errors.length) throw new Error(JSON.stringify(errors, undefined, 2));
+    if (errors.length) throw new Error(JSON.stringify(errors, undefined, 2));
 
-  return configInstance;
+    return configInstance;
 };
 
 /**
@@ -58,14 +58,14 @@ const validateEnvironmentsVariables = (): EnvironmentVariables => {
  * @param env - The process.env object containing all environment variables
  */
 const cleanEnv = (env: NodeJS.ProcessEnv): void => {
-  for (const key in env) {
-    if (env.hasOwnProperty(key)) {
-      const value = env[key];
-      if (typeof value === 'string') {
-        env[key] = value.replace(/^['"]+|['"]+$/g, '');
-      }
+    for (const key in env) {
+        if (env.hasOwnProperty(key)) {
+            const value = env[key];
+            if (typeof value === 'string') {
+                env[key] = value.replace(/^['"]+|['"]+$/g, '');
+            }
+        }
     }
-  }
 };
 
 export const config = validateEnvironmentsVariables();
