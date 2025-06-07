@@ -5,6 +5,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { PoliclinicasModule } from './modules/policlinicas/policlinicas.module';
 import { SessionModule } from './shared/cache/session.module';
+import { PacientesModule } from './modules/pacientes/pacientes.module';
+import { ChatGateway } from './modules/websocket/chat/chat.gateway';
 
 @Global()
 @Module({
@@ -14,6 +16,7 @@ import { SessionModule } from './shared/cache/session.module';
         AuthModule,
         PoliclinicasModule,
         SessionModule,
+        PacientesModule,
     ],
     controllers: [],
     providers: [
@@ -21,6 +24,7 @@ import { SessionModule } from './shared/cache/session.module';
             provide: 'APP_GUARD',
             useClass: AuthGuard,
         },
+        ChatGateway,
     ],
 })
 export class AppModule {}

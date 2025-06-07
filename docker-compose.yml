@@ -44,6 +44,8 @@ services:
       ADMINER_DEFAULT_SERVER: db
     depends_on:
       - db
+    networks:
+      - sag_network
       
 volumes:
   postgres-data:
