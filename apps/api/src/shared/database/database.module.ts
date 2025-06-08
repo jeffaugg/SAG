@@ -27,6 +27,7 @@ import { PacienteRepository } from './repositories/pacientes.repositories';
         },
     ],
     exports: [
+        PrismaService,
         USUARIO_REPOSITORY,
         POLICLINICAS_REPOSITORY,
         PACIENTES_REPOSITORY,
