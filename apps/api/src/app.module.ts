@@ -7,6 +7,7 @@ import { PoliclinicasModule } from './modules/policlinicas/policlinicas.module';
 import { SessionModule } from './shared/cache/session.module';
 import { PacientesModule } from './modules/pacientes/pacientes.module';
 import { UbsModule } from './modules/ubs/ubs.module';
+import { ChatGateway } from './modules/websocket/chat/chat.gateway';
 
 @Global()
 @Module({
@@ -25,6 +26,7 @@ import { UbsModule } from './modules/ubs/ubs.module';
       provide: 'APP_GUARD',
       useClass: AuthGuard,
     },
+    ChatGateway,
   ],
 })
 export class AppModule {}

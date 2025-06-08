@@ -4,7 +4,7 @@ import { RedisService } from './redis.service';
 
 @Global()
 @Module({
-  providers: [SessionRepository, RedisService],
-  exports: [SessionRepository],
+    providers: [SessionRepository, RedisService],
+    exports: [SessionRepository],
 })
 export class SessionModule {}
