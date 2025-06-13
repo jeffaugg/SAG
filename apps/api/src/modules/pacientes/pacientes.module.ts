@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { PacientesService } from './pacientes.service';
 import { PacientesController } from './pacientes.controller';
-import { PACIENTES_SERVICE, PACIENTES_REPOSITORY } from 'src/common/constants';
-import { PacienteRepository } from 'src/shared/database/repositories/pacientes.repositories';
+import { GESTACOES_SERVICE, PACIENTES_SERVICE } from 'src/common/constants';
+import { GestacaoService } from '../gestacoes/gestacoes.service';
 
 @Module({
   controllers: [PacientesController],
@@ -12,8 +12,8 @@ import { PacienteRepository } from 'src/shared/database/repositories/pacientes.r
       useClass: PacientesService,
     },
     {
-      provide: PACIENTES_REPOSITORY,
-      useClass: PacienteRepository,
+      provide: GESTACOES_SERVICE,
+      useClass: GestacaoService,
     },
   ],
 })

@@ -108,7 +108,7 @@ enum Cargo {
 }
 
 model Paciente {
-  id   String @id @default(uuid())
+  id   String @id @default(uuid()) @db.Uuid
   nome String
   cpf  String @unique
   telefone String? 
@@ -116,4 +116,28 @@ model Paciente {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
+
+  gestacoes Gestacao[]  
+
+  @@map("pacientes")
 }
+
+enum Status {
+  Pendente
+  Fechado
+}
+
+model Gestacao {
+  id   String @id @default(uuid())
+  inicio DateTime @default(now())
+  fim  DateTime?
+  status Status 
+  pacienteId String @db.Uuid
+  paciente Paciente @relation(fields: [pacienteId], references: [id], onDelete: NoAction)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  @@map("gestacoes")
+}
+
+
