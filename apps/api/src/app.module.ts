@@ -7,6 +7,8 @@ import { PoliclinicasModule } from './modules/policlinicas/policlinicas.module';
 import { SessionModule } from './shared/cache/session.module';
 import { PacientesModule } from './modules/pacientes/pacientes.module';
 import { GestacoesModule } from './modules/gestacoes/gestacoes.module';
+import { UbsModule } from './modules/ubs/ubs.module';
+import { ChatGateway } from './modules/websocket/chat/chat.gateway';
 
 @Global()
 @Module({
@@ -18,6 +20,7 @@ import { GestacoesModule } from './modules/gestacoes/gestacoes.module';
     SessionModule,
     PacientesModule,
     GestacoesModule,
+    UbsModule,
   ],
   controllers: [],
   providers: [
@@ -25,6 +28,7 @@ import { GestacoesModule } from './modules/gestacoes/gestacoes.module';
       provide: 'APP_GUARD',
       useClass: AuthGuard,
     },
+    ChatGateway,
   ],
 })
 export class AppModule {}

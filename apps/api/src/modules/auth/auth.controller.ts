@@ -8,18 +8,18 @@ import { AUTH_SERVICE } from 'src/common/constants';
 @isPublic()
 @Controller('auth')
 export class AuthController {
-  constructor(
-    @Inject(AUTH_SERVICE)
-    private readonly authService: IAuthService,
-  ) {}
+    constructor(
+        @Inject(AUTH_SERVICE)
+        private readonly authService: IAuthService,
+    ) {}
 
-  @Post('login')
-  authenticate(@Body() authDto: AuthDto) {
-    return this.authService.authenticate(authDto);
-  }
+    @Post('login')
+    authenticate(@Body() authDto: AuthDto) {
+        return this.authService.authenticate(authDto);
+    }
 
-  @Post('register')
-  create(@Body() signupDto: SignupDto) {
-    return this.authService.create(signupDto);
-  }
+    @Post('register')
+    create(@Body() signupDto: SignupDto) {
+        return this.authService.create(signupDto);
+    }
 }
