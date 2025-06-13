@@ -6,6 +6,7 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { PoliclinicasModule } from './modules/policlinicas/policlinicas.module';
 import { SessionModule } from './shared/cache/session.module';
 import { PacientesModule } from './modules/pacientes/pacientes.module';
+import { GestacoesModule } from './modules/gestacoes/gestacoes.module';
 
 @Global()
 @Module({
@@ -16,6 +17,7 @@ import { PacientesModule } from './modules/pacientes/pacientes.module';
     PoliclinicasModule,
     SessionModule,
     PacientesModule,
+    GestacoesModule,
   ],
   controllers: [],
   providers: [
