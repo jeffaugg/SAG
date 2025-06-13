@@ -17,6 +17,10 @@ export class EnvironmentVariables {
 
   @Expose()
   @IsString()
+  MONGO_URI: string;
+
+  @Expose()
+  @IsString()
   JWT_SECRET: string;
 
   @Expose()
@@ -59,6 +63,7 @@ const validateEnvironmentsVariables = (): EnvironmentVariables => {
  */
 const cleanEnv = (env: NodeJS.ProcessEnv): void => {
   for (const key in env) {
+    // eslint-disable-next-line no-prototype-builtins
     if (env.hasOwnProperty(key)) {
       const value = env[key];
       if (typeof value === 'string') {

@@ -9,6 +9,7 @@ async function bootstrap() {
   if (ENVIRONMENT === 'development') {
     console.log(`Ambiente: ${ENVIRONMENT}`);
     console.log(`Database URL: ${DATABASE_URL}`);
+    console.log(config.MONGO_URI);
   }
 
   const app = await NestFactory.create(AppModule);
