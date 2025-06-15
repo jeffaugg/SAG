@@ -1,6 +1,6 @@
-# PI2 Monorepo
+# PI2 Monorepo - SAG - Sistema de Apoio à Gestante
 
-Este projeto é um monorepo gerenciado com Turborepo, utilizando NestJS, Prisma, Docker, PostgreSQL e Infisical para gerenciamento de variáveis de ambiente.
+Este projeto é um monorepo gerenciado com Turborepo, utilizando React, NestJS, Prisma, Docker, PostgreSQL e Infisical para gerenciamento de variáveis de ambiente.
 
 ## Pré-requisitos
 
