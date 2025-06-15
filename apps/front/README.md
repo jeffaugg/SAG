@@ -1,54 +1,25 @@
-# React + TypeScript + Vite
+# PI2 Front - SAG - Sistema de Apoio à Gestante
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Esse projeto é um cliente web do SAG (Sistema de Apoio à Gestante), desenvolvido com React e TypeScript, utilizando Vite como bundler. O projeto é parte de um monorepo gerenciado com Turborepo, que inclui também o backend em NestJS.
 
-Currently, two official plugins are available:
+## Pré-requisitos
+- Node.js >= 22.15.0
+- npm >= 11.0
+- [Infisical CLI](https://infisical.com/docs/cli/overview)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 1. Instalação e Configuração
 
-## Expanding the ESLint configuration
+As instruções de instalação e configuração são as mesmas do monorepo principal. Consulte o [README do monorepo](../README.md) para detalhes.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 2. Guias de Desenvolvimento
+### 2.1. Tecnologias Utilizadas
+- React
+- TypeScript
+- Vite
+- React Router
+- Axios
+- React Query - Utilizado para gerenciamento de estado e requisições assíncronas
+- Tailwind CSS - Para estilização e design responsivo
+- Ant Design - Para componentes de UI
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+> **IMPORTANTE**: Não devemos fugir do padrão de desenvolvimento e uso das tecnologias definidas aqui. Qualquer adição de nova tecnologia deve ser discutida e aprovada pela equipe.
