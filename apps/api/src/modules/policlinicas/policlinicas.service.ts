@@ -12,6 +12,7 @@ import { handlePrismaError } from 'src/common/utils/prisma-error.util';
 import { POLICLINICAS_REPOSITORY } from 'src/common/constants';
 import { IPoliclinicasRepository } from 'src/shared/database/repositories/interface/policlinica-repository.interface';
 import { IPoliclinicasService } from './interface/policlinica-service.interface';
+import { OrganizacaoInfo } from 'src/shared/types';
 
 @Injectable()
 export class PoliclinicasService implements IPoliclinicasService {
@@ -76,5 +77,28 @@ export class PoliclinicasService implements IPoliclinicasService {
         if (erro) throw new NotFoundException('Policlinica não encontrada');
 
         return policlinica;
+    }
+
+    async listPatients(orgInfo: OrganizacaoInfo, options: PaginacaoDto) {
+        const [erro, policlinica] = await catchError(
+            this.policlinicasRepository.listPatient(orgInfo.cnes, options),
+        );
+
+        if (erro) throw new NotFoundException('Policlinica não encontrada');
+
+        return policlinica;
+    }
+
+    async getPatientByCpf(pacienteCpf: string, orgInfo: OrganizacaoInfo) {
+        const [erro, result] = await catchError(
+            this.policlinicasRepository.getPatientByCpf(
+                pacienteCpf,
+                orgInfo.cnes,
+            ),
+        );
+
+        if (erro) throw new NotFoundException('Paciente não encontrado');
+
+        return result?.paciente;
     }
 }
