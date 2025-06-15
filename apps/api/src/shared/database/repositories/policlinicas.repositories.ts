@@ -110,4 +110,48 @@ export class PoliclinicasRepository implements IPoliclinicasRepository {
         const items = pivots.map((p) => p.usuario);
         return { items, total };
     }
+
+    async listPatient(policlinicaCNES: string, { skip, limit }: PaginacaoDto) {
+        const where = {
+            policlinicaCNES,
+            deletedAt: null,
+        };
+        const [total, pivots] = await this.prismaService.$transaction([
+            this.prismaService.permissoesPoliclinica.count({ where }),
+            this.prismaService.permissoesPoliclinica.findMany({
+                where,
+                include: {
+                    paciente: true,
+                },
+                skip,
+                take: limit,
+                orderBy: {
+                    paciente: { nome: 'asc' },
+                },
+            }),
+        ]);
+
+        const items = pivots.map((p) => p.paciente);
+
+        return { items, total };
+    }
+
+    async getPatientByCpf(pacienteCpf: string, policlinicaCNES: string) {
+        return await this.prismaService.permissoesPoliclinica.findUniqueOrThrow(
+            {
+                where: {
+                    pacienteCpf_policlinicaCNES: {
+                        pacienteCpf,
+                        policlinicaCNES,
+                    },
+                    paciente: {
+                        deletedAt: null,
+                    },
+                },
+                include: {
+                    paciente: true,
+                },
+            },
+        );
+    }
 }

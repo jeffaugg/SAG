@@ -1,6 +1,6 @@
 import { CreatePoliclinicaDto } from 'src/modules/policlinicas/dto/create-policlinica.dto';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
-import { Policlinica } from '@prisma/client';
+import { Paciente, PermissoesPoliclinica, Policlinica } from '@prisma/client';
 import { Usuario } from '@prisma/client';
 
 export interface IPoliclinicasRepository {
@@ -21,4 +21,16 @@ export interface IPoliclinicasRepository {
         items: Usuario[];
         total: number;
     }>;
+    listPatient(
+        policlinicaCNES: string,
+        pagination: PaginacaoDto,
+    ): Promise<{
+        items: Paciente[];
+        total: number;
+    }>;
+
+    getPatientByCpf(
+        pacienteCpf: string,
+        policlinicaCNES: string,
+    ): Promise<(PermissoesPoliclinica & { paciente: Paciente }) | null>;
 }
