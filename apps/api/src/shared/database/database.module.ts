@@ -3,11 +3,13 @@ import { PrismaService } from './prisma.service';
 import { UsuarioRepository } from './repositories/usuarios.repositories';
 import { PoliclinicasRepository } from './repositories/policlinicas.repositories';
 import {
+    GESTACOES_REPOSITORY,
     PACIENTES_REPOSITORY,
     POLICLINICAS_REPOSITORY,
     UBS_REPOSITORY,
     USUARIO_REPOSITORY,
 } from 'src/common/constants';
+import { GestacoesRepository } from './repositories/gestacoes.repositories';
 import { PacienteRepository } from './repositories/pacientes.repositories';
 import { UbsRepository } from './repositories/ubs.repositories';
 
@@ -31,6 +33,10 @@ import { UbsRepository } from './repositories/ubs.repositories';
             provide: UBS_REPOSITORY,
             useClass: UbsRepository,
         },
+        {
+            provide: GESTACOES_REPOSITORY,
+            useClass: GestacoesRepository,
+        },
     ],
     exports: [
         PrismaService,
@@ -38,6 +44,7 @@ import { UbsRepository } from './repositories/ubs.repositories';
         POLICLINICAS_REPOSITORY,
         PACIENTES_REPOSITORY,
         UBS_REPOSITORY,
+        GESTACOES_REPOSITORY,
     ],
 })
 export class DatabaseModule {}

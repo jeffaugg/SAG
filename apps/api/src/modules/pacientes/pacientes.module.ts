@@ -5,11 +5,13 @@ import {
     PACIENTES_SERVICE,
     PACIENTES_REPOSITORY,
     ASSOCIACAO_STRATEGIES,
+    GESTACOES_SERVICE,
 } from 'src/common/constants';
 import { PacienteRepository } from 'src/shared/database/repositories/pacientes.repositories';
 import { PrismaService } from 'src/shared/database/prisma.service';
 import { AssociacaoPoliclinicaStrategy } from './strategies/associacao-policlinica.strategy';
 import { AssociacaoUbsStrategy } from './strategies/associacao-ubs.strategy';
+import { GestacaoService } from '../gestacoes/gestacoes.service';
 
 @Module({
     controllers: [PacientesController],
@@ -24,6 +26,10 @@ import { AssociacaoUbsStrategy } from './strategies/associacao-ubs.strategy';
         {
             provide: PACIENTES_REPOSITORY,
             useClass: PacienteRepository,
+        },
+        {
+            provide: GESTACOES_SERVICE,
+            useClass: GestacaoService,
         },
         {
             provide: ASSOCIACAO_STRATEGIES,

@@ -122,6 +122,7 @@ model Paciente {
   deletedAt             DateTime?               @map("deleted_at")
   PermissoesPoliclinica PermissoesPoliclinica[]
   PermissoesUbs         PermissoesUbs[]
+  gestacoes             Gestacao[]
 
   @@map("pacientes")
 }
@@ -163,3 +164,23 @@ model PermissoesUbs {
   @@index([ubsCNES], name: "idx_permissoes_ubs_ubs_cnes")
   @@map("permissoes_ubs")
 }
+
+enum Status {
+  Pendente
+  Fechado
+}
+
+model Gestacao {
+  id   String @id @default(uuid())
+  inicio DateTime @default(now())
+  fim  DateTime?
+  status Status 
+  pacienteId String @db.Uuid
+  paciente Paciente @relation(fields: [pacienteId], references: [id], onDelete: NoAction)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  @@map("gestacoes")
+}
+
+

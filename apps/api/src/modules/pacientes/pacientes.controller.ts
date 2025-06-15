@@ -11,11 +11,12 @@ import {
 } from '@nestjs/common';
 import { IsAdm } from 'src/shared/decorators/isAdm';
 import { IsPaginated } from 'src/shared/decorators/Ispaginated';
-import { PACIENTES_SERVICE } from 'src/common/constants';
+import { PACIENTES_SERVICE, GESTACOES_SERVICE } from 'src/common/constants';
 import { CreatePacienteDto } from './dto/create-paciente.dto';
 import { UpdatePacienteDto } from './dto/update-paciente.dto';
 import { IPacienteService } from './interface/pacientes-service.interface';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
+import { IGestacaoService } from '../gestacoes/interface/gestacoes-service.interface';
 import { organizationInfo } from 'src/shared/decorators/organizationInfo';
 import { OrganizacaoInfo } from 'src/shared/types';
 
@@ -24,6 +25,8 @@ export class PacientesController {
     constructor(
         @Inject(PACIENTES_SERVICE)
         private readonly pacientesService: IPacienteService,
+        @Inject(GESTACOES_SERVICE)
+        private readonly gestacaoService: IGestacaoService,
     ) {}
 
     @Post()
@@ -77,5 +80,15 @@ export class PacientesController {
         @organizationInfo() orgInfo: OrganizacaoInfo,
     ) {
         return this.pacientesService.association(pacienteCpf, orgInfo);
+    }
+
+    @Get(':id/gestacoes')
+    @IsAdm()
+    @IsPaginated()
+    findByPaciente(
+        @Param('id') id: string,
+        @Query() paginacaoDto: PaginacaoDto,
+    ) {
+        return this.gestacaoService.findByPaciente(id, paginacaoDto);
     }
 }
