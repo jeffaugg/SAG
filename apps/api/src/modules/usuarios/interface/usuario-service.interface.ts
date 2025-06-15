@@ -1,3 +1,5 @@
+import { Policlinica, UBS } from '@prisma/client';
+
 export interface IUsuariosService {
     getUsuariosById(id: string): Promise<{
         id: string;
@@ -7,4 +9,7 @@ export interface IUsuariosService {
         createdAt: Date;
         updatedAt: Date;
     }>;
+    getOrganizacaoByUserId(
+        usuarioCpf: string,
+    ): Promise<{ policlinicas: Policlinica[]; ubs: UBS[] }>;
 }

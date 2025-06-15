@@ -12,7 +12,7 @@ async function bootstrap() {
         console.log(`Database URL: ${DATABASE_URL}`);
     }
     const app = await NestFactory.create(AppModule);
-
+    app.enableCors();
     app.useGlobalPipes(new ValidationPipe());
     app.useGlobalInterceptors(new PaginateInterceptor(app.get(Reflector)));
 
