@@ -4,17 +4,18 @@ import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { UBS, Usuario } from '@prisma/client';
 
 export interface IUbsService {
-  create(dto: CreateUbsDto): Promise<UBS>;
-  findAll(options: PaginacaoDto): Promise<{ items: UBS[]; total: number }>;
-  findOne(id: string): Promise<UBS>;
-  update(id: string, dto: UpdateUbsDto): Promise<UBS>;
-  remove(id: string): Promise<void>;
-  createUser(usuarioId: string, ubsId: string): Promise<UBS>;
-  listUsers(
-    cnes: string,
-    options: PaginacaoDto,
-  ): Promise<{
-    items: Usuario[];
-    total: number;
-  }>;
+    create(dto: CreateUbsDto): Promise<UBS>;
+    findAll(options: PaginacaoDto): Promise<{ items: UBS[]; total: number }>;
+    findById(id: string): Promise<UBS>;
+    findByCnes(cnes: string): Promise<UBS>;
+    update(id: string, dto: UpdateUbsDto): Promise<UBS>;
+    remove(id: string): Promise<void>;
+    createUser(usuarioId: string, ubsId: string): Promise<UBS>;
+    listUsers(
+        cnes: string,
+        options: PaginacaoDto,
+    ): Promise<{
+        items: Usuario[];
+        total: number;
+    }>;
 }
