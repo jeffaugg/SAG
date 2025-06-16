@@ -41,14 +41,6 @@ export const createQueryClient = (
         },
     });
 
-    // queryCache.subscribe((event: QueryCacheNotifyEvent) => {
-    //   console.info("QueryCache event:", event);
-    // });
-
-    // mutationCache.subscribe((event: MutationCacheNotifyEvent) => {
-    //   console.info("MutationCache event:", event);
-    // });
-
     return queryClient;
 };
 

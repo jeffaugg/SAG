@@ -1,15 +1,15 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { Button, Layout, theme } from "antd";
+import { Layout, theme } from "antd";
 import { useState } from "react";
-import { NavigationProvider } from "../contexts/NavigationContext";
-import { useCurrentUser, useLogout } from "../modules/auth/hooks/authHooks";
-import routes from "../routes/routes.config";
-import type { MainLayoutProps } from "./@types/components.types";
-import AppBreadcrumb from "./AppBreadcrumb";
-import AppMenu from "./AppMenu";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import { useCurrentUser, useLogout } from "../../modules/auth/hooks/authHooks";
+import routes from "../../routes/routes.config";
+import AppBreadcrumb from "../navigation/components/AppBreadcrumb";
+import { NavigationProvider } from "../navigation/context/NavigationContext";
+import SiderContent from "./components/SiderContent";
+import UserInfo from "./components/UserInfo";
+import type { MainLayoutProps } from "./interfaces/Layout.interfaces";
 
-const { Header, Content, Sider, Footer } = Layout;
+const { Header, Content, Footer } = Layout;
 
 const MainLayout = ({ children }: MainLayoutProps) => {
     const logout = useLogout();
@@ -19,41 +19,17 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
 
+    const handleToggleCollapsed = () => {
+        setCollapsed(!collapsed);
+    };
+
     return (
         <NavigationProvider routes={routes}>
             <Layout className="min-h-screen">
-                <Sider
-                    trigger={null}
-                    collapsible
+                <SiderContent
                     collapsed={collapsed}
-                    className="flex flex-col"
-                    width={250}
-                    theme="light"
-                >
-                    <div className="flex items-center justify-center  mb-2">
-                        <img
-                            src="/img/sag_logo.svg"
-                            alt="Logo do Sistema de Apoio a Gestante (SAG)"
-                            className="w-2/5 h-auto object-contain p-2"
-                        />
-                    </div>
-                    <div className="flex overflow-auto">
-                        <AppMenu />
-                    </div>
-                    <div className="border-t border-gray-200 p-4 flex justify-center ">
-                        <Button
-                            type="text"
-                            icon={
-                                collapsed ? (
-                                    <MenuUnfoldOutlined />
-                                ) : (
-                                    <MenuFoldOutlined />
-                                )
-                            }
-                            onClick={() => setCollapsed(!collapsed)}
-                        />
-                    </div>
-                </Sider>
+                    onToggle={handleToggleCollapsed}
+                />
                 <Layout>
                     <Header
                         style={{
@@ -77,13 +53,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                                 <div className="flex w-full items-center justify-end gap-4">
                                     <AppBreadcrumb />
                                     <div className="flex items-center gap-2 w-full justify-end">
-                                        <span>
-                                            Olá, <strong>{user?.name}</strong> (
-                                            {user?.cargo})
-                                        </span>
-                                        <Button onClick={logout} type="link">
-                                            Sair
-                                        </Button>
+                                        <UserInfo
+                                            name={user?.name}
+                                            cargo={user?.cargo}
+                                            onLogout={logout}
+                                        />
                                     </div>
                                 </div>
                             )}

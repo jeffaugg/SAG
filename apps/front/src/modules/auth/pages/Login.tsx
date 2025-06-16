@@ -42,7 +42,6 @@ const Login = () => {
             { ...values, cpf: cleanedCpf },
             {
                 onError: (err) => {
-                    console.error("Login error:", err);
                     handleError(err);
                 },
             },

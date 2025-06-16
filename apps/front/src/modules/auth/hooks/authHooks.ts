@@ -38,7 +38,7 @@ export const useLogin = () => {
         onSuccess: (data) => {
             localStorage.setItem("access_token", data.token);
             queryClient.invalidateQueries({ queryKey: ["user"] });
-            queryClient.invalidateQueries({ queryKey: ["authStatus"] }); // Atualizando o status de autenticação
+            queryClient.invalidateQueries({ queryKey: ["authStatus"] });
             ToastService.success("Login realizado com sucesso!");
         },
     });
