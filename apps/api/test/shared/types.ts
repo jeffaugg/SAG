@@ -26,3 +26,17 @@ export const PoliclinicaMock = (): Prisma.PoliclinicaUncheckedCreateInput => {
         deletedAt: null,
     };
 };
+
+export const UbsMock = (): Prisma.UBSUncheckedCreateInput => {
+    return {
+        id: faker.string.uuid(),
+        contato: faker.phone.number({ style: 'international' }),
+        nome: faker.company.name(),
+        localizacao: faker.location.streetAddress(),
+        cnes: faker.string.numeric(7),
+        createdAt: faker.date.recent(),
+        updatedAt: faker.date.recent(),
+        deletedAt: null,
+        usuarioUbs: { create: [] }, // verificar mais tarde se é necessário criar usuários vinculados à UBS
+    };
+};
