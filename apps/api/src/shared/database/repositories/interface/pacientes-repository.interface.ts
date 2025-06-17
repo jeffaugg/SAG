@@ -10,6 +10,11 @@ export interface IPacientesRepository {
         total: number;
     }>;
     findById(id: string): Promise<Paciente | null>;
+    findByCpf(cpf: string): Promise<Paciente | null>;
     update(id: string, data: UpdatePacienteDto): Promise<Paciente>;
     delete(id: string): Promise<Paciente>;
+    findAllByOrganization(
+        pagination: PaginacaoDto,
+        orgCNES: string,
+    ): Promise<{ items: Paciente[]; total: number }>;
 }

@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    MaxLength,
+    MinLength,
+} from 'class-validator';
 
 export class AuthDto {
     @IsString()
@@ -17,4 +23,9 @@ export class AuthDto {
         message: 'senha deve ter pelo menos 8 caracteres',
     })
     senha: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
+    organizacaoCNES: string;
 }

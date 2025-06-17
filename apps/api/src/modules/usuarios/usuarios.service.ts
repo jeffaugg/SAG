@@ -26,4 +26,8 @@ export class UsuariosService implements IUsuariosService {
             updatedAt: usuario.updatedAt,
         };
     }
+
+    async getOrganizacaoByUserId(userId: string) {
+        return this.usuarioRepo.listAllOrganizacoes(userId);
+    }
 }

@@ -36,12 +36,13 @@ model Policlinica {
   localizacao String
 
   cnes String @unique
-  
+
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  usuarioPoliclinicas UsuarioPoliclinica[]
+  usuarioPoliclinicas   UsuarioPoliclinica[]
+  PermissoesPoliclinica PermissoesPoliclinica[]
 
   @@map("policlinica")
 }
@@ -77,7 +78,8 @@ model UBS {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  usuarioUbs UsuarioUbs[]
+  usuarioUbs    UsuarioUbs[]
+  PermissoesUbs PermissoesUbs[]
 
   @@map("ubs")
 }
@@ -108,18 +110,59 @@ enum Cargo {
 }
 
 model Paciente {
-  id   String @id @default(uuid()) @db.Uuid
-  nome String
-  cpf  String @unique
-  telefone String? 
+  id String @id @default(uuid()) @db.Uuid
+
+  nome     String
+  cpf      String  @unique
+  telefone String?
   endereco String?
+
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+  deletedAt             DateTime?               @map("deleted_at")
+  PermissoesPoliclinica PermissoesPoliclinica[]
+  PermissoesUbs         PermissoesUbs[]
+  gestacoes             Gestacao[]
+
+  @@map("pacientes")
+}
+
+model PermissoesPoliclinica {
+  id String @id @default(uuid()) @db.Uuid
+
+  pacienteCpf String
+  paciente   Paciente @relation(fields: [pacienteCpf], references: [cpf], onDelete: NoAction)
+
+  policlinicaCNES String
+  policlinica   Policlinica @relation(fields: [policlinicaCNES], references: [cnes], onDelete: NoAction)
+
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  gestacoes Gestacao[]  
+  @@unique([pacienteCpf, policlinicaCNES])
+  @@index([pacienteCpf], name: "idx_permissoes_policlinica_paciente_cpf")
+  @@index([policlinicaCNES], name: "idx_permissoes_policlinica_policlinica_cnes")
+  @@map("permissoes_policlinica")
+}
 
-  @@map("pacientes")
+model PermissoesUbs {
+  id String @id @default(uuid()) @db.Uuid
+
+  pacienteCpf String
+  paciente   Paciente @relation(fields: [pacienteCpf], references: [cpf], onDelete: NoAction)
+
+  ubsCNES String
+  ubs   UBS    @relation(fields: [ubsCNES], references: [cnes], onDelete: NoAction)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([pacienteCpf, ubsCNES])
+  @@index([pacienteCpf], name: "idx_permissoes_ubs_paciente_cpf")
+  @@index([ubsCNES], name: "idx_permissoes_ubs_ubs_cnes")
+  @@map("permissoes_ubs")
 }
 
 enum Status {
