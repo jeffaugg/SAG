@@ -1,7 +1,8 @@
 import { CreateUbsDto } from '../dto/create-ubs.dto';
 import { UpdateUbsDto } from '../dto/update-ubs.dto';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
-import { UBS, Usuario } from '@prisma/client';
+import { Paciente, UBS, Usuario } from '@prisma/client';
+import { OrganizacaoInfo } from 'src/shared/types';
 
 export interface IUbsService {
     create(dto: CreateUbsDto): Promise<UBS>;
@@ -18,4 +19,13 @@ export interface IUbsService {
         items: Usuario[];
         total: number;
     }>;
+    listPatients(
+        orgInfo: OrganizacaoInfo,
+        options: PaginacaoDto,
+    ): Promise<{ items: Paciente[] | undefined[]; total: number }>;
+
+    getPatientByCpf(
+        pacienteCpf: string,
+        orgInfo: OrganizacaoInfo,
+    ): Promise<Paciente | undefined>;
 }

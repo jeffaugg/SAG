@@ -13,6 +13,8 @@ import { SessionRepository } from 'src/shared/cache/session.repositories';
 import { IUsuarioRepository } from 'src/shared/database/repositories/interface/usuario-repository.interface';
 import { USUARIO_REPOSITORY } from 'src/common/constants';
 import { IAuthService } from './interface/auth-service.interface';
+import { Cargo } from './dto/cargo.enum';
+import { JwtPayload, OrganizacaoInfo } from 'src/shared/types';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -23,17 +25,17 @@ export class AuthService implements IAuthService {
         private readonly sessionRepository: SessionRepository,
     ) {}
     async authenticate(authDto: AuthDto) {
-        const { cpf, senha } = authDto;
-        const usuario = await this.usuarioRepo.findByCpf(cpf);
+        const usuario = await this.validateUsuario(authDto.cpf, authDto.senha);
 
-        if (!usuario) throw new UnauthorizedException('Credenciais inválidas');
+        const orgInfo =
+            usuario.cargo === Cargo.ADM
+                ? undefined
+                : await this.validateOrganizacao(
+                      usuario.id,
+                      authDto.organizacaoCNES,
+                  );
 
-        const senhaValida = await compare(senha, usuario.senha);
-
-        if (!senhaValida)
-            throw new UnauthorizedException('Credenciais inválidas');
-
-        const token = await this.generateToken(usuario.id);
+        const token = await this.generateToken(usuario.id, orgInfo);
         await this.sessionRepository.setUsuario(usuario, token);
         return { token };
     }
@@ -61,7 +63,33 @@ export class AuthService implements IAuthService {
         return { token };
     }
 
-    private async generateToken(userId: string) {
-        return this.jwtService.signAsync({ id: userId });
+    private async generateToken(userId: string, organizacao?: OrganizacaoInfo) {
+        const payload: JwtPayload = { userId: userId };
+        if (organizacao) payload.organizacao = organizacao;
+        return this.jwtService.signAsync(payload);
+    }
+
+    private async validateUsuario(cpf: string, senha: string) {
+        const usuario = await this.usuarioRepo.findByCpf(cpf);
+
+        if (!usuario) throw new UnauthorizedException('Credenciais inválidas');
+
+        const ok = await compare(senha, usuario.senha);
+        if (!ok) throw new UnauthorizedException('Credenciais inválidas');
+
+        return usuario;
+    }
+
+    private async validateOrganizacao(usuarioId: string, orgCNES: string) {
+        const organizacao = await this.usuarioRepo.findOrganizacaoById(
+            usuarioId,
+            orgCNES,
+        );
+
+        if (!organizacao) {
+            throw new UnauthorizedException('Organização não encontrada');
+        }
+
+        return { tipo: organizacao.tipo, cnes: orgCNES };
     }
 }

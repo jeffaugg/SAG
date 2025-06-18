@@ -10,8 +10,9 @@ import { IUbsService } from './interface/ubs-service.interface';
 import { IUbsRepository } from 'src/shared/database/repositories/interface/ubs-repository.interface';
 import { catchError } from 'src/shared/erro/catch-errors';
 import { handlePrismaError } from 'src/common/utils/prisma-error.util';
-import { PaginacaoDto } from 'src/common/dto/pagination.dto';
+import { PaginacaoDto }pda from 'src/common/dto/pagination.dto';
 import { UBS_REPOSITORY } from 'src/common/constants';
+import { OrganizacaoInfo } from 'src/shared/types';
 
 @Injectable()
 export class UbsService implements IUbsService {
@@ -69,5 +70,25 @@ export class UbsService implements IUbsService {
         );
         if (erro) throw new NotFoundException('UBS não encontrada');
         return data;
+    }
+
+    async listPatients(orgInfo: OrganizacaoInfo, options: PaginacaoDto) {
+        const [erro, data] = await catchError(
+            this.ubsRepository.listPatient(orgInfo.cnes, options),
+        );
+
+        if (erro) throw new NotFoundException('UBS não encontrada');
+
+        return data;
+    }
+
+    async getPatientByCpf(pacienteCpf: string, orgInfo: OrganizacaoInfo) {
+        const [erro, data] = await catchError(
+            this.ubsRepository.getPatientByCpf(pacienteCpf, orgInfo.cnes),
+        );
+
+        if (erro) throw new NotFoundException('Paciente não encontrado');
+
+        return data?.paciente;
     }
 }

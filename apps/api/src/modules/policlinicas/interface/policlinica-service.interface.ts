@@ -1,7 +1,8 @@
 import { CreatePoliclinicaDto } from '../dto/create-policlinica.dto';
 import { UpdatePoliclinicaDto } from '../dto/update-policlinica.dto';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
-import { Policlinica, Usuario } from '@prisma/client';
+import { Paciente, Policlinica, Usuario } from '@prisma/client';
+import { OrganizacaoInfo } from 'src/shared/types';
 
 export interface IPoliclinicasService {
     create(dto: CreatePoliclinicaDto): Promise<Policlinica>;
@@ -19,4 +20,13 @@ export interface IPoliclinicasService {
         items: Usuario[];
         total: number;
     }>;
+    listPatients(
+        orgInfo: OrganizacaoInfo,
+        options: PaginacaoDto,
+    ): Promise<{ items: Paciente[] | undefined[]; total: number }>;
+
+    getPatientByCpf(
+        pacienteCpf: string,
+        orgInfo: OrganizacaoInfo,
+    ): Promise<Paciente | undefined>;
 }

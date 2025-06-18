@@ -1,20 +1,48 @@
 import { Module } from '@nestjs/common';
 import { PacientesService } from './pacientes.service';
 import { PacientesController } from './pacientes.controller';
-import { GESTACOES_SERVICE, PACIENTES_SERVICE } from 'src/common/constants';
+import {
+    PACIENTES_SERVICE,
+    PACIENTES_REPOSITORY,
+    ASSOCIACAO_STRATEGIES,
+    GESTACOES_SERVICE,
+} from 'src/common/constants';
+import { PacienteRepository } from 'src/shared/database/repositories/pacientes.repositories';
+import { PrismaService } from 'src/shared/database/prisma.service';
+import { AssociacaoPoliclinicaStrategy } from './strategies/associacao-policlinica.strategy';
+import { AssociacaoUbsStrategy } from './strategies/associacao-ubs.strategy';
 import { GestacaoService } from '../gestacoes/gestacoes.service';
 
 @Module({
-  controllers: [PacientesController],
-  providers: [
-    {
-      provide: PACIENTES_SERVICE,
-      useClass: PacientesService,
-    },
-    {
-      provide: GESTACOES_SERVICE,
-      useClass: GestacaoService,
-    },
-  ],
+    controllers: [PacientesController],
+    providers: [
+        AssociacaoPoliclinicaStrategy,
+        AssociacaoUbsStrategy,
+        PrismaService,
+        {
+            provide: PACIENTES_SERVICE,
+            useClass: PacientesService,
+        },
+        {
+            provide: PACIENTES_REPOSITORY,
+            useClass: PacienteRepository,
+        },
+        {
+            provide: GESTACOES_SERVICE,
+            useClass: GestacaoService,
+        },
+        {
+            provide: ASSOCIACAO_STRATEGIES,
+            useFactory: (
+                pol: AssociacaoPoliclinicaStrategy,
+                ubs: AssociacaoUbsStrategy,
+            ) =>
+                new Map<string, any>([
+                    ['policlinica', pol],
+                    ['ubs', ubs],
+                ]),
+            inject: [AssociacaoPoliclinicaStrategy, AssociacaoUbsStrategy],
+        },
+    ],
 })
 export class PacientesModule {}
