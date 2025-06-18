@@ -7,7 +7,8 @@ import { OrganizacaoInfo } from 'src/shared/types';
 export interface IUbsService {
     create(dto: CreateUbsDto): Promise<UBS>;
     findAll(options: PaginacaoDto): Promise<{ items: UBS[]; total: number }>;
-    findOne(id: string): Promise<UBS>;
+    findById(id: string): Promise<UBS>;
+    findByCnes(cnes: string): Promise<UBS>;
     update(id: string, dto: UpdateUbsDto): Promise<UBS>;
     remove(id: string): Promise<void>;
     createUser(usuarioId: string, ubsId: string): Promise<UBS>;

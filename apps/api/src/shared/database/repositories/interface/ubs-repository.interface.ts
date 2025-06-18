@@ -7,6 +7,7 @@ export interface IUbsRepository {
     findByCnes(cnes: string): Promise<UBS | null>;
     findAll(pagination: PaginacaoDto): Promise<{ items: UBS[]; total: number }>;
     findById(id: string): Promise<UBS | null>;
+    findByCnes(cnes: string): Promise<UBS | null>;
     update(id: string, data: CreateUbsDto): Promise<UBS>;
     delete(id: string): Promise<UBS>;
     createUser(usuarioId: string, ubsId: string): Promise<UBS>;
@@ -14,7 +15,8 @@ export interface IUbsRepository {
         cnes: string,
         pagination: PaginacaoDto,
     ): Promise<{ items: Usuario[]; total: number }>;
-    listPatient(
+    
+  listPatient(
         ubsCNES: string,
         pagination: PaginacaoDto,
     ): Promise<{

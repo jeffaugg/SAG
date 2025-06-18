@@ -10,7 +10,7 @@ import { IUbsService } from './interface/ubs-service.interface';
 import { IUbsRepository } from 'src/shared/database/repositories/interface/ubs-repository.interface';
 import { catchError } from 'src/shared/erro/catch-errors';
 import { handlePrismaError } from 'src/common/utils/prisma-error.util';
-import { PaginacaoDto } from 'src/common/dto/pagination.dto';
+import { PaginacaoDto }pda from 'src/common/dto/pagination.dto';
 import { UBS_REPOSITORY } from 'src/common/constants';
 import { OrganizacaoInfo } from 'src/shared/types';
 
@@ -31,8 +31,14 @@ export class UbsService implements IUbsService {
         return this.ubsRepository.findAll(options);
     }
 
-    async findOne(id: string) {
+    async findById(id: string) {
         const ubs = await this.ubsRepository.findById(id);
+        if (!ubs) throw new NotFoundException('UBS não encontrada');
+        return ubs;
+    }
+
+    async findByCnes(cnes: string) {
+        const ubs = await this.ubsRepository.findByCnes(cnes);
         if (!ubs) throw new NotFoundException('UBS não encontrada');
         return ubs;
     }
