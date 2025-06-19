@@ -1,4 +1,6 @@
-import { Policlinica, UBS } from '@prisma/client';
+import { Policlinica, UBS, Usuario } from '@prisma/client';
+import { PaginacaoDto } from 'src/common/dto/pagination.dto';
+import { UpdateUsuariosDto } from '../dto/update-usuarios.dto';
 
 export interface IUsuariosService {
     getUsuariosById(id: string): Promise<{
@@ -12,4 +14,13 @@ export interface IUsuariosService {
     getOrganizacaoByUserId(
         usuarioCpf: string,
     ): Promise<{ policlinicas: Policlinica[]; ubs: UBS[] }>;
+    listAllUsuarios(options: PaginacaoDto): Promise<{
+        total: number;
+        items: (Omit<Usuario, 'senha'> & {
+            policlinicas: Policlinica[];
+            ubs: UBS[];
+        })[];
+    }>;
+    update(id: string, updateUserDto: UpdateUsuariosDto): Promise<Usuario>;
+    delete(id: string): Promise<void>;
 }

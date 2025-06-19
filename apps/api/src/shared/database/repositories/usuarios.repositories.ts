@@ -3,6 +3,8 @@ import { PrismaService } from '../prisma.service';
 import { type Prisma } from '@prisma/client';
 import { IUsuarioRepository } from './interface/usuario-repository.interface';
 import { OrganizacaoPorUsuario, OrganizacaoTipo } from 'src/shared/types';
+import { UpdateUsuariosDto } from 'src/modules/usuarios/dto/update-usuarios.dto';
+import { FilterUsuariosDto } from 'src/modules/usuarios/dto/filter-usuarios.dto';
 @Injectable()
 export class UsuarioRepository implements IUsuarioRepository {
     constructor(private readonly prismaService: PrismaService) {}
@@ -22,6 +24,7 @@ export class UsuarioRepository implements IUsuarioRepository {
         return await this.prismaService.usuario.findUnique({
             where: {
                 id,
+                deletedAt: null,
             },
         });
     }
@@ -77,6 +80,7 @@ export class UsuarioRepository implements IUsuarioRepository {
         const result = await this.prismaService.usuario.findUnique({
             where: {
                 cpf: usuarioCpf,
+                deletedAt: null,
             },
             include: {
                 usuarioPoliclinicas: {
@@ -94,6 +98,78 @@ export class UsuarioRepository implements IUsuarioRepository {
             policlinicas:
                 result?.usuarioPoliclinicas.map((p) => p.policlinica) || [],
             ubs: result?.usuarioUbs.map((u) => u.ubs) || [],
+        };
+    }
+
+    async update(id: string, updateUserDto: UpdateUsuariosDto) {
+        return await this.prismaService.usuario.update({
+            where: { id, deletedAt: null },
+            data: {
+                updatedAt: new Date(),
+                ...updateUserDto,
+            },
+        });
+    }
+
+    async delete(id: string) {
+        return await this.prismaService.usuario.update({
+            where: { id },
+            data: {
+                deletedAt: new Date(),
+            },
+        });
+    }
+
+    async listAllUsuarios({ skip, limit, cargo, cnes }: FilterUsuariosDto) {
+        const where: Prisma.UsuarioWhereInput = {
+            deletedAt: null,
+            ...(cargo ? { cargo } : {}),
+            ...(cnes
+                ? {
+                      OR: [
+                          {
+                              usuarioPoliclinicas: {
+                                  some: { cnes, deletedAt: null },
+                              },
+                          },
+                          { usuarioUbs: { some: { cnes, deletedAt: null } } },
+                      ],
+                  }
+                : {}),
+        };
+
+        const [total, items] = await this.prismaService.$transaction([
+            this.prismaService.usuario.count({
+                where,
+            }),
+            this.prismaService.usuario.findMany({
+                where,
+                orderBy: {
+                    nome: 'asc',
+                },
+                skip,
+                take: limit,
+                include: {
+                    usuarioPoliclinicas: {
+                        include: { policlinica: true },
+                    },
+                    usuarioUbs: {
+                        include: { ubs: true },
+                    },
+                },
+                omit: {
+                    senha: true,
+                },
+            }),
+        ]);
+        return {
+            items: items.map((u) => ({
+                ...u,
+
+                policlinicas: u.usuarioPoliclinicas.map((p) => p.policlinica),
+                ubs: u.usuarioUbs.map((u) => u.ubs),
+            })),
+            total,
         };
     }
 }

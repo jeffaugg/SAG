@@ -2,6 +2,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { USUARIO_REPOSITORY } from 'src/common/constants';
 import { IUsuarioRepository } from 'src/shared/database/repositories/interface/usuario-repository.interface';
 import { IUsuariosService } from './interface/usuario-service.interface';
+import { UpdateUsuariosDto } from './dto/update-usuarios.dto';
+import { handlePrismaError } from 'src/common/utils/prisma-error.util';
+import { catchError } from 'src/shared/erro/catch-errors';
+import { FilterUsuariosDto } from './dto/filter-usuarios.dto';
 
 @Injectable()
 export class UsuariosService implements IUsuariosService {
@@ -29,5 +33,25 @@ export class UsuariosService implements IUsuariosService {
 
     async getOrganizacaoByUserId(userId: string) {
         return this.usuarioRepo.listAllOrganizacoes(userId);
+    }
+
+    async listAllUsuarios(options: FilterUsuariosDto) {
+        return this.usuarioRepo.listAllUsuarios(options);
+    }
+
+    async update(id: string, updateUserDto: UpdateUsuariosDto) {
+        const [erro, usuario] = await catchError(
+            this.usuarioRepo.update(id, updateUserDto),
+        );
+
+        if (erro) handlePrismaError(erro);
+
+        return usuario;
+    }
+
+    async delete(id: string) {
+        const [erro] = await catchError(this.usuarioRepo.delete(id));
+
+        if (erro) throw new NotFoundException('Usuário não encontrado');
     }
 }

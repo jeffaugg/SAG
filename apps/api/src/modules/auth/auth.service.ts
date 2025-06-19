@@ -74,6 +74,9 @@ export class AuthService implements IAuthService {
 
         if (!usuario) throw new UnauthorizedException('Credenciais inválidas');
 
+        if (usuario.deletedAt)
+            throw new UnauthorizedException('Credenciais inválidas');
+
         const ok = await compare(senha, usuario.senha);
         if (!ok) throw new UnauthorizedException('Credenciais inválidas');
 
