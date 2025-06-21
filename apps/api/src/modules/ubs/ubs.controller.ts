@@ -61,7 +61,7 @@ export class UbsController {
     @Get(':id')
     @IsAdm()
     findOne(@Param('id') id: string) {
-        return this.ubsService.findOne(id);
+        return this.ubsService.findById(id);
     }
 
     @Put(':id')
