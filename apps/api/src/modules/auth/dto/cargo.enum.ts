@@ -1,5 +1,5 @@
 export enum Cargo {
-  ENFERMEIRO = 'Enfermeiro',
-  MEDICO = 'Medico',
-  ADM = 'ADM',
+    ENFERMEIRO = 'Enfermeiro',
+    MEDICO = 'Medico',
+    ADM = 'ADM',
 }

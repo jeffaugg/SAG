@@ -1,14 +1,14 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Put,
-  Query,
-  HttpCode,
-  Inject,
+    Controller,
+    Get,
+    Post,
+    Body,
+    Param,
+    Delete,
+    Put,
+    Query,
+    HttpCode,
+    Inject,
 } from '@nestjs/common';
 import { CreatePoliclinicaDto } from './dto/create-policlinica.dto';
 import { UpdatePoliclinicaDto } from './dto/update-policlinica.dto';
@@ -17,59 +17,81 @@ import { IsPaginated } from 'src/shared/decorators/Ispaginated';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { IPoliclinicasService } from './interface/policlinica-service.interface';
 import { POLICLINICAS_SERVICE } from 'src/common/constants';
+import { organizationInfo } from 'src/shared/decorators/organizationInfo';
+import { OrganizacaoInfo } from 'src/shared/types';
 
 @Controller('policlinicas')
 export class PoliclinicasController {
-  constructor(
-    @Inject(POLICLINICAS_SERVICE)
-    private readonly policlinicasService: IPoliclinicasService,
-  ) {}
+    constructor(
+        @Inject(POLICLINICAS_SERVICE)
+        private readonly policlinicasService: IPoliclinicasService,
+    ) {}
 
-  @Post()
-  @IsAdm()
-  create(@Body() createPoliclinicaDto: CreatePoliclinicaDto) {
-    return this.policlinicasService.create(createPoliclinicaDto);
-  }
+    @Get('pacientes')
+    @IsPaginated()
+    listPacientes(
+        @Query() paginacaoDto: PaginacaoDto,
+        @organizationInfo() orgInfo: OrganizacaoInfo,
+    ) {
+        return this.policlinicasService.listPatients(orgInfo, paginacaoDto);
+    }
 
-  @Get()
-  @IsAdm()
-  @IsPaginated()
-  findAll(@Query() paginacaoDto: PaginacaoDto) {
-    return this.policlinicasService.findAll(paginacaoDto);
-  }
+    @Get('pacientes/cpf/:cpf')
+    findPatientByCpf(
+        @Param('cpf') pacienteCpf: string,
+        @organizationInfo() orgInfo: OrganizacaoInfo,
+    ) {
+        return this.policlinicasService.getPatientByCpf(pacienteCpf, orgInfo);
+    }
 
-  @Get(':id')
-  @IsAdm()
-  findOne(@Param('id') id: string) {
-    return this.policlinicasService.findOne(id);
-  }
+    @Post()
+    @IsAdm()
+    create(@Body() createPoliclinicaDto: CreatePoliclinicaDto) {
+        return this.policlinicasService.create(createPoliclinicaDto);
+    }
 
-  @Put(':id')
-  @IsAdm()
-  update(
-    @Param('id') id: string,
-    @Body() updatePoliclinicaDto: UpdatePoliclinicaDto,
-  ) {
-    return this.policlinicasService.update(id, updatePoliclinicaDto);
-  }
+    @Get()
+    @IsAdm()
+    @IsPaginated()
+    findAll(@Query() paginacaoDto: PaginacaoDto) {
+        return this.policlinicasService.findAll(paginacaoDto);
+    }
 
-  @Delete(':id')
-  @IsAdm()
-  @HttpCode(204)
-  remove(@Param('id') id: string) {
-    return this.policlinicasService.remove(id);
-  }
+    @Get(':id')
+    @IsAdm()
+    findOne(@Param('id') id: string) {
+        return this.policlinicasService.findOne(id);
+    }
 
-  @Post(':id/usuarios/:usuarioId')
-  @IsAdm()
-  createUser(@Param('id') id: string, @Param('usuarioId') usuarioId: string) {
-    return this.policlinicasService.createUser(usuarioId, id);
-  }
+    @Put(':id')
+    @IsAdm()
+    update(
+        @Param('id') id: string,
+        @Body() updatePoliclinicaDto: UpdatePoliclinicaDto,
+    ) {
+        return this.policlinicasService.update(id, updatePoliclinicaDto);
+    }
 
-  @Get(':cns/usuarios')
-  @IsAdm()
-  @IsPaginated()
-  listUsers(@Param('cns') cns: string, @Query() paginacaoDto: PaginacaoDto) {
-    return this.policlinicasService.listUsers(cns, paginacaoDto);
-  }
+    @Delete(':id')
+    @IsAdm()
+    @HttpCode(204)
+    remove(@Param('id') id: string) {
+        return this.policlinicasService.remove(id);
+    }
+
+    @Post(':id/usuarios/:usuarioId')
+    @IsAdm()
+    createUser(@Param('id') id: string, @Param('usuarioId') usuarioId: string) {
+        return this.policlinicasService.createUser(usuarioId, id);
+    }
+
+    @Get(':cnes/usuarios')
+    @IsAdm()
+    @IsPaginated()
+    listUsers(
+        @Param('cnes') cnes: string,
+        @Query() paginacaoDto: PaginacaoDto,
+    ) {
+        return this.policlinicasService.listUsers(cnes, paginacaoDto);
+    }
 }

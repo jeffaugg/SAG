@@ -6,6 +6,8 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { PoliclinicasModule } from './modules/policlinicas/policlinicas.module';
 import { SessionModule } from './shared/cache/session.module';
 import { PacientesModule } from './modules/pacientes/pacientes.module';
+import { GestacoesModule } from './modules/gestacoes/gestacoes.module';
+import { UbsModule } from './modules/ubs/ubs.module';
 import { ChatGateway } from './modules/websocket/chat/chat.gateway';
 import { MongooseModule } from '@nestjs/mongoose';
 import { config } from 'src/shared/config/environments';
@@ -22,6 +24,8 @@ import { MensagensModule } from './modules/mensagens/mensagens.module';
     PacientesModule,
     MongooseModule.forRoot(config.MONGO_URI),
     MensagensModule,
+    GestacoesModule,
+    UbsModule,
   ],
   controllers: [],
   providers: [

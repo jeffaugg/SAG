@@ -12,6 +12,8 @@
     "docker-compose": "infisical run -- docker compose"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.8.0",
+    "@types/faker": "^6.6.8",
     "cross-env": "^7.0.3",
     "prettier": "^3.5.3",
     "turbo": "^2.5.3",
@@ -27,6 +29,7 @@
   ],
   "dependencies": {
     "@nestjs/cache-manager": "^3.0.1",
+    "@nestjs/swagger": "^11.2.0",
     "cache-manager": "^6.4.3",
     "ioredis": "^5.6.1"
   }

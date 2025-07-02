@@ -4,12 +4,12 @@ import { UsuariosController } from './usuarios.controller';
 import { USUARIOS_SERVICE } from 'src/common/constants';
 
 @Module({
-  controllers: [UsuariosController],
-  providers: [
-    {
-      provide: USUARIOS_SERVICE,
-      useClass: UsuariosService,
-    },
-  ],
+    controllers: [UsuariosController],
+    providers: [
+        {
+            provide: USUARIOS_SERVICE,
+            useClass: UsuariosService,
+        },
+    ],
 })
 export class UsuariosModule {}
