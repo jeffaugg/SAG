@@ -11,8 +11,8 @@ export class MensagensService {
     private readonly mensagemModel: Model<MensagemDocument>,
   ) {}
 
-  async create(createDto: CreateMessageDto): Promise<Mensagem> {
-    const message = new this.mensagemModel(createDto);
+  async create(createDto: CreateMessageDto, userId: string): Promise<Mensagem> {
+    const message = new this.mensagemModel({ ...createDto, remetente: userId });
     return message.save();
   }
 }
