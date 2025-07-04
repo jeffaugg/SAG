@@ -9,6 +9,7 @@ import { PacientesModule } from './modules/pacientes/pacientes.module';
 import { GestacoesModule } from './modules/gestacoes/gestacoes.module';
 import { UbsModule } from './modules/ubs/ubs.module';
 import { ChatGateway } from './modules/websocket/chat/chat.gateway';
+import { AtendimentosModule } from './modules/atendimentos/atendimentos.module';
 
 @Global()
 @Module({
@@ -21,6 +22,7 @@ import { ChatGateway } from './modules/websocket/chat/chat.gateway';
     PacientesModule,
     GestacoesModule,
     UbsModule,
+    AtendimentosModule,
   ],
   controllers: [],
   providers: [

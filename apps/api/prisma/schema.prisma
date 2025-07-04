@@ -25,6 +25,7 @@ model Usuario {
 
   usuarioPoliclinicas UsuarioPoliclinica[]
   usuarioUbs          UsuarioUbs[]
+  atendimentos        Atendimento[]
 
   @@map("usuarios")
 }
@@ -36,7 +37,7 @@ model Policlinica {
   localizacao String
 
   cnes String @unique
-  
+
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -77,7 +78,8 @@ model UBS {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  usuarioUbs UsuarioUbs[]
+  usuarioUbs   UsuarioUbs[]
+  atendimentos Atendimento[]
 
   @@map("ubs")
 }
@@ -108,16 +110,16 @@ enum Cargo {
 }
 
 model Paciente {
-  id   String @id @default(uuid()) @db.Uuid
-  nome String
-  cpf  String @unique
-  telefone String? 
-  endereco String?
+  id        String    @id @default(uuid()) @db.Uuid
+  nome      String
+  cpf       String    @unique
+  telefone  String?
+  endereco  String?
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  gestacoes Gestacao[]  
+  gestacoes Gestacao[]
 
   @@map("pacientes")
 }
@@ -128,16 +130,44 @@ enum Status {
 }
 
 model Gestacao {
-  id   String @id @default(uuid())
-  inicio DateTime @default(now())
-  fim  DateTime?
-  status Status 
-  pacienteId String @db.Uuid
-  paciente Paciente @relation(fields: [pacienteId], references: [id], onDelete: NoAction)
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  id         String    @id @default(uuid()) @db.Uuid
+  inicio     DateTime  @default(now())
+  fim        DateTime?
+  status     Status
+  pacienteId String    @db.Uuid
+  paciente   Paciente  @relation(fields: [pacienteId], references: [id], onDelete: NoAction)
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  atendimentos Atendimento[]
+
   @@map("gestacoes")
 }
 
+enum UnidadeType {
+  UBS
+  POLICLINICA
+}
 
+model Atendimento {
+  id          String      @id @default(uuid()) @db.Uuid
+  unidadeId   String      @db.Uuid
+  unidadeType UnidadeType
+  medicoId    String      @db.Uuid
+  gestacaoId  String      @db.Uuid
+  descricao   String
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  deletedAt   DateTime?   @map("deleted_at")
+
+  unidade  UBS      @relation(fields: [unidadeId], references: [id], onDelete: NoAction)
+  medico   Usuario  @relation(fields: [medicoId], references: [id], onDelete: NoAction)
+  gestacao Gestacao @relation(fields: [gestacaoId], references: [id], onDelete: NoAction)
+
+  @@index([unidadeType, unidadeId])
+  @@index([medicoId])
+  @@index([gestacaoId])
+
+  @@map("atendimentos")
+}
