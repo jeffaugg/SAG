@@ -17,6 +17,8 @@ import { IsPaginated } from 'src/shared/decorators/Ispaginated';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { IPoliclinicasService } from './interface/policlinica-service.interface';
 import { POLICLINICAS_SERVICE } from 'src/common/constants';
+import { organizationInfo } from 'src/shared/decorators/organizationInfo';
+import { OrganizacaoInfo } from 'src/shared/types';
 
 @Controller('policlinicas')
 export class PoliclinicasController {
@@ -24,6 +26,23 @@ export class PoliclinicasController {
         @Inject(POLICLINICAS_SERVICE)
         private readonly policlinicasService: IPoliclinicasService,
     ) {}
+
+    @Get('pacientes')
+    @IsPaginated()
+    listPacientes(
+        @Query() paginacaoDto: PaginacaoDto,
+        @organizationInfo() orgInfo: OrganizacaoInfo,
+    ) {
+        return this.policlinicasService.listPatients(orgInfo, paginacaoDto);
+    }
+
+    @Get('pacientes/cpf/:cpf')
+    findPatientByCpf(
+        @Param('cpf') pacienteCpf: string,
+        @organizationInfo() orgInfo: OrganizacaoInfo,
+    ) {
+        return this.policlinicasService.getPatientByCpf(pacienteCpf, orgInfo);
+    }
 
     @Post()
     @IsAdm()
@@ -66,10 +85,13 @@ export class PoliclinicasController {
         return this.policlinicasService.createUser(usuarioId, id);
     }
 
-    @Get(':cns/usuarios')
+    @Get(':cnes/usuarios')
     @IsAdm()
     @IsPaginated()
-    listUsers(@Param('cns') cns: string, @Query() paginacaoDto: PaginacaoDto) {
-        return this.policlinicasService.listUsers(cns, paginacaoDto);
+    listUsers(
+        @Param('cnes') cnes: string,
+        @Query() paginacaoDto: PaginacaoDto,
+    ) {
+        return this.policlinicasService.listUsers(cnes, paginacaoDto);
     }
 }

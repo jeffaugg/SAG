@@ -17,6 +17,8 @@ import { IsPaginated } from 'src/shared/decorators/Ispaginated';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { IUbsService } from './interface/ubs-service.interface';
 import { UBS_SERVICE } from 'src/common/constants';
+import { OrganizacaoInfo } from 'src/shared/types';
+import { organizationInfo } from 'src/shared/decorators/organizationInfo';
 
 @Controller('ubs')
 export class UbsController {
@@ -24,6 +26,24 @@ export class UbsController {
         @Inject(UBS_SERVICE)
         private readonly ubsService: IUbsService,
     ) {}
+
+    @Get('pacientes')
+    @IsPaginated()
+    listPatients(
+        @Query() paginacaoDto: PaginacaoDto,
+        @organizationInfo() orgInfo: OrganizacaoInfo,
+    ) {
+        return this.ubsService.listPatients(orgInfo, paginacaoDto);
+    }
+
+    @Get('pacientes/cpf/:cpf')
+    @IsPaginated()
+    findPatientByCpf(
+        @Param('cpf') pacienteCpf: string,
+        @organizationInfo() orgInfo: OrganizacaoInfo,
+    ) {
+        return this.ubsService.getPatientByCpf(pacienteCpf, orgInfo);
+    }
 
     @Post()
     @IsAdm()

@@ -10,6 +10,7 @@ import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from 'src/shared/decorators/isPublic';
 import { IS_ADM_KEY } from 'src/shared/decorators/isAdm';
 import { SessionRepository } from 'src/shared/cache/session.repositories';
+import { JwtPayload } from 'src/shared/types';
 @Injectable()
 export class AuthGuard implements CanActivate {
     constructor(
@@ -58,8 +59,12 @@ export class AuthGuard implements CanActivate {
         }
 
         try {
-            const payload = this.jwtService.verify<{ id: string }>(token);
-            request.userId = payload.id;
+            const payload = this.jwtService.verify<JwtPayload>(token);
+            request.userId = payload.userId;
+
+            if (payload.organizacao) {
+                request.organizacaoInfo = payload.organizacao;
+            }
         } catch {
             throw new UnauthorizedException('Token inválido');
         }
