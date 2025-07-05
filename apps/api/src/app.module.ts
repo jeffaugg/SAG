@@ -9,6 +9,9 @@ import { PacientesModule } from './modules/pacientes/pacientes.module';
 import { GestacoesModule } from './modules/gestacoes/gestacoes.module';
 import { UbsModule } from './modules/ubs/ubs.module';
 import { ChatGateway } from './modules/websocket/chat/chat.gateway';
+import { MongooseModule } from '@nestjs/mongoose';
+import { config } from 'src/shared/config/environments';
+import { MensagensModule } from './modules/mensagens/mensagens.module';
 
 @Global()
 @Module({
@@ -19,6 +22,8 @@ import { ChatGateway } from './modules/websocket/chat/chat.gateway';
     PoliclinicasModule,
     SessionModule,
     PacientesModule,
+    MongooseModule.forRoot(config.MONGO_URI),
+    MensagensModule,
     GestacoesModule,
     UbsModule,
   ],
