@@ -1,256 +1,235 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Form, Input, Modal, Select, Space, Table } from "antd";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-import { CpfHookFormInput } from "../../../components";
-import type { Usuario } from "../../auth/schemas/auth.schemas";
-import { cargoSchema, cpfSchema } from "../../auth/schemas/auth.schemas";
 import {
-    useCreateUsuario,
-    useDeleteUsuario,
-    useUpdateUsuario,
-    useUsuarios,
-} from "../hooks/usuariosHooks";
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    SearchOutlined,
+} from "@ant-design/icons";
+import {
+    Button,
+    Card,
+    Empty,
+    Input,
+    Modal,
+    Pagination,
+    Select,
+    Space,
+    Table,
+    Typography,
+} from "antd";
+import { useCallback, useEffect, useMemo } from "react";
+import { formatCpf } from "../../../utils/formatters";
+import { UsuarioModal } from "../components";
+import { useUsuarioForm } from "../hooks/useUsuarioForm";
+import { useUsuarios } from "../hooks/usuariosHooks";
+import type { Usuario } from "../types";
 
-const usuarioSchema = z.object({
-    nome: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
-    cargo: cargoSchema,
-    cpf: cpfSchema,
-    senha: z
-        .string()
-        .min(8, "Senha deve ter pelo menos 8 caracteres")
-        .optional(),
-});
+const { Title } = Typography;
 
-type UsuarioFormData = z.infer<typeof usuarioSchema>;
-
-const Usuarios = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingUser, setEditingUser] = useState<Usuario | null>(null);
-
-    const { data: usuarios, isLoading } = useUsuarios();
-    const createUsuario = useCreateUsuario();
-    const updateUsuario = useUpdateUsuario();
-    const deleteUsuario = useDeleteUsuario();
+const Usuarios: React.FC = () => {
+    const {
+        isModalVisible,
+        editingUsuario,
+        isSubmitting,
+        isDeleting,
+        pagination,
+        searchText,
+        searchQuery,
+        cargoFilter,
+        openModal,
+        openEditModal,
+        closeModal,
+        handleDelete,
+        handleSubmit,
+        setPagination,
+        setSearchText,
+        setCargoFilter,
+        handleSearch,
+        clearSearch,
+    } = useUsuarioForm();
 
     const {
-        control,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm<UsuarioFormData>({
-        resolver: zodResolver(usuarioSchema),
+        data: usuarioResponse,
+        isLoading,
+        error,
+    } = useUsuarios({
+        page: pagination.current,
+        limit: pagination.pageSize,
+        search: searchQuery,
+        cargo: cargoFilter,
     });
 
-    const columns = [
-        {
-            title: "Nome",
-            dataIndex: "nome",
-            key: "nome",
-        },
-        {
-            title: "CPF",
-            dataIndex: "cpf",
-            key: "cpf",
-        },
-        {
-            title: "Cargo",
-            dataIndex: "cargo",
-            key: "cargo",
-        },
-        {
-            title: "Ações",
-            key: "actions",
-            render: (_: unknown, record: Usuario) => (
-                <Space>
-                    <Button
-                        icon={<EditOutlined />}
-                        onClick={() => handleEdit(record)}
-                        size="small"
-                    />
-                    <Button
-                        icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.id)}
-                        danger
-                        size="small"
-                    />
-                </Space>
-            ),
-        },
-    ];
+    const usuariosList = usuarioResponse?.data || [];
+    const meta = usuarioResponse?.meta;
 
-    const handleEdit = (user: Usuario) => {
-        setEditingUser(user);
-        reset({
-            nome: user.nome,
-            cargo: user.cargo,
-            cpf: user.cpf,
-        });
-        setIsModalOpen(true);
-    };
-
-    const handleDelete = (id: string) => {
-        Modal.confirm({
-            title: "Confirmar exclusão",
-            content: "Tem certeza que deseja excluir este usuário?",
-            onOk: () => deleteUsuario.mutate(id),
-        });
-    };
-
-    const onSubmit = (data: UsuarioFormData) => {
-        if (editingUser) {
-            updateUsuario.mutate(
-                { id: editingUser.id, data },
-                {
-                    onSuccess: () => {
-                        setIsModalOpen(false);
-                        setEditingUser(null);
-                        reset();
-                    },
-                },
-            );
-        } else {
-            createUsuario.mutate(data as UsuarioFormData & { senha: string }, {
-                onSuccess: () => {
-                    setIsModalOpen(false);
-                    reset();
-                },
+    useEffect(() => {
+        if (error) {
+            Modal.error({
+                title: "Erro ao carregar usuários",
+                content: error.message,
             });
         }
-    };
+    }, [error]);
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-        setEditingUser(null);
-        reset();
-    };
+    const handleDeleteConfirm = useCallback(
+        (id: string) => {
+            Modal.confirm({
+                title: "Confirmar exclusão",
+                content: "Tem certeza que deseja excluir este usuário?",
+                okText: "Sim",
+                cancelText: "Não",
+                onOk: () => handleDelete(id),
+            });
+        },
+        [handleDelete],
+    );
+
+    const columns = useMemo(
+        () => [
+            {
+                title: "Nome",
+                dataIndex: "nome",
+                key: "nome",
+            },
+            {
+                title: "CPF",
+                dataIndex: "cpf",
+                key: "cpf",
+                width: 150,
+                render: (cpf: string) => formatCpf(cpf),
+            },
+            {
+                title: "Cargo",
+                dataIndex: "cargo",
+                key: "cargo",
+                width: 120,
+            },
+            {
+                title: "Ações",
+                key: "actions",
+                width: 150,
+                render: (_: unknown, record: Usuario) => (
+                    <Space size="middle">
+                        <Button
+                            type="text"
+                            icon={<EditOutlined />}
+                            onClick={() => openEditModal(record)}
+                        />
+                        <Button
+                            type="text"
+                            icon={<DeleteOutlined />}
+                            danger
+                            loading={isDeleting}
+                            onClick={() => handleDeleteConfirm(record.id)}
+                        />
+                    </Space>
+                ),
+            },
+        ],
+        [openEditModal, handleDeleteConfirm, isDeleting],
+    );
+
+    const showEmptyState = !usuariosList.length && !isLoading;
 
     return (
-        <div>
-            <div className="mb-4 flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Usuários</h1>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => setIsModalOpen(true)}
-                >
-                    Novo Usuário
-                </Button>
+        <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+                <Title level={4}>Usuários</Title>
+
+                <Space>
+                    <Input
+                        placeholder="Buscar por nome, CPF ou cargo..."
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        onPressEnter={handleSearch}
+                        style={{ flex: 1 }}
+                    />
+                    <Select
+                        placeholder="Filtrar por cargo"
+                        value={cargoFilter}
+                        onChange={setCargoFilter}
+                        allowClear
+                        onClear={clearSearch}
+                        style={{ width: 180 }}
+                    >
+                        <Select.Option value="Enfermeiro">
+                            Enfermeiro
+                        </Select.Option>
+                        <Select.Option value="Medico">Médico</Select.Option>
+                        <Select.Option value="ADM">Administrador</Select.Option>
+                    </Select>
+                    <Button
+                        type="default"
+                        icon={<SearchOutlined />}
+                        onClick={handleSearch}
+                    />
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={openModal}
+                    >
+                        Novo Usuário
+                    </Button>
+                </Space>
             </div>
-
-            <Table
-                columns={columns}
-                dataSource={usuarios}
-                loading={isLoading}
-                rowKey="id"
-            />
-
-            <Modal
-                title={editingUser ? "Editar Usuário" : "Novo Usuário"}
-                open={isModalOpen}
-                onCancel={handleCancel}
-                footer={null}
-            >
-                <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
-                    <Form.Item
-                        label="Nome"
-                        validateStatus={errors.nome ? "error" : ""}
-                    >
-                        <Controller
-                            name="nome"
-                            control={control}
-                            render={({ field }) => <Input {...field} />}
-                        />
-                        {errors.nome && (
-                            <span className="text-red-500">
-                                {errors.nome.message}
-                            </span>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Cargo"
-                        validateStatus={errors.cargo ? "error" : ""}
-                    >
-                        <Controller
-                            name="cargo"
-                            control={control}
-                            render={({ field }) => (
-                                <Select {...field}>
-                                    <Select.Option value="Enfermeiro">
-                                        Enfermeiro
-                                    </Select.Option>
-                                    <Select.Option value="Medico">
-                                        Médico
-                                    </Select.Option>
-                                    <Select.Option value="ADM">
-                                        Administrador
-                                    </Select.Option>
-                                </Select>
-                            )}
-                        />
-                        {errors.cargo && (
-                            <span className="text-red-500">
-                                {errors.cargo.message}
-                            </span>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item
-                        label="CPF"
-                        validateStatus={errors.cpf ? "error" : ""}
-                    >
-                        <CpfHookFormInput
-                            name="cpf"
-                            control={control}
-                            label="CPF"
-                        />
-                        {errors.cpf && (
-                            <span className="text-red-500">
-                                {errors.cpf.message}
-                            </span>
-                        )}
-                    </Form.Item>
-
-                    {!editingUser && (
-                        <Form.Item
-                            label="Senha"
-                            validateStatus={errors.senha ? "error" : ""}
+            {showEmptyState ? (
+                <Card>
+                    <Empty
+                        description={
+                            searchQuery || cargoFilter
+                                ? "Nenhum usuário encontrado"
+                                : "Nenhum usuário cadastrado"
+                        }
+                    />
+                </Card>
+            ) : (
+                <>
+                    <Table
+                        columns={columns}
+                        dataSource={usuariosList}
+                        loading={isLoading}
+                        rowKey="id"
+                        pagination={false}
+                    />
+                    {meta && meta.totalPages > 1 && (
+                        <div
+                            style={{
+                                textAlign: "center",
+                                marginTop: "16px",
+                            }}
                         >
-                            <Controller
-                                name="senha"
-                                control={control}
-                                render={({ field }) => (
-                                    <Input.Password {...field} />
-                                )}
-                            />
-                            {errors.senha && (
-                                <span className="text-red-500">
-                                    {errors.senha.message}
-                                </span>
-                            )}
-                        </Form.Item>
-                    )}
-
-                    <Form.Item>
-                        <Space>
-                            <Button onClick={handleCancel}>Cancelar</Button>
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                loading={
-                                    createUsuario.isPending ||
-                                    updateUsuario.isPending
+                            <Pagination
+                                current={pagination.current}
+                                pageSize={pagination.pageSize}
+                                total={meta.totalItems}
+                                onChange={(page, pageSize) =>
+                                    setPagination({ current: page, pageSize })
                                 }
-                            >
-                                {editingUser ? "Atualizar" : "Criar"}
-                            </Button>
-                        </Space>
-                    </Form.Item>
-                </Form>
-            </Modal>
+                                showSizeChanger
+                                showQuickJumper
+                                showTotal={(total, range) =>
+                                    `${range[0]}-${range[1]} de ${total} usuários`
+                                }
+                            />
+                        </div>
+                    )}
+                </>
+            )}
+            <UsuarioModal
+                visible={isModalVisible}
+                editingId={editingUsuario?.id || null}
+                onCancel={closeModal}
+                onSubmit={handleSubmit}
+                loading={isSubmitting}
+                initialValues={
+                    editingUsuario
+                        ? {
+                              nome: editingUsuario.nome,
+                              cargo: editingUsuario.cargo,
+                              cpf: formatCpf(editingUsuario.cpf),
+                          }
+                        : undefined
+                }
+            />
         </div>
     );
 };

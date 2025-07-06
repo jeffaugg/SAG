@@ -16,11 +16,6 @@ export interface PoliclinicaFormData {
     contato: string;
 }
 
-export interface PoliclinicaPagination {
-    current: number;
-    pageSize: number;
-}
-
 export interface PoliclinicaSearchParams {
     page?: number;
     limit?: number;

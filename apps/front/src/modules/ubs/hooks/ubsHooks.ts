@@ -23,7 +23,7 @@ export const useUBS = (params?: UBSSearchParams) => {
                 searchParams.append("limit", params.limit.toString());
             }
             if (params?.search?.trim()) {
-                searchParams.append("search", params.search.trim());
+                searchParams.append("filter", params.search.trim());
             }
 
             const url = `${API_ENDPOINTS.UBS.ROOT}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;

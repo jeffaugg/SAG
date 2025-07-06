@@ -3,35 +3,67 @@ import axiosInstance from "../../../api/axiosConfig";
 import { API_ENDPOINTS } from "../../../api/endpoints";
 import { handleError } from "../../../utils/error-handler";
 import { ToastService } from "../../../utils/toast-service";
-import type { CargoType, Usuario } from "../../auth/schemas/auth.schemas";
+import type {
+    Usuario,
+    UsuarioFormData,
+    UsuarioPaginatedResponse,
+    UsuarioSearchParams,
+} from "../types";
 
-interface CreateUsuarioData {
-    nome: string;
-    cargo: CargoType;
-    cpf: string;
-    senha: string;
-}
-
-interface UpdateUsuarioData {
-    nome?: string;
-    cargo?: CargoType;
-    senha?: string;
-}
-
-export const useUsuarios = () => {
+export const useUsuarios = (params?: UsuarioSearchParams) => {
     return useQuery({
-        queryKey: ["usuarios"],
-        queryFn: async () => {
+        queryKey: ["usuarios", params],
+        queryFn: async (): Promise<UsuarioPaginatedResponse> => {
+            const searchParams = new URLSearchParams();
+
+            if (params?.page && params.page > 0) {
+                searchParams.append("page", params.page.toString());
+            }
+            if (params?.limit && params.limit > 0) {
+                searchParams.append("limit", params.limit.toString());
+            }
+            if (params?.search?.trim()) {
+                searchParams.append("search", params.search.trim());
+            }
+            if (params?.cargo) {
+                searchParams.append("cargo", params.cargo);
+            }
+
+            const url = `${API_ENDPOINTS.USUARIOS.ROOT}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+
+            try {
+                const response = await axiosInstance.get(url);
+                return response.data as UsuarioPaginatedResponse;
+            } catch (error) {
+                const appError = handleError(error);
+                throw new Error(
+                    `Erro ao carregar lista de usuários: ${appError.message}`,
+                );
+            }
+        },
+        retry: 2,
+        staleTime: 5 * 60 * 1000,
+    });
+};
+
+export const useUsuarioById = (id: string) => {
+    return useQuery({
+        queryKey: ["usuarios", id],
+        queryFn: async (): Promise<Usuario> => {
             try {
                 const response = await axiosInstance.get(
-                    `${API_ENDPOINTS.USUARIOS.ME.replace("/me", "")}`,
+                    API_ENDPOINTS.USUARIOS.BY_ID(id),
                 );
                 return response.data;
             } catch (error) {
                 const appError = handleError(error);
-                throw new Error(appError.message);
+                throw new Error(
+                    `Erro ao carregar usuário: ${appError.message}`,
+                );
             }
         },
+        enabled: !!id,
+        retry: 2,
         staleTime: 5 * 60 * 1000,
     });
 };
@@ -39,22 +71,21 @@ export const useUsuarios = () => {
 export const useCreateUsuario = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<Usuario, Error, CreateUsuarioData>({
-        mutationFn: async (userData) => {
-            try {
-                const response = await axiosInstance.post(
-                    `${API_ENDPOINTS.USUARIOS.ME.replace("/me", "")}`,
-                    userData,
-                );
-                return response.data;
-            } catch (error) {
-                const appError = handleError(error);
-                throw new Error(appError.message);
-            }
+    return useMutation({
+        mutationFn: async (data: UsuarioFormData): Promise<Usuario> => {
+            const response = await axiosInstance.post(
+                API_ENDPOINTS.USUARIOS.ROOT,
+                data,
+            );
+            return response.data;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["usuarios"] });
             ToastService.success("Usuário criado com sucesso!");
+        },
+        onError: (error) => {
+            const appError = handleError(error);
+            ToastService.error(`Erro ao criar usuário: ${appError.message}`);
         },
     });
 };
@@ -62,45 +93,48 @@ export const useCreateUsuario = () => {
 export const useUpdateUsuario = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<Usuario, Error, { id: string; data: UpdateUsuarioData }>(
-        {
-            mutationFn: async ({ id, data }) => {
-                try {
-                    const response = await axiosInstance.put(
-                        `${API_ENDPOINTS.USUARIOS.ME.replace("/me", "")}/${id}`,
-                        data,
-                    );
-                    return response.data;
-                } catch (error) {
-                    const appError = handleError(error);
-                    throw new Error(appError.message);
-                }
-            },
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ["usuarios"] });
-                ToastService.success("Usuário atualizado com sucesso!");
-            },
+    return useMutation({
+        mutationFn: async ({
+            id,
+            data,
+        }: {
+            id: string;
+            data: Partial<UsuarioFormData>;
+        }): Promise<Usuario> => {
+            const response = await axiosInstance.put(
+                API_ENDPOINTS.USUARIOS.BY_ID(id),
+                data,
+            );
+            return response.data;
         },
-    );
+        onSuccess: (_, { id }) => {
+            queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+            queryClient.invalidateQueries({ queryKey: ["usuarios", id] });
+            ToastService.success("Usuário atualizado com sucesso!");
+        },
+        onError: (error) => {
+            const appError = handleError(error);
+            ToastService.error(
+                `Erro ao atualizar usuário: ${appError.message}`,
+            );
+        },
+    });
 };
 
 export const useDeleteUsuario = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<void, Error, string>({
-        mutationFn: async (id) => {
-            try {
-                await axiosInstance.delete(
-                    `${API_ENDPOINTS.USUARIOS.ME.replace("/me", "")}/${id}`,
-                );
-            } catch (error) {
-                const appError = handleError(error);
-                throw new Error(appError.message);
-            }
+    return useMutation({
+        mutationFn: async (id: string): Promise<void> => {
+            await axiosInstance.delete(API_ENDPOINTS.USUARIOS.BY_ID(id));
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["usuarios"] });
-            ToastService.success("Usuário removido com sucesso!");
+            ToastService.success("Usuário excluído com sucesso!");
+        },
+        onError: (error) => {
+            const appError = handleError(error);
+            ToastService.error(`Erro ao excluir usuário: ${appError.message}`);
         },
     });
 };

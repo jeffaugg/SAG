@@ -1,19 +1,24 @@
+import { useState } from "react";
 import { useSearchForm } from "../../../hooks/useSearchForm";
-import type { Policlinica, PoliclinicaFormData } from "../types";
+import type { Usuario, UsuarioFormData } from "../types";
 import {
-    useCreatePoliclinica,
-    useDeletePoliclinica,
-    useUpdatePoliclinica,
-} from "./policlinicasHooks";
+    useCreateUsuario,
+    useDeleteUsuario,
+    useUpdateUsuario,
+} from "./usuariosHooks";
 
-export const usePoliclinicaForm = () => {
-    const createMutation = useCreatePoliclinica();
-    const updateMutation = useUpdatePoliclinica();
-    const deleteMutation = useDeletePoliclinica();
+export const useUsuarioForm = () => {
+    const createMutation = useCreateUsuario();
+    const updateMutation = useUpdateUsuario();
+    const deleteMutation = useDeleteUsuario();
+
+    const [cargoFilter, setCargoFilter] = useState<
+        "Enfermeiro" | "Medico" | "ADM" | undefined
+    >(undefined);
 
     const {
         isModalVisible,
-        editingItem: editingPoliclinica,
+        editingItem: editingUsuario,
         pagination,
         searchText,
         searchQuery,
@@ -23,20 +28,25 @@ export const usePoliclinicaForm = () => {
         setPagination,
         setSearchText,
         handleSearch,
-        clearSearch,
-    } = useSearchForm<Policlinica>();
+        clearSearch: baseClearSearch,
+    } = useSearchForm<Usuario>();
 
     const isSubmitting = createMutation.isPending || updateMutation.isPending;
     const isDeleting = deleteMutation.isPending;
+
+    const clearSearch = () => {
+        baseClearSearch();
+        setCargoFilter(undefined);
+    };
 
     const handleDelete = async (id: string) => {
         await deleteMutation.mutateAsync(id);
     };
 
-    const handleSubmit = async (data: PoliclinicaFormData) => {
-        if (editingPoliclinica) {
+    const handleSubmit = async (data: UsuarioFormData) => {
+        if (editingUsuario) {
             await updateMutation.mutateAsync({
-                id: editingPoliclinica.id,
+                id: editingUsuario.id,
                 data,
             });
         } else {
@@ -47,12 +57,13 @@ export const usePoliclinicaForm = () => {
 
     return {
         isModalVisible,
-        editingPoliclinica,
+        editingUsuario,
         isSubmitting,
         isDeleting,
         pagination,
         searchText,
         searchQuery,
+        cargoFilter,
         openModal,
         openEditModal,
         closeModal,
@@ -60,6 +71,7 @@ export const usePoliclinicaForm = () => {
         handleSubmit,
         setPagination,
         setSearchText,
+        setCargoFilter,
         handleSearch,
         clearSearch,
     };
