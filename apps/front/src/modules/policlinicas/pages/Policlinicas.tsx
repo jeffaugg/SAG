@@ -1,250 +1,188 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Form, Input, Modal, Space, Table } from "antd";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-import type { Policlinica } from "../../auth/schemas/auth.schemas";
 import {
-    useCreatePoliclinica,
-    useDeletePoliclinica,
-    usePoliclinicas,
-    useUpdatePoliclinica,
-} from "../hooks/policlinicasHooks";
+    DeleteOutlined,
+    EditOutlined,
+    PlusOutlined,
+    SearchOutlined,
+} from "@ant-design/icons";
+import { Button, Input, Popconfirm, Space, Table, Typography } from "antd";
+import React, { useEffect, useMemo } from "react";
+import { handleError } from "../../../utils/error-handler";
+import { ToastService } from "../../../utils/toast-service";
+import PoliclinicaModal from "../components/PoliclinicaModal";
+import { usePoliclinicas } from "../hooks/policlinicasHooks";
+import { usePoliclinicaForm } from "../hooks/usePoliclinicaForm";
+import type { Policlinica } from "../types";
 
-const policlinicaSchema = z.object({
-    nome: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
-    contato: z.string().min(10, "Contato deve ter pelo menos 10 caracteres"),
-    localizacao: z
-        .string()
-        .min(5, "Localização deve ter pelo menos 5 caracteres"),
-    cnes: z.string().length(7, "CNES deve ter exatamente 7 caracteres"),
-});
+const { Title } = Typography;
 
-type PoliclinicaFormData = z.infer<typeof policlinicaSchema>;
-
-const Policlinicas = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingPoliclinica, setEditingPoliclinica] =
-        useState<Policlinica | null>(null);
-
-    const { data: policlinicas, isLoading } = usePoliclinicas();
-    const createPoliclinica = useCreatePoliclinica();
-    const updatePoliclinica = useUpdatePoliclinica();
-    const deletePoliclinica = useDeletePoliclinica();
+const Policlinicas: React.FC = () => {
+    const {
+        isModalVisible,
+        editingPoliclinica,
+        isSubmitting,
+        isDeleting,
+        pagination,
+        searchText,
+        searchQuery,
+        openModal,
+        openEditModal,
+        closeModal,
+        handleDelete,
+        handleSubmit,
+        setPagination,
+        setSearchText,
+        handleSearch,
+        clearSearch,
+    } = usePoliclinicaForm();
 
     const {
-        control,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm<PoliclinicaFormData>({
-        resolver: zodResolver(policlinicaSchema),
+        data: policlinicaResponse,
+        isLoading,
+        error,
+    } = usePoliclinicas({
+        page: pagination.current,
+        limit: pagination.pageSize,
+        search: searchQuery,
     });
 
-    const columns = [
-        {
-            title: "Nome",
-            dataIndex: "nome",
-            key: "nome",
-        },
-        {
-            title: "CNES",
-            dataIndex: "cnes",
-            key: "cnes",
-        },
-        {
-            title: "Localização",
-            dataIndex: "localizacao",
-            key: "localizacao",
-        },
-        {
-            title: "Contato",
-            dataIndex: "contato",
-            key: "contato",
-        },
-        {
-            title: "Ações",
-            key: "actions",
-            render: (_: unknown, record: Policlinica) => (
-                <Space>
-                    <Button
-                        icon={<EditOutlined />}
-                        onClick={() => handleEdit(record)}
-                        size="small"
-                    />
-                    <Button
-                        icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.id)}
-                        danger
-                        size="small"
-                    />
-                </Space>
-            ),
-        },
-    ];
+    const policlinicasList = policlinicaResponse?.data || [];
+    const meta = policlinicaResponse?.meta;
 
-    const handleEdit = (policlinica: Policlinica) => {
-        setEditingPoliclinica(policlinica);
-        reset({
-            nome: policlinica.nome,
-            contato: policlinica.contato,
-            localizacao: policlinica.localizacao,
-            cnes: policlinica.cnes,
-        });
-        setIsModalOpen(true);
-    };
-
-    const handleDelete = (id: string) => {
-        Modal.confirm({
-            title: "Confirmar exclusão",
-            content: "Tem certeza que deseja excluir esta policlínica?",
-            onOk: () => deletePoliclinica.mutate(id),
-        });
-    };
-
-    const onSubmit = (data: PoliclinicaFormData) => {
-        if (editingPoliclinica) {
-            updatePoliclinica.mutate(
-                { id: editingPoliclinica.id, data },
-                {
-                    onSuccess: () => {
-                        setIsModalOpen(false);
-                        setEditingPoliclinica(null);
-                        reset();
-                    },
-                },
+    useEffect(() => {
+        if (error) {
+            const appError = handleError(error);
+            ToastService.error(
+                `Erro ao carregar policlínicas: ${appError.message}`,
             );
-        } else {
-            createPoliclinica.mutate(data, {
-                onSuccess: () => {
-                    setIsModalOpen(false);
-                    reset();
-                },
-            });
         }
-    };
+    }, [error]);
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-        setEditingPoliclinica(null);
-        reset();
-    };
+    const columns = useMemo(
+        () => [
+            { title: "CNES", dataIndex: "cnes", key: "cnes", width: 100 },
+            { title: "Nome", dataIndex: "nome", key: "nome" },
+            {
+                title: "Localização",
+                dataIndex: "localizacao",
+                key: "localizacao",
+                width: 400,
+            },
+            {
+                title: "Contato",
+                dataIndex: "contato",
+                key: "contato",
+                width: 150,
+            },
+            {
+                title: "Ações",
+                key: "actions",
+                width: 150,
+                render: (_: unknown, record: Policlinica) => (
+                    <Space size="middle">
+                        <Button
+                            type="text"
+                            icon={<EditOutlined />}
+                            onClick={() => openEditModal(record)}
+                        />
+                        <Popconfirm
+                            title="Tem certeza que deseja excluir esta policlínica?"
+                            onConfirm={() => handleDelete(record.id)}
+                            okText="Sim"
+                            cancelText="Não"
+                        >
+                            <Button
+                                danger
+                                type="text"
+                                icon={<DeleteOutlined />}
+                                loading={isDeleting}
+                            />
+                        </Popconfirm>
+                    </Space>
+                ),
+            },
+        ],
+        [openEditModal, handleDelete, isDeleting],
+    );
+
+    const showEmptyState = !policlinicasList.length && !isLoading;
 
     return (
-        <div>
-            <div className="mb-4 flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Policlínicas</h1>
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => setIsModalOpen(true)}
-                >
-                    Nova Policlínica
-                </Button>
+        <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+                <Title level={4}>Gerenciar Policlínicas</Title>
+
+                <Space>
+                    <Input
+                        placeholder="Buscar por nome ou CNES..."
+                        prefix={<SearchOutlined />}
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        onPressEnter={handleSearch}
+                        style={{ width: 250 }}
+                        allowClear
+                        onClear={clearSearch}
+                    />
+                    <Button
+                        type="default"
+                        icon={<SearchOutlined />}
+                        onClick={handleSearch}
+                    />
+
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={openModal}
+                    >
+                        Cadastrar Policlínica
+                    </Button>
+                </Space>
             </div>
+            {showEmptyState ? (
+                <div>
+                    <Typography.Text type="secondary">
+                        Nenhuma policlínica cadastrada. Clique em "Cadastrar
+                        Policlínica" para adicionar a primeira.
+                    </Typography.Text>
+                </div>
+            ) : (
+                <Table
+                    columns={columns}
+                    dataSource={policlinicasList}
+                    rowKey="id"
+                    loading={isLoading}
+                    pagination={{
+                        current: pagination.current,
+                        pageSize: pagination.pageSize,
+                        total: meta?.totalItems || 0,
+                        showSizeChanger: true,
+                        showQuickJumper: true,
+                        showTotal: (total, range) =>
+                            `${range[0]}-${range[1]} de ${total} policlínicas`,
+                        onChange: (page, pageSize) =>
+                            setPagination({ current: page, pageSize }),
+                        onShowSizeChange: (_, size) =>
+                            setPagination({ current: 1, pageSize: size }),
+                    }}
+                />
+            )}
 
-            <Table
-                columns={columns}
-                dataSource={policlinicas}
-                loading={isLoading}
-                rowKey="id"
-            />
-
-            <Modal
-                title={
+            <PoliclinicaModal
+                visible={isModalVisible}
+                editingId={editingPoliclinica?.id || null}
+                onCancel={closeModal}
+                onSubmit={handleSubmit}
+                loading={isSubmitting}
+                initialValues={
                     editingPoliclinica
-                        ? "Editar Policlínica"
-                        : "Nova Policlínica"
+                        ? {
+                              cnes: editingPoliclinica.cnes,
+                              nome: editingPoliclinica.nome,
+                              localizacao: editingPoliclinica.localizacao,
+                              contato: editingPoliclinica.contato,
+                          }
+                        : undefined
                 }
-                open={isModalOpen}
-                onCancel={handleCancel}
-                footer={null}
-            >
-                <Form onFinish={handleSubmit(onSubmit)} layout="vertical">
-                    <Form.Item
-                        label="Nome"
-                        validateStatus={errors.nome ? "error" : ""}
-                    >
-                        <Controller
-                            name="nome"
-                            control={control}
-                            render={({ field }) => <Input {...field} />}
-                        />
-                        {errors.nome && (
-                            <span className="text-red-500">
-                                {errors.nome.message}
-                            </span>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item
-                        label="CNES"
-                        validateStatus={errors.cnes ? "error" : ""}
-                    >
-                        <Controller
-                            name="cnes"
-                            control={control}
-                            render={({ field }) => (
-                                <Input {...field} maxLength={7} />
-                            )}
-                        />
-                        {errors.cnes && (
-                            <span className="text-red-500">
-                                {errors.cnes.message}
-                            </span>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Localização"
-                        validateStatus={errors.localizacao ? "error" : ""}
-                    >
-                        <Controller
-                            name="localizacao"
-                            control={control}
-                            render={({ field }) => <Input {...field} />}
-                        />
-                        {errors.localizacao && (
-                            <span className="text-red-500">
-                                {errors.localizacao.message}
-                            </span>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Contato"
-                        validateStatus={errors.contato ? "error" : ""}
-                    >
-                        <Controller
-                            name="contato"
-                            control={control}
-                            render={({ field }) => <Input {...field} />}
-                        />
-                        {errors.contato && (
-                            <span className="text-red-500">
-                                {errors.contato.message}
-                            </span>
-                        )}
-                    </Form.Item>
-
-                    <Form.Item>
-                        <Space>
-                            <Button onClick={handleCancel}>Cancelar</Button>
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                loading={
-                                    createPoliclinica.isPending ||
-                                    updatePoliclinica.isPending
-                                }
-                            >
-                                {editingPoliclinica ? "Atualizar" : "Criar"}
-                            </Button>
-                        </Space>
-                    </Form.Item>
-                </Form>
-            </Modal>
+            />
         </div>
     );
 };
