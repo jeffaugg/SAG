@@ -1,13 +1,16 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, theme } from "antd";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { NavigationProvider } from "../contexts/NavigationContext";
 import { useCurrentUser, useLogout } from "../modules/auth/hooks/authHooks";
 import routes from "../routes/routes.config";
-import type { MainLayoutProps } from "./@types/components.types";
 import AppBreadcrumb from "./AppBreadcrumb";
 import AppMenu from "./AppMenu";
 import LoadingSpinner from "./LoadingSpinner";
+
+interface MainLayoutProps {
+    children: ReactNode;
+}
 
 const { Header, Content, Sider, Footer } = Layout;
 

@@ -7,18 +7,7 @@ import {
     TeamOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import type { ReactNode } from "react";
-import type { CargoType } from "../modules/auth/schemas/auth.schemas";
-
-interface RouteDefinition {
-    path: string;
-    label: string;
-    icon?: ReactNode;
-    requiredRoles?: Array<CargoType>;
-    children?: RouteDefinition[];
-    isVisible?: boolean;
-}
-
+import type { RouteDefinition } from "../contexts/NavigationContext";
 import { ROLES } from "../utils/permission-utils";
 
 const ALL_ROLES = [ROLES.ADMIN, ROLES.MEDICO, ROLES.ENFERMEIRO];

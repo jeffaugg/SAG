@@ -1,5 +1,5 @@
 import { toast, type ToastOptions } from "react-toastify";
-import { type AppError } from "./@types/error.types";
+import { type AppError } from "./useErrorHandler";
 
 const defaultOptions: ToastOptions = {
     position: "top-right",
@@ -11,8 +11,21 @@ const defaultOptions: ToastOptions = {
     progress: undefined,
 };
 
+const activeToasts = new Set<string>();
+
+const preventDuplicate = (message: string, type: string) => {
+    const key = `${type}:${message}`;
+    if (activeToasts.has(key)) {
+        return null;
+    }
+    activeToasts.add(key);
+    setTimeout(() => activeToasts.delete(key), 100);
+    return key;
+};
+
 export const ToastService = {
     success: (message: string, options?: ToastOptions) => {
+        if (!preventDuplicate(message, "success")) return;
         return toast.success(message, {
             ...defaultOptions,
             ...options,
@@ -27,6 +40,7 @@ export const ToastService = {
                   ? message.message
                   : "Um erro ocorreu";
 
+        if (!preventDuplicate(errorMessage, "error")) return;
         return toast.error(errorMessage, {
             ...defaultOptions,
             ...options,
@@ -34,6 +48,7 @@ export const ToastService = {
     },
 
     warning: (message: string, options?: ToastOptions) => {
+        if (!preventDuplicate(message, "warning")) return;
         return toast.warning(message, {
             ...defaultOptions,
             ...options,
@@ -41,6 +56,7 @@ export const ToastService = {
     },
 
     info: (message: string, options?: ToastOptions) => {
+        if (!preventDuplicate(message, "info")) return;
         return toast.info(message, {
             ...defaultOptions,
             ...options,
@@ -48,6 +64,7 @@ export const ToastService = {
     },
 
     default: (message: string, options?: ToastOptions) => {
+        if (!preventDuplicate(message, "default")) return;
         return toast(message, {
             ...defaultOptions,
             ...options,
@@ -55,27 +72,22 @@ export const ToastService = {
     },
 
     handleError: (error: unknown, options?: ToastOptions) => {
+        let errorMessage: string;
+
         if (error instanceof Error) {
-            return toast.error(error.message, {
-                ...defaultOptions,
-                ...options,
-            });
+            errorMessage = error.message;
+        } else if (typeof error === "string") {
+            errorMessage = error;
+        } else {
+            errorMessage =
+                "Ocorreu um erro inesperado. Por favor, tente novamente.";
         }
 
-        if (typeof error === "string") {
-            return toast.error(error, {
-                ...defaultOptions,
-                ...options,
-            });
-        }
-
-        return toast.error(
-            "Ocorreu um erro inesperado. Por favor, tente novamente.",
-            {
-                ...defaultOptions,
-                ...options,
-            },
-        );
+        if (!preventDuplicate(errorMessage, "error")) return;
+        return toast.error(errorMessage, {
+            ...defaultOptions,
+            ...options,
+        });
     },
 
     clearAll: () => {

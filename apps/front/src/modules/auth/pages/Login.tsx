@@ -4,7 +4,7 @@ import { Button, Input, Typography } from "antd";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CpfHookFormInput } from "../../../components/inputs";
+import { CpfHookFormInput } from "../../../components";
 import { cleanCpf } from "../../../utils/cpf-validator";
 import { useErrorHandler } from "../../../utils/useErrorHandler";
 import { useLogin } from "../hooks/authHooks";

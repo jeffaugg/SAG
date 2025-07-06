@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidBrazilianCpf } from "../../../utils/cpf-validator";
 
 const cpfRegex = /^\d{11}$/;
 
@@ -12,34 +13,6 @@ export const cpfSchema = z
     .refine((val) => isValidBrazilianCpf(val), {
         message: "CPF inválido. Verifique os dígitos informados",
     });
-
-export function isValidBrazilianCpf(cpf: string): boolean {
-    if (!cpf || cpf.length !== 11) return false;
-
-    if (/^(\d)\1{10}$/.test(cpf)) return false;
-
-    let sum = 0;
-    for (let i = 0; i < 9; i++) {
-        sum += parseInt(cpf.charAt(i)) * (10 - i);
-    }
-
-    let remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-
-    if (remainder !== parseInt(cpf.charAt(9))) return false;
-
-    sum = 0;
-    for (let i = 0; i < 10; i++) {
-        sum += parseInt(cpf.charAt(i)) * (11 - i);
-    }
-
-    remainder = (sum * 10) % 11;
-    if (remainder === 10 || remainder === 11) remainder = 0;
-
-    if (remainder !== parseInt(cpf.charAt(10))) return false;
-
-    return true;
-}
 
 export const loginSchema = z.object({
     cpf: cpfSchema,
@@ -82,3 +55,39 @@ export const userSchema = z.object({
 });
 
 export type User = z.infer<typeof userSchema>;
+
+// Tipos básicos das entidades
+export type Cargo = "Enfermeiro" | "Medico" | "ADM";
+
+export interface Usuario {
+    id: string;
+    nome: string;
+    cargo: Cargo;
+    cpf: string;
+    senha: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt?: string | null;
+}
+
+export interface Policlinica {
+    id: string;
+    contato: string;
+    nome: string;
+    localizacao: string;
+    cnes: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt?: string | null;
+}
+
+export interface UBS {
+    id: string;
+    contato: string;
+    nome: string;
+    localizacao: string;
+    cnes: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt?: string | null;
+}

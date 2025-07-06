@@ -1,32 +1,22 @@
 import { LockOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Menu, Tooltip } from "antd";
-import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { useNavigation } from "../contexts/NavigationContext";
-import type { CargoType } from "../modules/auth/schemas/auth.schemas";
-
-interface RouteItem {
-    path: string;
-    label: string;
-    icon?: ReactNode;
-    requiredRoles?: Array<CargoType>;
-    children?: RouteItem[];
-    isVisible?: boolean;
-}
+import { useNavigation } from "../hooks/useNavigation";
+import type { RouteDefinition } from "../types";
 
 const AppMenu = () => {
     const { routes, openKeys, selectedKeys, setOpenKeys, hasPermission } =
         useNavigation();
 
-    const getMenuItems = (routes: RouteItem[]): MenuProps["items"] => {
+    const getMenuItems = (routes: RouteDefinition[]): MenuProps["items"] => {
         return routes
-            .filter((route: RouteItem) => {
+            .filter((route: RouteDefinition) => {
                 if (route.isVisible === false) return false;
 
                 if (route.children?.length) {
                     const visibleChildren = route.children.filter(
-                        (child: RouteItem) =>
+                        (child: RouteDefinition) =>
                             child.isVisible !== false &&
                             hasPermission(child.requiredRoles),
                     );
@@ -35,13 +25,14 @@ const AppMenu = () => {
 
                 return true;
             })
-            .map((route: RouteItem) => {
+            .map((route: RouteDefinition) => {
                 const userHasAccess = hasPermission(route.requiredRoles);
 
                 if (route.children && route.children.length > 0) {
                     const childItems = getMenuItems(
                         route.children.filter(
-                            (child: RouteItem) => child.isVisible !== false,
+                            (child: RouteDefinition) =>
+                                child.isVisible !== false,
                         ),
                     );
 

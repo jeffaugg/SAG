@@ -1,8 +1,13 @@
 import axios, { AxiosError } from "axios";
-import type { ApiErrorResponse } from "./@types/api.types";
+
+interface ApiErrorResponse {
+    message: string;
+    statusCode: number;
+    details?: Record<string, string[]>;
+}
 
 const axiosInstance = axios.create({
-    baseURL: process.env.VITE_API_END_POINT,
+    baseURL: import.meta.env.VITE_API_END_POINT,
     headers: {
         "Content-Type": "application/json",
     },
@@ -35,14 +40,25 @@ axiosInstance.interceptors.response.use(
                 const formattedError = new Error(
                     error.response.data.message || "Erro de validação",
                 );
-                (formattedError as any).details = apiDetails;
-                (formattedError as any).statusCode = status;
+                (
+                    formattedError as Error & {
+                        details: unknown;
+                        statusCode: number;
+                    }
+                ).details = apiDetails;
+                (
+                    formattedError as Error & {
+                        details: unknown;
+                        statusCode: number;
+                    }
+                ).statusCode = status;
                 return Promise.reject(formattedError);
             }
 
             if (error.response.data?.message) {
                 const formattedError = new Error(error.response.data.message);
-                (formattedError as any).statusCode = status;
+                (formattedError as Error & { statusCode: number }).statusCode =
+                    status;
                 return Promise.reject(formattedError);
             }
         }
