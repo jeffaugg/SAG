@@ -14,12 +14,27 @@ export const cpfSchema = z
         message: "CPF inválido. Verifique os dígitos informados",
     });
 
-export const loginSchema = z.object({
-    cpf: cpfSchema,
-    senha: z
-        .string()
-        .min(8, { message: "A senha deve ter no mínimo 8 caracteres" }),
-});
+export const loginSchema = z
+    .object({
+        cpf: cpfSchema,
+        senha: z
+            .string()
+            .min(8, { message: "A senha deve ter no mínimo 8 caracteres" }),
+        tipoUsuario: z.enum(["ADM", "FUNCIONARIO"]),
+        organizacaoCNES: z.string().optional(),
+    })
+    .refine(
+        (data) => {
+            if (data.tipoUsuario === "FUNCIONARIO" && !data.organizacaoCNES) {
+                return false;
+            }
+            return true;
+        },
+        {
+            message: "Selecione uma organização",
+            path: ["organizacaoCNES"],
+        },
+    );
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 

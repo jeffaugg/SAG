@@ -48,12 +48,7 @@ const AppMenu = () => {
                                 {route.label}
                                 {!userHasAccess && (
                                     <Tooltip title="Acesso restrito">
-                                        <LockOutlined
-                                            style={{
-                                                marginLeft: 5,
-                                                fontSize: 12,
-                                            }}
-                                        />
+                                        <LockOutlined />
                                     </Tooltip>
                                 )}
                             </span>
@@ -70,8 +65,7 @@ const AppMenu = () => {
                     ) : (
                         <Tooltip title="Acesso restrito">
                             <span className="text-gray-400">
-                                {route.label}{" "}
-                                <LockOutlined style={{ fontSize: 12 }} />
+                                {route.label} <LockOutlined />
                             </span>
                         </Tooltip>
                     ),
@@ -97,7 +91,6 @@ const AppMenu = () => {
             selectedKeys={selectedKeys}
             onOpenChange={onOpenChange}
             items={menuItems}
-            className="border-0"
         />
     );
 };

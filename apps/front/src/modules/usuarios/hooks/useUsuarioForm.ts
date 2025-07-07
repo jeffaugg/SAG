@@ -1,28 +1,30 @@
 import { useState } from "react";
 import { useSearchForm } from "../../../hooks/useSearchForm";
-import type { Usuario, UsuarioFormData } from "../types";
+import type { Usuario } from "../types";
 import {
-    useCreateUsuario,
     useDeleteUsuario,
-    useUpdateUsuario,
+    useVincularUsuarioPoliclinica,
+    useVincularUsuarioUbs,
 } from "./usuariosHooks";
 
 export const useUsuarioForm = () => {
-    const createMutation = useCreateUsuario();
-    const updateMutation = useUpdateUsuario();
     const deleteMutation = useDeleteUsuario();
+    const vincularUbsMutation = useVincularUsuarioUbs();
+    const vincularPoliclinicaMutation = useVincularUsuarioPoliclinica();
 
     const [cargoFilter, setCargoFilter] = useState<
         "Enfermeiro" | "Medico" | "ADM" | undefined
     >(undefined);
 
+    const [selectedUsuario, setSelectedUsuario] = useState<Usuario | null>(
+        null,
+    );
+
     const {
         isModalVisible,
-        editingItem: editingUsuario,
         pagination,
         searchText,
         searchQuery,
-        openModal,
         openEditModal,
         closeModal,
         setPagination,
@@ -31,7 +33,8 @@ export const useUsuarioForm = () => {
         clearSearch: baseClearSearch,
     } = useSearchForm<Usuario>();
 
-    const isSubmitting = createMutation.isPending || updateMutation.isPending;
+    const isSubmitting =
+        vincularUbsMutation.isPending || vincularPoliclinicaMutation.isPending;
     const isDeleting = deleteMutation.isPending;
 
     const clearSearch = () => {
@@ -43,32 +46,50 @@ export const useUsuarioForm = () => {
         await deleteMutation.mutateAsync(id);
     };
 
-    const handleSubmit = async (data: UsuarioFormData) => {
-        if (editingUsuario) {
-            await updateMutation.mutateAsync({
-                id: editingUsuario.id,
-                data,
+    const openVincularModal = (usuario: Usuario) => {
+        setSelectedUsuario(usuario);
+        openEditModal(usuario);
+    };
+
+    const handleVincular = async (data: {
+        tipo: "ubs" | "policlinica";
+        unidadeId: string;
+    }) => {
+        if (!selectedUsuario) return;
+
+        if (data.tipo === "ubs") {
+            await vincularUbsMutation.mutateAsync({
+                ubsId: data.unidadeId,
+                usuarioId: selectedUsuario.id,
             });
         } else {
-            await createMutation.mutateAsync(data);
+            await vincularPoliclinicaMutation.mutateAsync({
+                policlinicaId: data.unidadeId,
+                usuarioId: selectedUsuario.id,
+            });
         }
         closeModal();
+        setSelectedUsuario(null);
+    };
+
+    const handleCloseModal = () => {
+        closeModal();
+        setSelectedUsuario(null);
     };
 
     return {
         isModalVisible,
-        editingUsuario,
+        selectedUsuario,
         isSubmitting,
         isDeleting,
         pagination,
         searchText,
         searchQuery,
         cargoFilter,
-        openModal,
-        openEditModal,
-        closeModal,
+        openVincularModal,
+        closeModal: handleCloseModal,
         handleDelete,
-        handleSubmit,
+        handleVincular,
         setPagination,
         setSearchText,
         setCargoFilter,

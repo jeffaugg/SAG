@@ -1,7 +1,6 @@
 import {
     DeleteOutlined,
-    EditOutlined,
-    PlusOutlined,
+    LinkOutlined,
     SearchOutlined,
 } from "@ant-design/icons";
 import {
@@ -11,14 +10,15 @@ import {
     Input,
     Modal,
     Pagination,
+    Popconfirm,
     Select,
     Space,
     Table,
     Typography,
 } from "antd";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { formatCpf } from "../../../utils/formatters";
-import { UsuarioModal } from "../components";
+import { VincularUsuarioModal } from "../components";
 import { useUsuarioForm } from "../hooks/useUsuarioForm";
 import { useUsuarios } from "../hooks/usuariosHooks";
 import type { Usuario } from "../types";
@@ -28,18 +28,17 @@ const { Title } = Typography;
 const Usuarios: React.FC = () => {
     const {
         isModalVisible,
-        editingUsuario,
+        selectedUsuario,
         isSubmitting,
         isDeleting,
         pagination,
         searchText,
         searchQuery,
         cargoFilter,
-        openModal,
-        openEditModal,
+        openVincularModal,
         closeModal,
         handleDelete,
-        handleSubmit,
+        handleVincular,
         setPagination,
         setSearchText,
         setCargoFilter,
@@ -70,19 +69,6 @@ const Usuarios: React.FC = () => {
         }
     }, [error]);
 
-    const handleDeleteConfirm = useCallback(
-        (id: string) => {
-            Modal.confirm({
-                title: "Confirmar exclusão",
-                content: "Tem certeza que deseja excluir este usuário?",
-                okText: "Sim",
-                cancelText: "Não",
-                onOk: () => handleDelete(id),
-            });
-        },
-        [handleDelete],
-    );
-
     const columns = useMemo(
         () => [
             {
@@ -109,23 +95,31 @@ const Usuarios: React.FC = () => {
                 width: 150,
                 render: (_: unknown, record: Usuario) => (
                     <Space size="middle">
+                        <Popconfirm
+                            title="Tem certeza que deseja excluir este usuário?"
+                            onConfirm={() => handleDelete(record.id)}
+                            okText="Sim"
+                            cancelText="Não"
+                        >
+                            <Button
+                                color="danger"
+                                variant="text"
+                                icon={<DeleteOutlined />}
+                                loading={isDeleting}
+                            />
+                        </Popconfirm>
                         <Button
-                            type="text"
-                            icon={<EditOutlined />}
-                            onClick={() => openEditModal(record)}
-                        />
-                        <Button
-                            type="text"
-                            icon={<DeleteOutlined />}
-                            danger
-                            loading={isDeleting}
-                            onClick={() => handleDeleteConfirm(record.id)}
+                            color="primary"
+                            variant="text"
+                            icon={<LinkOutlined />}
+                            onClick={() => openVincularModal(record)}
+                            title="Vincular usuário"
                         />
                     </Space>
                 ),
             },
         ],
-        [openEditModal, handleDeleteConfirm, isDeleting],
+        [openVincularModal, handleDelete, isDeleting],
     );
 
     const showEmptyState = !usuariosList.length && !isLoading;
@@ -162,13 +156,6 @@ const Usuarios: React.FC = () => {
                         icon={<SearchOutlined />}
                         onClick={handleSearch}
                     />
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={openModal}
-                    >
-                        Novo Usuário
-                    </Button>
                 </Space>
             </div>
             {showEmptyState ? (
@@ -214,21 +201,12 @@ const Usuarios: React.FC = () => {
                     )}
                 </>
             )}
-            <UsuarioModal
+            <VincularUsuarioModal
                 visible={isModalVisible}
-                editingId={editingUsuario?.id || null}
+                usuarioId={selectedUsuario?.id || null}
                 onCancel={closeModal}
-                onSubmit={handleSubmit}
+                onSubmit={handleVincular}
                 loading={isSubmitting}
-                initialValues={
-                    editingUsuario
-                        ? {
-                              nome: editingUsuario.nome,
-                              cargo: editingUsuario.cargo,
-                              cpf: formatCpf(editingUsuario.cpf),
-                          }
-                        : undefined
-                }
             />
         </div>
     );

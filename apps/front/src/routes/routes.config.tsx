@@ -1,11 +1,9 @@
 import {
-    AppstoreOutlined,
     DashboardOutlined,
     HomeOutlined,
     MedicineBoxOutlined,
     SettingOutlined,
     TeamOutlined,
-    UserOutlined,
 } from "@ant-design/icons";
 import type { RouteDefinition } from "../contexts/NavigationContext";
 import { ROLES } from "../utils/permission-utils";
@@ -66,65 +64,22 @@ export const routes: RouteDefinition[] = [
         ],
     },
     {
-        path: "/ubs",
-        label: "Unidades Básicas",
+        path: "/",
+        label: "Administração",
         icon: <HomeOutlined />,
         requiredRoles: [ROLES.ADMIN],
         children: [
             {
                 path: "/ubs",
-                label: "Todas UBSs",
+                label: "Gerenciar UBS",
             },
-            {
-                path: "/ubs/cadastrar",
-                label: "Cadastrar UBS",
-            },
-            {
-                path: "/ubs/:id",
-                label: "Detalhes da UBS",
-                isVisible: false,
-            },
-        ],
-    },
-    {
-        path: "/policlinicas",
-        label: "Policlínicas",
-        icon: <AppstoreOutlined />,
-        requiredRoles: [ROLES.ADMIN],
-        children: [
             {
                 path: "/policlinicas",
-                label: "Todas Policlínicas",
+                label: "Gerenciar Policlínicas",
             },
-            {
-                path: "/policlinicas/cadastrar",
-                label: "Cadastrar Policlínica",
-            },
-            {
-                path: "/policlinicas/:id",
-                label: "Detalhes da Policlínica",
-                isVisible: false,
-            },
-        ],
-    },
-    {
-        path: "/usuarios",
-        label: "Usuários",
-        icon: <UserOutlined />,
-        requiredRoles: [ROLES.ADMIN],
-        children: [
             {
                 path: "/usuarios",
-                label: "Todos Usuários",
-            },
-            {
-                path: "/usuarios/cadastrar",
-                label: "Cadastrar Usuário",
-            },
-            {
-                path: "/usuarios/:id",
-                label: "Detalhes do Usuário",
-                isVisible: false,
+                label: "Gerenciar Usuários",
             },
         ],
     },

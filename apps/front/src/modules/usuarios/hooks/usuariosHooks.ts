@@ -101,7 +101,7 @@ export const useUpdateUsuario = () => {
             id: string;
             data: Partial<UsuarioFormData>;
         }): Promise<Usuario> => {
-            const response = await axiosInstance.put(
+            const response = await axiosInstance.patch(
                 API_ENDPOINTS.USUARIOS.BY_ID(id),
                 data,
             );
@@ -135,6 +135,67 @@ export const useDeleteUsuario = () => {
         onError: (error) => {
             const appError = handleError(error);
             ToastService.error(`Erro ao excluir usuário: ${appError.message}`);
+        },
+    });
+};
+
+export const useVincularUsuarioUbs = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            ubsId,
+            usuarioId,
+        }: {
+            ubsId: string;
+            usuarioId: string;
+        }): Promise<void> => {
+            await axiosInstance.post(
+                API_ENDPOINTS.UBS.ADD_USUARIO(ubsId, usuarioId),
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+            ToastService.success("Usuário vinculado à UBS com sucesso!");
+        },
+        onError: (error) => {
+            const appError = handleError(error);
+            ToastService.error(
+                `Erro ao vincular usuário à UBS: ${appError.message}`,
+            );
+        },
+    });
+};
+
+export const useVincularUsuarioPoliclinica = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            policlinicaId,
+            usuarioId,
+        }: {
+            policlinicaId: string;
+            usuarioId: string;
+        }): Promise<void> => {
+            await axiosInstance.post(
+                API_ENDPOINTS.POLICLINICAS.ADD_USUARIO(
+                    policlinicaId,
+                    usuarioId,
+                ),
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+            ToastService.success(
+                "Usuário vinculado à Policlínica com sucesso!",
+            );
+        },
+        onError: (error) => {
+            const appError = handleError(error);
+            ToastService.error(
+                `Erro ao vincular usuário à Policlínica: ${appError.message}`,
+            );
         },
     });
 };
