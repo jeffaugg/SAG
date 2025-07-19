@@ -1,7 +1,19 @@
 import { useCallback, useState } from "react";
-import type { AppError, ErrorState } from "./@types/error.types";
-import { handleError } from "./error-handler";
-import { ToastService } from "./toast-service";
+import { handleError } from "../utils/error-handler";
+
+export interface ErrorState {
+    hasError: boolean;
+    message: string | null;
+    fieldErrors?: Record<string, string[]>;
+    statusCode?: number;
+}
+
+export interface AppError {
+    message: string;
+    type: "validation" | "api" | "network" | "auth" | "unknown";
+    details?: Record<string, string[]>;
+    statusCode?: number;
+}
 
 export const useErrorHandler = () => {
     const [errorState, setErrorState] = useState<ErrorState>({
@@ -16,25 +28,18 @@ export const useErrorHandler = () => {
         });
     }, []);
 
-    const handleAppError = useCallback(
-        (error: unknown, showToast: boolean = true) => {
-            const appError: AppError = handleError(error);
+    const handleAppError = useCallback((error: unknown) => {
+        const appError: AppError = handleError(error);
 
-            setErrorState({
-                hasError: true,
-                message: appError.message,
-                fieldErrors: appError.details,
-                statusCode: appError.statusCode,
-            });
+        setErrorState({
+            hasError: true,
+            message: appError.message,
+            fieldErrors: appError.details,
+            statusCode: appError.statusCode,
+        });
 
-            if (showToast) {
-                ToastService.error(appError.message);
-            }
-
-            return appError;
-        },
-        [],
-    );
+        return appError;
+    }, []);
 
     const getFieldError = useCallback(
         (fieldName: string): string | undefined => {

@@ -1,7 +1,12 @@
 import axios, { AxiosError } from "axios";
 import { ZodError } from "zod";
-import type { ApiErrorResponse } from "../api/@types/api.types";
-import type { AppError } from "./@types/error.types";
+import type { AppError } from "./useErrorHandler";
+
+interface ApiErrorResponse {
+    message: string;
+    statusCode: number;
+    details?: Record<string, string[]>;
+}
 
 export const formatZodError = (error: ZodError): Record<string, string[]> => {
     const formattedErrors: Record<string, string[]> = {};

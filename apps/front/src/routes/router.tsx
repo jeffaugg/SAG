@@ -1,15 +1,19 @@
 import { lazy, Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
-import { LoadingSpinner } from "../components";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { LoadingSpinner, MainLayout } from "../components";
 import ProtectedRoute from "../components/ProtectedRoute";
 import PublicRoute from "../components/PublicRoute";
-import { MainLayout } from "../features/layout";
 
 const Maintenance = lazy(() => import("../pages/Maintenance"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 const AccessDenied = lazy(() => import("../pages/AccessDenied"));
 const WorkInProgress = lazy(() => import("../pages/WorkInProgress"));
-const AuthRoutes = lazy(() => import("../modules/auth/router/AuthRoutes"));
+const Login = lazy(() => import("../modules/auth/pages/Login"));
+const Usuarios = lazy(() => import("../modules/usuarios/pages/Usuarios"));
+const Policlinicas = lazy(
+    () => import("../modules/policlinicas/pages/Policlinicas"),
+);
+const UBS = lazy(() => import("../modules/ubs/pages/UBS"));
 
 const SuspenseLoading = () => (
     <LoadingSpinner fullScreen message="Carregando aplicação..." />
@@ -152,10 +156,7 @@ const Router = () => {
                     element={
                         <ProtectedRoute requiredRoles={["ADM"]}>
                             <MainLayout>
-                                <WorkInProgress
-                                    pageName="Unidades Básicas de Saúde"
-                                    estimatedCompletion="no próximo mês"
-                                />
+                                <UBS />
                             </MainLayout>
                         </ProtectedRoute>
                     }
@@ -192,10 +193,7 @@ const Router = () => {
                     element={
                         <ProtectedRoute requiredRoles={["ADM"]}>
                             <MainLayout>
-                                <WorkInProgress
-                                    pageName="Policlínicas"
-                                    estimatedCompletion="no próximo mês"
-                                />
+                                <Policlinicas />
                             </MainLayout>
                         </ProtectedRoute>
                     }
@@ -232,10 +230,7 @@ const Router = () => {
                     element={
                         <ProtectedRoute requiredRoles={["ADM"]}>
                             <MainLayout>
-                                <WorkInProgress
-                                    pageName="Usuários"
-                                    estimatedCompletion="em breve"
-                                />
+                                <Usuarios />
                             </MainLayout>
                         </ProtectedRoute>
                     }
@@ -288,10 +283,18 @@ const Router = () => {
                 />
 
                 <Route
+                    path="/auth/login"
+                    element={
+                        <PublicRoute>
+                            <Login />
+                        </PublicRoute>
+                    }
+                />
+                <Route
                     path="/auth/*"
                     element={
                         <PublicRoute>
-                            <AuthRoutes />
+                            <Navigate to="/auth/login" replace />
                         </PublicRoute>
                     }
                 />

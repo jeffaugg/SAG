@@ -1,7 +1,10 @@
 import React from "react";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, type ToastContainerProps } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import type { AppToastContainerProps } from "./@types/components.types";
+
+interface AppToastContainerProps extends ToastContainerProps {
+    position?: ToastContainerProps["position"];
+}
 
 export const AppToastContainer: React.FC<AppToastContainerProps> = (props) => {
     return (

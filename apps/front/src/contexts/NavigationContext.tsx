@@ -1,15 +1,9 @@
-import {
-    createContext,
-    type ReactNode,
-    useContext,
-    useEffect,
-    useState,
-} from "react";
+import { createContext, type ReactNode, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useCurrentUser } from "../modules/auth/hooks/authHooks";
 import type { CargoType } from "../modules/auth/schemas/auth.schemas";
 
-interface RouteDefinition {
+export interface RouteDefinition {
     path: string;
     label: string;
     icon?: ReactNode;
@@ -18,7 +12,7 @@ interface RouteDefinition {
     isVisible?: boolean;
 }
 
-interface BreadcrumbItem {
+export interface BreadcrumbItem {
     path: string;
     label: string;
     icon?: ReactNode;
@@ -37,6 +31,8 @@ interface NavigationContextType {
 const NavigationContext = createContext<NavigationContextType | undefined>(
     undefined,
 );
+
+export { NavigationContext };
 
 export const NavigationProvider = ({
     children,
@@ -143,7 +139,7 @@ export const NavigationProvider = ({
                 setOpenKeys(newOpenKeys.slice(0, -1));
             }
         }
-    }, [location.pathname, routes, user]);
+    }, [location.pathname, routes, user, openKeys.length]);
 
     return (
         <NavigationContext.Provider
@@ -160,14 +156,4 @@ export const NavigationProvider = ({
             {children}
         </NavigationContext.Provider>
     );
-};
-
-export const useNavigation = () => {
-    const context = useContext(NavigationContext);
-    if (!context) {
-        throw new Error(
-            "useNavigation must be used within a NavigationProvider",
-        );
-    }
-    return context;
 };
