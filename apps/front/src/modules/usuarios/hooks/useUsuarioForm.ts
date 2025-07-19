@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useSearchForm } from "../../../hooks/useSearchForm";
-import type { Usuario } from "../types";
+import type { Usuario, UsuarioFormData } from "../types";
 import {
+    useCreateUsuario,
     useDeleteUsuario,
     useVincularUsuarioPoliclinica,
     useVincularUsuarioUbs,
 } from "./usuariosHooks";
 
 export const useUsuarioForm = () => {
+    const createMutation = useCreateUsuario();
     const deleteMutation = useDeleteUsuario();
     const vincularUbsMutation = useVincularUsuarioUbs();
     const vincularPoliclinicaMutation = useVincularUsuarioPoliclinica();
@@ -27,6 +29,7 @@ export const useUsuarioForm = () => {
         searchQuery,
         openEditModal,
         closeModal,
+        openModal,
         setPagination,
         setSearchText,
         handleSearch,
@@ -72,6 +75,15 @@ export const useUsuarioForm = () => {
         setSelectedUsuario(null);
     };
 
+    const handleCreate = async (data: UsuarioFormData) => {
+        const { cpf, ...rest } = data;
+        await createMutation.mutateAsync({
+            cpf: cpf.replace(/\D/g, ""),
+            ...rest,
+        });
+        closeModal();
+    };
+
     const handleCloseModal = () => {
         closeModal();
         setSelectedUsuario(null);
@@ -80,7 +92,7 @@ export const useUsuarioForm = () => {
     return {
         isModalVisible,
         selectedUsuario,
-        isSubmitting,
+        isSubmitting: isSubmitting || createMutation.isPending,
         isDeleting,
         pagination,
         searchText,
@@ -90,10 +102,12 @@ export const useUsuarioForm = () => {
         closeModal: handleCloseModal,
         handleDelete,
         handleVincular,
+        handleCreate,
         setPagination,
         setSearchText,
         setCargoFilter,
         handleSearch,
+        openModal,
         clearSearch,
     };
 };
