@@ -1,26 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Paciente` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE "Paciente";
-
--- CreateTable
-CREATE TABLE "pacientes" (
-    "id" UUID NOT NULL,
-    "nome" TEXT NOT NULL,
-    "cpf" TEXT NOT NULL,
-    "telefone" TEXT,
-    "endereco" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-    "deleted_at" TIMESTAMP(3),
-
-    CONSTRAINT "pacientes_pkey" PRIMARY KEY ("id")
-);
-
 -- CreateTable
 CREATE TABLE "permissoes_policlinica" (
     "id" UUID NOT NULL,
@@ -44,9 +21,6 @@ CREATE TABLE "permissoes_ubs" (
 
     CONSTRAINT "permissoes_ubs_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "pacientes_cpf_key" ON "pacientes"("cpf");
 
 -- CreateIndex
 CREATE INDEX "idx_permissoes_policlinica_paciente_cpf" ON "permissoes_policlinica"("pacienteCpf");
