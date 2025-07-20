@@ -15,6 +15,10 @@ const Policlinicas = lazy(
 );
 const UBS = lazy(() => import("../modules/ubs/pages/UBS"));
 
+const Pacientes = lazy(
+    () => import("../modules/pacientes/pages/Pacientes"),
+);
+
 const SuspenseLoading = () => (
     <LoadingSpinner fullScreen message="Carregando aplicação..." />
 );
@@ -108,16 +112,7 @@ const Router = () => {
                             requiredRoles={["Enfermeiro", "Medico", "ADM"]}
                         >
                             <MainLayout>
-                                <WorkInProgress
-                                    pageName="Pacientes"
-                                    estimatedCompletion="na próxima semana"
-                                    features={[
-                                        "Listagem completa de pacientes",
-                                        "Busca por nome, CPF ou cartão SUS",
-                                        "Filtros por UBS e status",
-                                        "Histórico de atendimentos e gestações",
-                                    ]}
-                                />
+                                <Pacientes />
                             </MainLayout>
                         </ProtectedRoute>
                     }
