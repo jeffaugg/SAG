@@ -38,7 +38,6 @@ export class PacientesController {
     }
 
     @Get()
-    @IsAdm()
     @IsPaginated()
     findAll(@Query() paginacaoDto: PaginacaoDto) {
         return this.pacientesService.findAll(paginacaoDto);
