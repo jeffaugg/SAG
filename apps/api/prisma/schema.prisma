@@ -55,6 +55,7 @@ model UsuarioPoliclinica {
   policlinica Policlinica @relation(fields: [cnes], references: [cnes], onDelete: NoAction)
 
   usuarioId String  @db.Uuid
+  
   usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: NoAction)
 
   createdAt DateTime  @default(now()) @map("created_at")
@@ -79,7 +80,8 @@ model UBS {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  usuarioUbs    UsuarioUbs[]
+  usuarioUbs   UsuarioUbs[]
+  atendimentos Atendimento[]
   PermissoesUbs PermissoesUbs[]
 
   @@map("ubs")

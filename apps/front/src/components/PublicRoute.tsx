@@ -1,7 +1,12 @@
+import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuthStatus } from "../modules/auth/hooks/authHooks";
-import type { PublicRouteProps } from "./@types/components.types";
 import LoadingSpinner from "./LoadingSpinner";
+
+interface PublicRouteProps {
+    children: ReactNode;
+    restrictForAuthUsers?: boolean;
+}
 
 const PublicRoute = ({
     children,

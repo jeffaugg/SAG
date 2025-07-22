@@ -46,10 +46,26 @@ services:
       - db
     networks:
       - sag_network
+    
+  mongo:
+    image: mongo:6.0
+    container_name: mymongo
+    restart: always
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - sag_network
       
 volumes:
   postgres-data:
   redis_data:
+  mongo_data:
 networks:
   sag_network:
     driver: bridge  

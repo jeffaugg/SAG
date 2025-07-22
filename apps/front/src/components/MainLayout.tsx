@@ -1,13 +1,16 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, theme } from "antd";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { NavigationProvider } from "../contexts/NavigationContext";
 import { useCurrentUser, useLogout } from "../modules/auth/hooks/authHooks";
 import routes from "../routes/routes.config";
-import type { MainLayoutProps } from "./@types/components.types";
 import AppBreadcrumb from "./AppBreadcrumb";
 import AppMenu from "./AppMenu";
 import LoadingSpinner from "./LoadingSpinner";
+
+interface MainLayoutProps {
+    children: ReactNode;
+}
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -26,18 +29,17 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     trigger={null}
                     collapsible
                     collapsed={collapsed}
-                    className="flex flex-col"
                     width={250}
                     theme="light"
                 >
-                    <div className="flex items-center justify-center  mb-2">
+                    <div className="flex w-full items-center justify-center">
                         <img
                             src="/img/sag_logo.svg"
                             alt="Logo do Sistema de Apoio a Gestante (SAG)"
                             className="w-2/5 h-auto object-contain p-2"
                         />
                     </div>
-                    <div className="flex overflow-auto">
+                    <div className="overflow-auto">
                         <AppMenu />
                     </div>
                     <div className="border-t border-gray-200 p-4 flex justify-center ">

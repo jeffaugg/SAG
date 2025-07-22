@@ -16,6 +16,36 @@ import {
     type User,
 } from "../schemas/auth.schemas";
 
+interface OrganizacaoItem {
+    id: string;
+    nome: string;
+    cnes: string;
+}
+
+interface OrganizacoesResponse {
+    policlinicas: OrganizacaoItem[];
+    ubs: OrganizacaoItem[];
+}
+
+export const useOrganizacoesByCpf = (cpf: string, enabled: boolean = false) => {
+    return useQuery<OrganizacoesResponse>({
+        queryKey: ["organizacoes", cpf],
+        queryFn: async () => {
+            try {
+                const response = await axiosInstance.get(
+                    API_ENDPOINTS.USUARIOS.GET_ORGANIZATIONS_BY_CPF(cpf),
+                );
+                return response.data;
+            } catch (error) {
+                const appError = handleError(error);
+                throw new Error(appError.message);
+            }
+        },
+        enabled: enabled && !!cpf && cpf.length === 11,
+        staleTime: 5 * 60 * 1000,
+    });
+};
+
 export const useLogin = () => {
     const queryClient = useQueryClient();
 
@@ -24,9 +54,15 @@ export const useLogin = () => {
             try {
                 loginSchema.parse(credentials);
 
+                const loginData = {
+                    cpf: credentials.cpf,
+                    senha: credentials.senha,
+                    organizacaoCNES: credentials.organizacaoCNES,
+                };
+
                 const response = await axiosInstance.post<AuthResponse>(
                     API_ENDPOINTS.AUTH.LOGIN,
-                    credentials,
+                    loginData,
                 );
 
                 return authResponseSchema.parse(response.data);

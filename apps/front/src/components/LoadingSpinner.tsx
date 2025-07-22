@@ -1,7 +1,15 @@
 import { LoadingOutlined } from "@ant-design/icons";
-import { Spin } from "antd";
+import { Spin, type SpinProps } from "antd";
 import React from "react";
-import type { LoadingSpinnerProps } from "./@types/components.types";
+
+interface LoadingSpinnerProps extends SpinProps {
+    fullScreen?: boolean;
+    iconSize?: number;
+    message?: string | null;
+    containerClassName?: string;
+    height?: string;
+    withBackground?: boolean;
+}
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     fullScreen = false,

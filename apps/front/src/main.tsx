@@ -4,9 +4,9 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { AppToastContainer } from "./components";
-import { createQueryClient } from "./hooks/useQuery.ts";
 import Router from "./routes/router.tsx";
 import "./styles/global.css";
+import { createQueryClient } from "./utils/query-client";
 
 const queryClient = createQueryClient();
 

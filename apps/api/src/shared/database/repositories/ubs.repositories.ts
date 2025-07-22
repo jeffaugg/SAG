@@ -78,9 +78,7 @@ export class UbsRepository implements IUbsRepository {
         const items = pivots.map((p) => p.usuario);
         return { items, total };
     }
-<<<<<<< HEAD
-=======
-
+  
     async listPatient(ubsCNES: string, { skip, limit }: PaginacaoDto) {
         const where = { ubsCNES, deletedAt: null };
 
@@ -113,5 +111,5 @@ export class UbsRepository implements IUbsRepository {
             },
         });
     }
->>>>>>> e276df227546389bc2c99946b747667d24918ebe
+
 }
