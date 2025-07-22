@@ -37,7 +37,7 @@ export const UbsMock = (): Prisma.UBSUncheckedCreateInput => {
         createdAt: faker.date.recent(),
         updatedAt: faker.date.recent(),
         deletedAt: null,
-        usuarioUbs: { create: [] }, // verificar mais tarde se é necessário criar usuários vinculados à UBS
+        usuarioUbs: { create: [] },
     };
 };
 

@@ -17,6 +17,8 @@ import { IsPaginated } from 'src/shared/decorators/Ispaginated';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { IUbsService } from './interface/ubs-service.interface';
 import { UBS_SERVICE } from 'src/common/constants';
+import { OrganizacaoInfo } from 'src/shared/types';
+import { organizationInfo } from 'src/shared/decorators/organizationInfo';
 
 @Controller('ubs')
 export class UbsController {
@@ -25,6 +27,7 @@ export class UbsController {
         private readonly ubsService: IUbsService,
     ) {}
 
+<<<<<<< HEAD
     @Post()
     @IsAdm()
     create(@Body() dto: CreateUbsDto) {
@@ -63,6 +66,64 @@ export class UbsController {
         return this.ubsService.createUser(usuarioId, id);
     }
 
+=======
+    @Get('pacientes')
+    @IsPaginated()
+    listPatients(
+        @Query() paginacaoDto: PaginacaoDto,
+        @organizationInfo() orgInfo: OrganizacaoInfo,
+    ) {
+        return this.ubsService.listPatients(orgInfo, paginacaoDto);
+    }
+
+    @Get('pacientes/cpf/:cpf')
+    @IsPaginated()
+    findPatientByCpf(
+        @Param('cpf') pacienteCpf: string,
+        @organizationInfo() orgInfo: OrganizacaoInfo,
+    ) {
+        return this.ubsService.getPatientByCpf(pacienteCpf, orgInfo);
+    }
+
+    @Post()
+    @IsAdm()
+    create(@Body() dto: CreateUbsDto) {
+        return this.ubsService.create(dto);
+    }
+
+    @Get()
+    @IsAdm()
+    @IsPaginated()
+    findAll(@Query() paginacaoDto: PaginacaoDto) {
+        return this.ubsService.findAll(paginacaoDto);
+    }
+
+    @Get(':id')
+    @IsAdm()
+    findOne(@Param('id') id: string) {
+        return this.ubsService.findById(id);
+    }
+
+    @Put(':id')
+    @IsAdm()
+    update(@Param('id') id: string, @Body() dto: UpdateUbsDto) {
+        return this.ubsService.update(id, dto);
+    }
+
+    @Delete(':id')
+    @IsAdm()
+    @HttpCode(204)
+    remove(@Param('id') id: string) {
+        return this.ubsService.remove(id);
+    }
+
+    @Post(':id/usuarios/:usuarioId')
+    @IsAdm()
+    createUser(@Param('id') id: string, @Param('usuarioId') usuarioId: string) {
+        return this.ubsService.createUser(usuarioId, id);
+    }
+
+>>>>>>> e276df227546389bc2c99946b747667d24918ebe
     @Get(':cnes/usuarios')
     @IsAdm()
     @IsPaginated()

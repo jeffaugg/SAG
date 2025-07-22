@@ -78,4 +78,40 @@ export class UbsRepository implements IUbsRepository {
         const items = pivots.map((p) => p.usuario);
         return { items, total };
     }
+<<<<<<< HEAD
+=======
+
+    async listPatient(ubsCNES: string, { skip, limit }: PaginacaoDto) {
+        const where = { ubsCNES, deletedAt: null };
+
+        const [total, pivots] = await this.prisma.$transaction([
+            this.prisma.permissoesUbs.count({ where }),
+            this.prisma.permissoesUbs.findMany({
+                where,
+                include: { paciente: true },
+                skip,
+                take: limit,
+                orderBy: { paciente: { nome: 'asc' } },
+            }),
+        ]);
+        const items = pivots.map((p) => p.paciente);
+
+        return { items, total };
+    }
+
+    async getPatientByCpf(pacienteCpf: string, ubsCNES: string) {
+        return this.prisma.permissoesUbs.findUniqueOrThrow({
+            where: {
+                pacienteCpf_ubsCNES: {
+                    pacienteCpf,
+                    ubsCNES,
+                },
+                paciente: { deletedAt: null },
+            },
+            include: {
+                paciente: true,
+            },
+        });
+    }
+>>>>>>> e276df227546389bc2c99946b747667d24918ebe
 }
