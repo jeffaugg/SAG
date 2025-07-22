@@ -143,7 +143,6 @@ model PermissoesPoliclinica {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  gestacoes Gestacao[]
   @@unique([pacienteCpf, policlinicaCNES])
   @@index([pacienteCpf], name: "idx_permissoes_policlinica_paciente_cpf")
   @@index([policlinicaCNES], name: "idx_permissoes_policlinica_policlinica_cnes")
