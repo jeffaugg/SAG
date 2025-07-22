@@ -9,6 +9,7 @@ import { PacientesModule } from './modules/pacientes/pacientes.module';
 import { GestacoesModule } from './modules/gestacoes/gestacoes.module';
 import { UbsModule } from './modules/ubs/ubs.module';
 import { ChatGateway } from './modules/websocket/chat/chat.gateway';
+import { AtendimentosModule } from './modules/atendimentos/atendimentos.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { config } from 'src/shared/config/environments';
 import { MensagensModule } from './modules/mensagens/mensagens.module';
@@ -26,6 +27,7 @@ import { MensagensModule } from './modules/mensagens/mensagens.module';
     MensagensModule,
     GestacoesModule,
     UbsModule,
+    AtendimentosModule,
   ],
   controllers: [],
   providers: [

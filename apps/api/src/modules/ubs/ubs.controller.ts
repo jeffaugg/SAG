@@ -60,7 +60,7 @@ export class UbsController {
 
     @Get(':id')
     @IsAdm()
-    findOne(@Param('id') id: string) {
+    findById(@Param('id') id: string) {
         return this.ubsService.findById(id);
     }
 
