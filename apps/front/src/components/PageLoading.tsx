@@ -1,6 +1,14 @@
 import React from "react";
-import type { PageLoadingProps } from "./@types/components.types";
 import LoadingSpinner from "./LoadingSpinner";
+
+interface PageLoadingProps {
+    title?: string;
+    iconSize?: number;
+    message?: string | null;
+    containerClassName?: string;
+    height?: string;
+    withBackground?: boolean;
+}
 
 const PageLoading: React.FC<PageLoadingProps> = ({
     message = "Carregando dados...",

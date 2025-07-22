@@ -2,7 +2,11 @@ import { Alert, Button, Result } from "antd";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MainLayout } from "../components";
-import type { LocationState } from "../components/@types/components.types";
+
+interface LocationState {
+    from?: string;
+    message?: string;
+}
 
 const AccessDenied: React.FC = () => {
     const location = useLocation();

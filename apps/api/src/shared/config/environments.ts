@@ -15,9 +15,15 @@ export class EnvironmentVariables {
     @IsString()
     DATABASE_URL: string;
 
+
+    @Expose()
+    @IsString()
+    MONGO_URI: string;
+  
     @Expose()
     @IsString()
     JWT_SECRET: string;
+
 
     @Expose()
     @IsNumber()

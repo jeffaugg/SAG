@@ -4,7 +4,11 @@ export const API_ENDPOINTS = {
         REGISTER: "/auth/register",
     },
     USUARIOS: {
+        ROOT: "/usuarios",
+        BY_ID: (id: string) => `/usuarios/${id}`,
         ME: "/usuarios/me",
+        GET_ORGANIZATIONS_BY_CPF: (cpf: string) =>
+            `/usuarios/${cpf}/organizacao`,
     },
     GESTACOES: {
         ROOT: "/gestacoes",

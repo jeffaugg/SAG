@@ -52,7 +52,7 @@ export const validateCpfFormat = (value?: string): string | undefined => {
     return undefined;
 };
 
-export const cpfValidator = (_: any, value: string): Promise<void> => {
+export const cpfValidator = (_: unknown, value: string): Promise<void> => {
     const errorMessage = validateCpfFormat(value);
 
     if (errorMessage) {

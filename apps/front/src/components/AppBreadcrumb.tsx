@@ -1,6 +1,6 @@
 import { Breadcrumb, Space } from "antd";
 import { Link } from "react-router-dom";
-import { useNavigation } from "../contexts/NavigationContext";
+import { useNavigation } from "../hooks/useNavigation";
 
 const AppBreadcrumb = () => {
     const { breadcrumbs } = useNavigation();

@@ -1,8 +1,13 @@
+import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useErrorHandler } from "../hooks/useErrorHandler";
 import { useAuthStatus, useCurrentUser } from "../modules/auth/hooks/authHooks";
-import type { ProtectedRouteProps } from "./@types/components.types";
+import { useErrorHandler } from "../utils/useErrorHandler";
 import LoadingSpinner from "./LoadingSpinner";
+
+interface ProtectedRouteProps {
+    children: ReactNode;
+    requiredRoles?: Array<"Enfermeiro" | "Medico" | "ADM">;
+}
 
 const ProtectedRoute = ({ children, requiredRoles }: ProtectedRouteProps) => {
     const {
