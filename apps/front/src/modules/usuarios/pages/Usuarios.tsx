@@ -1,6 +1,7 @@
 import {
     DeleteOutlined,
     LinkOutlined,
+    PlusOutlined,
     SearchOutlined,
 } from "@ant-design/icons";
 import {
@@ -18,7 +19,7 @@ import {
 } from "antd";
 import { useEffect, useMemo } from "react";
 import { formatCpf } from "../../../utils/formatters";
-import { VincularUsuarioModal } from "../components";
+import { UsuarioModal, VincularUsuarioModal } from "../components";
 import { useUsuarioForm } from "../hooks/useUsuarioForm";
 import { useUsuarios } from "../hooks/usuariosHooks";
 import type { Usuario } from "../types";
@@ -39,11 +40,13 @@ const Usuarios: React.FC = () => {
         closeModal,
         handleDelete,
         handleVincular,
+        handleCreate,
         setPagination,
         setSearchText,
         setCargoFilter,
         handleSearch,
         clearSearch,
+        openModal,
     } = useUsuarioForm();
 
     const {
@@ -128,7 +131,6 @@ const Usuarios: React.FC = () => {
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
                 <Title level={4}>Usuários</Title>
-
                 <Space>
                     <Input
                         placeholder="Buscar por nome, CPF ou cargo..."
@@ -156,6 +158,13 @@ const Usuarios: React.FC = () => {
                         icon={<SearchOutlined />}
                         onClick={handleSearch}
                     />
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={openModal}
+                    >
+                        Cadastrar Usuário
+                    </Button>
                 </Space>
             </div>
             {showEmptyState ? (
@@ -202,10 +211,17 @@ const Usuarios: React.FC = () => {
                 </>
             )}
             <VincularUsuarioModal
-                visible={isModalVisible}
+                visible={isModalVisible && !!selectedUsuario}
                 usuarioId={selectedUsuario?.id || null}
                 onCancel={closeModal}
                 onSubmit={handleVincular}
+                loading={isSubmitting}
+            />
+            <UsuarioModal
+                visible={isModalVisible && !selectedUsuario}
+                editingId={null}
+                onCancel={closeModal}
+                onSubmit={handleCreate}
                 loading={isSubmitting}
             />
         </div>

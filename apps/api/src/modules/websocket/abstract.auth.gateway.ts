@@ -28,8 +28,11 @@ export abstract class AbstractAuthenticatedGateway implements OnGatewayInit {
                 const token = rawToken.startsWith('Bearer ')
                     ? rawToken.slice(7)
                     : rawToken;
-                const payload = this.jwtService.verify<{ id: string }>(token);
-                (socket as AuthenticatedSocket).userId = payload.id;
+                const payload = this.jwtService.verify<{
+                    userId: string;
+                    organizacao: { tipo: string; cnes: string };
+                }>(token);
+                (socket as AuthenticatedSocket).userId = payload.userId;
                 next();
             } catch (err) {
                 return next(new Error('Token inválido: ' + err));
