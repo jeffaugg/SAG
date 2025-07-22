@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Paciente, PacienteFormData, PacientePaginatedResponse, PacienteSearchParams } from "../types";
 import axiosInstance from "../../../api/axiosConfig";
 import { API_ENDPOINTS } from "../../../api/endpoints";

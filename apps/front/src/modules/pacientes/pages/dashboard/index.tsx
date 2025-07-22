@@ -1,12 +1,13 @@
 import { Button, Input, Popconfirm, Space, Table, Typography } from "antd";
 import { useEffect, useMemo } from "react";
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons";
-import type { Paciente } from "../types";
-import { usePacienteForm } from "../hooks/usePacienteForm";
-import { usePaciente } from "../hooks/pacienteHooks";
-import { handleError } from "../../../utils/error-handler";
-import ToastService from "../../../utils/toast-service";
-import PacienteModal from "../components/PacienteModal";
+import { usePacienteForm } from "../../hooks/usePacienteForm";
+import { usePaciente } from "../../hooks/pacienteHooks";
+import { handleError } from "../../../../utils/error-handler";
+import ToastService from "../../../../utils/toast-service";
+import type { Paciente } from "../../types";
+import PacienteModal from "../../modals/PacienteModal";
+
 const { Title } = Typography;
 
 const Paciente : React.FC = () => {

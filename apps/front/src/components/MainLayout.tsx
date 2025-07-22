@@ -99,7 +99,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        <div className="min-h-[calc(100vh-200px)]">
+                        <div className="h-[calc(100vh-200px)]">
                             {children}
                         </div>
                     </Content>

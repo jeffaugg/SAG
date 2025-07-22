@@ -15,8 +15,12 @@ const Policlinicas = lazy(
 );
 const UBS = lazy(() => import("../modules/ubs/pages/UBS"));
 
-const Pacientes = lazy(
-    () => import("../modules/pacientes/pages/Pacientes"),
+const Dashboard = lazy(
+    () => import("../modules/pacientes/pages/dashboard"),
+);
+
+const PacienteDetails = lazy(
+    () => import("../modules/pacientes/pages/pacienteDetails"),
 );
 
 const SuspenseLoading = () => (
@@ -112,7 +116,7 @@ const Router = () => {
                             requiredRoles={["Enfermeiro", "Medico", "ADM"]}
                         >
                             <MainLayout>
-                                <Pacientes />
+                                <Dashboard />
                             </MainLayout>
                         </ProtectedRoute>
                     }
@@ -120,12 +124,11 @@ const Router = () => {
                 <Route
                     path="/pacientes/cadastrar"
                     element={
-                        <ProtectedRoute requiredRoles={["Enfermeiro", "ADM"]}>
+                        <ProtectedRoute
+                            requiredRoles={["Enfermeiro", "Medico", "ADM"]}
+                        >
                             <MainLayout>
-                                <WorkInProgress
-                                    pageName="Cadastro de Pacientes"
-                                    estimatedCompletion="na próxima semana"
-                                />
+                                <PacienteDetails />
                             </MainLayout>
                         </ProtectedRoute>
                     }
