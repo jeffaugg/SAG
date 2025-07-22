@@ -7,6 +7,7 @@ interface BaseItem {
 export const useSearchForm = <T extends BaseItem>() => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingItem, setEditingItem] = useState<T | null>(null);
+    const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
 
     const [pagination, setPagination] = useState({
         current: 1,

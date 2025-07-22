@@ -74,7 +74,7 @@ export const useCreateUsuario = () => {
     return useMutation({
         mutationFn: async (data: UsuarioFormData): Promise<Usuario> => {
             const response = await axiosInstance.post(
-                API_ENDPOINTS.USUARIOS.ROOT,
+                API_ENDPOINTS.AUTH.REGISTER,
                 data,
             );
             return response.data;
