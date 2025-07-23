@@ -6,17 +6,22 @@ export class PaginacaoDto {
     @IsOptional()
     @Type(() => Number)
     @Min(1)
-    page = 1;
+    page: number = 1;
 
     @IsOptional()
     @Type(() => Number)
     @Min(1)
-    limit = 10;
+    limit: number = 10;
 
     @ApiHideProperty()
     @Expose()
-    @Transform(({ obj }: { obj: PaginacaoDto }) => (obj.page - 1) * obj.limit, {
-        toClassOnly: true,
-    })
-    skip: number;
+    @Transform(
+        ({ obj }: { obj: PaginacaoDto }) => {
+            const page = obj.page ?? 1;
+            const limit = obj.limit ?? 10;
+            return (page - 1) * limit;
+        },
+        { toClassOnly: true },
+    )
+    skip!: number;
 }

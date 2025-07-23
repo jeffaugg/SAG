@@ -1,3 +1,4 @@
+
 import {
     DashboardOutlined,
     HomeOutlined,
@@ -44,24 +45,6 @@ export const routes: RouteDefinition[] = [
         path: "/pacientes",
         label: "Pacientes",
         icon: <TeamOutlined />,
-        children: [
-            {
-                path: "/pacientes",
-                label: "Todos Pacientes",
-                requiredRoles: ALL_ROLES,
-            },
-            {
-                path: "/pacientes/cadastrar",
-                label: "Cadastrar Paciente",
-                requiredRoles: [ROLES.ENFERMEIRO, ROLES.ADMIN],
-            },
-            {
-                path: "/pacientes/:id",
-                label: "Detalhes do Paciente",
-                requiredRoles: ALL_ROLES,
-                isVisible: false,
-            },
-        ],
     },
     {
         path: "/",

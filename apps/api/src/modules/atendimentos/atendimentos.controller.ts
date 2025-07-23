@@ -54,4 +54,16 @@ export class AtendimentosController {
     remove(@Param('id') id: string) {
         return this.atendimentosService.remove(id);
     }
+
+    @Get('gestacao/:gestacaoId')
+    @IsPaginated()
+    findByGestacaoId(
+        @Param('gestacaoId') gestacaoId: string,
+        @Query() paginacaoDto: PaginacaoDto,
+    ) {
+        return this.atendimentosService.findByGestacaoId(
+            gestacaoId,
+            paginacaoDto,
+        );
+    }
 }

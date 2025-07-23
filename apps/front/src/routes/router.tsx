@@ -20,7 +20,7 @@ const Dashboard = lazy(
 );
 
 const PacienteDetails = lazy(
-    () => import("../modules/pacientes/pages/pacienteDetails"),
+    () => import("../modules/pacientes/pages/pacienteDetails/wrapper"),
 );
 
 const SuspenseLoading = () => (
@@ -121,34 +121,16 @@ const Router = () => {
                         </ProtectedRoute>
                     }
                 />
-                <Route
-                    path="/pacientes/cadastrar"
-                    element={
-                        <ProtectedRoute
-                            requiredRoles={["Enfermeiro", "Medico", "ADM"]}
-                        >
-                            <MainLayout>
-                                <PacienteDetails />
-                            </MainLayout>
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
+               <Route
                     path="/pacientes/:id"
                     element={
-                        <ProtectedRoute
-                            requiredRoles={["Enfermeiro", "Medico", "ADM"]}
-                        >
-                            <MainLayout>
-                                <WorkInProgress
-                                    pageName="Detalhes do Paciente"
-                                    estimatedCompletion="na próxima semana"
-                                />
-                            </MainLayout>
+                        <ProtectedRoute requiredRoles={["Enfermeiro", "Medico", "ADM"]}>
+                        <MainLayout>
+                            <PacienteDetails />
+                        </MainLayout>
                         </ProtectedRoute>
                     }
                 />
-
                 <Route
                     path="/ubs"
                     element={

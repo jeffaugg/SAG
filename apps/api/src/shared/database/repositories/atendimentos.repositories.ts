@@ -65,6 +65,27 @@ export class AtendimentosRepository implements IAtendimentoRepository {
         });
     }
 
+    async findByGestacaoId(gestacaoId: string, { skip, limit }: PaginacaoDto) {
+        const where = { gestacaoId, deletedAt: null };
+
+        const [total, items] = await this.prisma.$transaction([
+            this.prisma.atendimento.count({ where }),
+            this.prisma.atendimento.findMany({
+                where,
+                include: {
+                    medico: true,
+                    gestacao: true,
+                    unidade: true,
+                },
+                skip,
+                take: limit,
+                orderBy: { createdAt: 'asc' },
+            }),
+        ]);
+
+        return { items, total };
+    }
+
     async delete(id: string): Promise<void> {
         const atendimento = await this.prisma.atendimento.findFirst({
             where: { id, deletedAt: null },

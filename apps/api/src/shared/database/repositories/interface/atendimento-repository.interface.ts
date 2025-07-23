@@ -11,4 +11,8 @@ export interface IAtendimentoRepository {
     findById(id: string): Promise<Atendimento>;
     update(id: string, dto: UpdateAtendimentoDto): Promise<Atendimento>;
     delete(id: string): Promise<void>;
+    findByGestacaoId(
+        gestacaoId: string,
+        options: PaginacaoDto,
+    ): Promise<{ items: Atendimento[]; total: number }>;
 }

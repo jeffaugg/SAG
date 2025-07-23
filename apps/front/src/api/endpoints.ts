@@ -33,4 +33,9 @@ export const API_ENDPOINTS = {
         ADD_USUARIO: (id: string, usuarioId: string) =>
             `/ubs/${id}/usuarios/${usuarioId}`,
     },
+    ATENDIMENTOS: {
+        ROOT: "/atendimentos",
+        BY_ID: (id: string) => `/atendimentos/${id}`,
+        GESTACAO: (gestacaoId: string) => `/atendimentos/gestacao/${gestacaoId}`,
+    }
 };

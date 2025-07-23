@@ -2,10 +2,22 @@ import { Typography } from "antd";
 import { Tag } from "antd";
 const { Title } = Typography;
 
-const GestacaoInfoCard : React.FC = () => {
+interface GestacaoInfoCardProps {
+    numero: number;
+    status: string;
+    inicio: string;
+    fim: string;
+    onClick: () => void;
+}
+
+
+const GestacaoInfoCard : React.FC<GestacaoInfoCardProps> = ({ numero, status, inicio, fim, onClick }) => {
 
     return (
-        <div className="p-5 border-[1px] border-neutral-400/20 flex flex-col w-full gap-2.5 rounded-[4px]">
+        <div className="p-5 border-[1px] border-neutral-400/20 flex flex-col w-full gap-2.5 rounded-[4px]"
+            onClick={onClick}
+            style={{ cursor: "pointer" }}
+        >
            <div className="flex w-full justify-between">
             <Title
                 level={5}
@@ -19,10 +31,10 @@ const GestacaoInfoCard : React.FC = () => {
                 }}
                 className="!m-0 text-black"
             >
-                3ª Gestação
+                {numero}ª Gestação
             </Title>
 
-            <Tag className="!m-0" color="green">Em andamento</Tag>
+            <Tag className="!m-0" color="green">{status}</Tag>
            </div>
 
            <div className="flex w-full justify-between items-center">
@@ -39,7 +51,7 @@ const GestacaoInfoCard : React.FC = () => {
                         color: "#D9D9D9",
                     }}
                 >
-                    Início: 05/2024 
+                    Início: {inicio} 
                 </Title>
 
                 <Title
@@ -55,7 +67,7 @@ const GestacaoInfoCard : React.FC = () => {
                         color: "#D9D9D9",
                     }}
                 >
-                    Fim: 05/2024 
+                    Fim: {fim}
                 </Title>
            </div>
         </div>

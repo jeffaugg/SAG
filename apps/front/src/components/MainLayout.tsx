@@ -56,7 +56,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         />
                     </div>
                 </Sider>
-                <Layout>
+                <Layout className="!bg-grey-100">
                     <Header
                         style={{
                             padding: 0,

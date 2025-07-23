@@ -9,7 +9,6 @@ import {
     Query,
     Put,
 } from '@nestjs/common';
-import { IsAdm } from 'src/shared/decorators/isAdm';
 import { IsPaginated } from 'src/shared/decorators/Ispaginated';
 import { PACIENTES_SERVICE, GESTACOES_SERVICE } from 'src/common/constants';
 import { CreatePacienteDto } from './dto/create-paciente.dto';
@@ -82,12 +81,7 @@ export class PacientesController {
     }
 
     @Get(':id/gestacoes')
-    @IsAdm()
-    @IsPaginated()
-    findByPaciente(
-        @Param('id') id: string,
-        @Query() paginacaoDto: PaginacaoDto,
-    ) {
-        return this.gestacaoService.findByPaciente(id, paginacaoDto);
+    findByPaciente(@Param('id') id: string) {
+        return this.gestacaoService.findByPaciente(id);
     }
 }

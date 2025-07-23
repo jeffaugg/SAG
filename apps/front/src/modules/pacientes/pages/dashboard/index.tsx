@@ -7,10 +7,12 @@ import { handleError } from "../../../../utils/error-handler";
 import ToastService from "../../../../utils/toast-service";
 import type { Paciente } from "../../types";
 import PacienteModal from "../../modals/PacienteModal";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 const Paciente : React.FC = () => {
+    const navigate = useNavigate();
     const {
         pagination,
         searchText,
@@ -148,6 +150,9 @@ const Paciente : React.FC = () => {
                         onShowSizeChange: (_, size) =>
                             setPagination({ current: 1, pageSize: size }),
                 }}
+                onRow={(record) => ({
+                    onClick: () => navigate(`/pacientes/${record.id}`),
+                })}
             />
         )}
 

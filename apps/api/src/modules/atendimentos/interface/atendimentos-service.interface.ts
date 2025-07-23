@@ -11,4 +11,8 @@ export interface IAtendimentosService {
     findById(id: string): Promise<Atendimento>;
     update(id: string, dto: UpdateAtendimentoDto): Promise<Atendimento>;
     remove(id: string): Promise<void>;
+    findByGestacaoId(
+        gestacaoId: string,
+        options: PaginacaoDto,
+    ): Promise<{ items: Atendimento[]; total: number }>;
 }
