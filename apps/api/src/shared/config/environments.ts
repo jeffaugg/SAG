@@ -15,15 +15,13 @@ export class EnvironmentVariables {
     @IsString()
     DATABASE_URL: string;
 
-
     @Expose()
     @IsString()
     MONGO_URI: string;
-  
+
     @Expose()
     @IsString()
     JWT_SECRET: string;
-
 
     @Expose()
     @IsNumber()
@@ -36,6 +34,26 @@ export class EnvironmentVariables {
     @Expose()
     @IsString()
     REDIS_PASSWORD: string;
+
+    @Expose()
+    @IsString()
+    MINIO_ROOT_USER: string;
+
+    @Expose()
+    @IsString()
+    MINIO_ROOT_PASSWORD: string;
+
+    @Expose()
+    @IsString()
+    S3_REGION: string;
+
+    @Expose()
+    @IsString()
+    S3_ENDPOINT: string;
+
+    @Expose()
+    @IsString()
+    S3_FORCE_PATH_STYLE: string;
 }
 
 const validateEnvironmentsVariables = (): EnvironmentVariables => {

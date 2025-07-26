@@ -10,14 +10,23 @@ import { Atendimento } from '@prisma/client';
 export class AtendimentosRepository implements IAtendimentoRepository {
     constructor(private readonly prisma: PrismaService) {}
 
-    async create(dto: CreateAtendimentoDto): Promise<Atendimento> {
+    async create(
+        dto: CreateAtendimentoDto & {
+            medicoId: string;
+            ubsId: string | null;
+            policlinicaId: string | null;
+        },
+        files: string[],
+    ): Promise<Atendimento> {
         return this.prisma.atendimento.create({
             data: {
-                descricao: dto.descricao,
-                unidade: { connect: { id: dto.unidadeId } },
-                medico: { connect: { id: dto.medicoId } },
-                gestacao: { connect: { id: dto.gestacaoId } },
-                unidadeType: dto.unidadeType,
+                ...dto,
+                AtendimentoArquivo: {
+                    create: files.map((file) => ({ arquivoUrl: file })),
+                },
+            },
+            include: {
+                AtendimentoArquivo: true,
             },
         });
     }
@@ -29,14 +38,16 @@ export class AtendimentosRepository implements IAtendimentoRepository {
             this.prisma.atendimento.count({ where }),
             this.prisma.atendimento.findMany({
                 where,
-                include: {
-                    medico: true,
-                    gestacao: true,
-                    unidade: true,
-                },
                 skip,
                 take: limit,
                 orderBy: { createdAt: 'asc' },
+                include: {
+                    medico: true,
+                    gestacao: true,
+                    policlinica: true,
+                    ubs: true,
+                    AtendimentoArquivo: true,
+                },
             }),
         ]);
 
@@ -46,7 +57,13 @@ export class AtendimentosRepository implements IAtendimentoRepository {
     async findById(id: string): Promise<Atendimento> {
         const atendimento = await this.prisma.atendimento.findFirst({
             where: { id, deletedAt: null },
-            include: { medico: true, gestacao: true, unidade: true },
+            include: {
+                medico: true,
+                gestacao: true,
+                policlinica: true,
+                ubs: true,
+                AtendimentoArquivo: true,
+            },
         });
         if (!atendimento)
             throw new NotFoundException('Atendimento não encontrado');
@@ -54,7 +71,7 @@ export class AtendimentosRepository implements IAtendimentoRepository {
     }
 
     async update(id: string, data: UpdateAtendimentoDto): Promise<Atendimento> {
-        const atendimento = await this.prisma.atendimento.findFirst({
+        const atendimento = await this.prisma.atendimento.findUnique({
             where: { id, deletedAt: null },
         });
         if (!atendimento)
@@ -66,7 +83,7 @@ export class AtendimentosRepository implements IAtendimentoRepository {
     }
 
     async delete(id: string): Promise<void> {
-        const atendimento = await this.prisma.atendimento.findFirst({
+        const atendimento = await this.prisma.atendimento.findUnique({
             where: { id, deletedAt: null },
         });
         if (!atendimento)

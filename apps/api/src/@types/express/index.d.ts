@@ -8,6 +8,11 @@ declare global {
             userId: string;
             /** Informações da UBS/Policlinica que o usuário está logado */
             organizacaoInfo?: OrganizacaoInfo;
+            /** Contexto do atendimento, incluindo IDs de UBS e Policlinica */
+            contextoAtendimento?: {
+                ubsId: null | { id: string };
+                policlinicaId: null | { id: string };
+            };
         }
     }
 }
