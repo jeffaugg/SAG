@@ -44,6 +44,7 @@ model Policlinica {
 
   usuarioPoliclinicas   UsuarioPoliclinica[]
   PermissoesPoliclinica PermissoesPoliclinica[]
+  Atendimento Atendimento[]
 
   @@map("policlinica")
 }
@@ -189,15 +190,12 @@ model Gestacao {
   @@map("gestacoes")
 }
 
-enum UnidadeType {
-  UBS
-  POLICLINICA
-}
+
 
 model Atendimento {
   id          String      @id @default(uuid()) @db.Uuid
-  unidadeId   String      @db.Uuid
-  unidadeType UnidadeType
+  ubsId      String?     @db.Uuid
+  policlinicaId String?  @db.Uuid
   medicoId    String      @db.Uuid
   gestacaoId  String      @db.Uuid
   descricao   String
@@ -205,13 +203,27 @@ model Atendimento {
   updatedAt   DateTime    @updatedAt @map("updated_at")
   deletedAt   DateTime?   @map("deleted_at")
 
-  unidade  UBS      @relation(fields: [unidadeId], references: [id], onDelete: NoAction)
+  AtendimentoArquivo AtendimentoArquivo[]
+
   medico   Usuario  @relation(fields: [medicoId], references: [id], onDelete: NoAction)
   gestacao Gestacao @relation(fields: [gestacaoId], references: [id], onDelete: NoAction)
+  ubs              UBS?          @relation(fields: [ubsId], references: [id])
+  policlinica      Policlinica?  @relation(fields: [policlinicaId], references: [id])
 
-  @@index([unidadeType, unidadeId])
   @@index([medicoId])
   @@index([gestacaoId])
-
   @@map("atendimentos")
+}
+
+
+model AtendimentoArquivo {
+  id            String      @id @default(uuid()) @db.Uuid
+  atendimentoId String      @db.Uuid
+  arquivoUrl    String
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  atendimento   Atendimento @relation(fields: [atendimentoId], references: [id], onDelete: Cascade)
+
+  @@map("atendimentos_arquivos")
+  @@index([atendimentoId], name: "idx_arquivo_atendimento_id")
 }
