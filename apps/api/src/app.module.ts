@@ -13,29 +13,31 @@ import { AtendimentosModule } from './modules/atendimentos/atendimentos.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { config } from 'src/shared/config/environments';
 import { MensagensModule } from './modules/mensagens/mensagens.module';
+import { S3Module } from './shared/upload/s3.module';
 
 @Global()
 @Module({
-  imports: [
-    UsuariosModule,
-    DatabaseModule,
-    AuthModule,
-    PoliclinicasModule,
-    SessionModule,
-    PacientesModule,
-    MongooseModule.forRoot(config.MONGO_URI),
-    MensagensModule,
-    GestacoesModule,
-    UbsModule,
-    AtendimentosModule,
-  ],
-  controllers: [],
-  providers: [
-    {
-      provide: 'APP_GUARD',
-      useClass: AuthGuard,
-    },
-    ChatGateway,
-  ],
+    imports: [
+        UsuariosModule,
+        DatabaseModule,
+        AuthModule,
+        PoliclinicasModule,
+        SessionModule,
+        PacientesModule,
+        MongooseModule.forRoot(config.MONGO_URI),
+        MensagensModule,
+        GestacoesModule,
+        UbsModule,
+        AtendimentosModule,
+        S3Module,
+    ],
+    controllers: [],
+    providers: [
+        {
+            provide: 'APP_GUARD',
+            useClass: AuthGuard,
+        },
+        ChatGateway,
+    ],
 })
 export class AppModule {}

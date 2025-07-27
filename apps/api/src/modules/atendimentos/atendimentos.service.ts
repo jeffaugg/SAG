@@ -3,27 +3,41 @@ import { CreateAtendimentoDto } from './dto/create-atendimento.dto';
 import { UpdateAtendimentoDto } from './dto/update-atendimento.dto';
 import { catchError } from 'src/shared/erro/catch-errors';
 import {
-    ConflictException,
     InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
 import { IAtendimentoRepository } from 'src/shared/database/repositories/interface/atendimento-repository.interface';
 import { IAtendimentosService } from './interface/atendimentos-service.interface';
-import { ATENDIMENTOS_REPOSITORY } from 'src/common/constants';
+import { ATENDIMENTOS_REPOSITORY, S3_SERVICE } from 'src/common/constants';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
+import { S3Service } from 'src/shared/upload/s3.service';
 
 @Injectable()
 export class AtendimentosService implements IAtendimentosService {
     constructor(
         @Inject(ATENDIMENTOS_REPOSITORY)
         private readonly atendimentoRepository: IAtendimentoRepository,
+        @Inject(S3_SERVICE)
+        private readonly s3Service: S3Service,
     ) {}
-    async create(dto: CreateAtendimentoDto): Promise<any> {
-        const [erro, atendimento] = await catchError(
-            this.atendimentoRepository.create(dto),
+    async create(
+        dto: CreateAtendimentoDto & {
+            medicoId: string;
+            ubsId: string | null;
+            policlinicaId: string | null;
+        },
+        files: Express.Multer.File[],
+    ): Promise<any> {
+        const urls = await Promise.all(
+            files ? files.map((file) => this.s3Service.uploadFile(file)) : [],
         );
-        if (erro) throw new ConflictException('atendimento, já cadastrado');
-        return atendimento;
+
+        const [erro, atendimento] = await catchError(
+            this.atendimentoRepository.create(dto, urls),
+        );
+        if (erro) console.error('Erro ao criar atendimento:', erro);
+
+        return { ...atendimento, urls };
     }
 
     findAll(options: PaginacaoDto) {

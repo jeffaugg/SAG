@@ -4,15 +4,15 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { CreateGestacaoDto } from './dto/create-gestacao.dto';
-import { UpdateGestacaoDto } from './dto/update-gestacao.dto';
-import { catchError } from 'src/shared/erro/catch-errors';
+import { Gestacao } from '@prisma/client';
+import { GESTACOES_REPOSITORY } from 'src/common/constants';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { handlePrismaError } from 'src/common/utils/prisma-error.util';
-import { GESTACOES_REPOSITORY } from 'src/common/constants';
 import { IGestacoesRepository } from 'src/shared/database/repositories/interface/gestacoes-repository.interface';
+import { catchError } from 'src/shared/erro/catch-errors';
+import { CreateGestacaoDto } from './dto/create-gestacao.dto';
+import { UpdateGestacaoDto } from './dto/update-gestacao.dto';
 import { IGestacaoService } from './interface/gestacoes-service.interface';
-import { Gestacao } from '@prisma/client';
 
 @Injectable()
 export class GestacaoService implements IGestacaoService {

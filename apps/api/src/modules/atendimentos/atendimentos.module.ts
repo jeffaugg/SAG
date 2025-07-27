@@ -6,8 +6,10 @@ import {
     ATENDIMENTOS_SERVICE,
     ATENDIMENTOS_REPOSITORY,
 } from 'src/common/constants';
+import { S3Module } from 'src/shared/upload/s3.module';
 
 @Module({
+    imports: [S3Module],
     controllers: [AtendimentosController],
     providers: [
         { provide: ATENDIMENTOS_SERVICE, useClass: AtendimentosService },
