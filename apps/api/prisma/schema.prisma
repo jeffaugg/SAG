@@ -23,11 +23,207 @@ model Usuario {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
+  usuarioPoliclinicas UsuarioPoliclinica[]
+  usuarioUbs          UsuarioUbs[]
+  atendimentos        Atendimento[]
+
   @@map("usuarios")
+}
+
+model Policlinica {
+  id          String @id @default(uuid()) @db.Uuid
+  contato     String
+  nome        String
+  localizacao String
+
+  cnes String @unique
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  usuarioPoliclinicas   UsuarioPoliclinica[]
+  PermissoesPoliclinica PermissoesPoliclinica[]
+  Atendimento Atendimento[]
+
+  @@map("policlinica")
+}
+
+model UsuarioPoliclinica {
+  id String @id @default(uuid()) @db.Uuid
+
+  cnes        String
+  policlinica Policlinica @relation(fields: [cnes], references: [cnes], onDelete: NoAction)
+
+  usuarioId String  @db.Uuid
+  
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: NoAction)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([cnes, usuarioId])
+  @@index([cnes], name: "idx_policlinica_cnes")
+  @@index([usuarioId], name: "idx_policlinica_usuario_id")
+  @@map("usuarios_policlinica")
+}
+
+model UBS {
+  id          String @id @default(uuid()) @db.Uuid
+  contato     String
+  nome        String
+  localizacao String
+
+  cnes String @unique
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  usuarioUbs   UsuarioUbs[]
+  atendimentos Atendimento[]
+  PermissoesUbs PermissoesUbs[]
+
+  @@map("ubs")
+}
+
+model UsuarioUbs {
+  id String @id @default(uuid()) @db.Uuid
+
+  cnes String
+  ubs  UBS    @relation(fields: [cnes], references: [cnes], onDelete: NoAction)
+
+  usuarioId String  @db.Uuid
+  usuario   Usuario @relation(fields: [usuarioId], references: [id], onDelete: NoAction)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([cnes, usuarioId])
+  @@index([cnes], name: "idx_ubs_cnes")
+  @@index([usuarioId], name: "idx_ubs_usuario_id")
+  @@map("usuarios_ubs")
 }
 
 enum Cargo {
   Enfermeiro
   Medico
   ADM
+}
+
+model Paciente {
+  id String @id @default(uuid()) @db.Uuid
+
+  nome     String
+  cpf      String  @unique
+  telefone String?
+  endereco String?
+
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+  deletedAt             DateTime?               @map("deleted_at")
+  PermissoesPoliclinica PermissoesPoliclinica[]
+  PermissoesUbs         PermissoesUbs[]
+  gestacoes             Gestacao[]
+
+  @@map("pacientes")
+}
+
+model PermissoesPoliclinica {
+  id String @id @default(uuid()) @db.Uuid
+
+  pacienteCpf String
+  paciente   Paciente @relation(fields: [pacienteCpf], references: [cpf], onDelete: NoAction)
+
+  policlinicaCNES String
+  policlinica   Policlinica @relation(fields: [policlinicaCNES], references: [cnes], onDelete: NoAction)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([pacienteCpf, policlinicaCNES])
+  @@index([pacienteCpf], name: "idx_permissoes_policlinica_paciente_cpf")
+  @@index([policlinicaCNES], name: "idx_permissoes_policlinica_policlinica_cnes")
+  @@map("permissoes_policlinica")
+}
+
+model PermissoesUbs {
+  id String @id @default(uuid()) @db.Uuid
+
+  pacienteCpf String
+  paciente   Paciente @relation(fields: [pacienteCpf], references: [cpf], onDelete: NoAction)
+
+  ubsCNES String
+  ubs   UBS    @relation(fields: [ubsCNES], references: [cnes], onDelete: NoAction)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([pacienteCpf, ubsCNES])
+  @@index([pacienteCpf], name: "idx_permissoes_ubs_paciente_cpf")
+  @@index([ubsCNES], name: "idx_permissoes_ubs_ubs_cnes")
+  @@map("permissoes_ubs")
+}
+
+enum Status {
+  Pendente
+  Fechado
+}
+
+model Gestacao {
+  id         String    @id @default(uuid()) @db.Uuid
+  inicio     DateTime  @default(now())
+  fim        DateTime?
+  status     Status
+  pacienteId String    @db.Uuid
+  paciente   Paciente  @relation(fields: [pacienteId], references: [id], onDelete: NoAction)
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  atendimentos Atendimento[]
+
+  @@map("gestacoes")
+}
+
+
+
+model Atendimento {
+  id          String      @id @default(uuid()) @db.Uuid
+  ubsId      String?     @db.Uuid
+  policlinicaId String?  @db.Uuid
+  medicoId    String      @db.Uuid
+  gestacaoId  String      @db.Uuid
+  descricao   String
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  deletedAt   DateTime?   @map("deleted_at")
+
+  AtendimentoArquivo AtendimentoArquivo[]
+
+  medico   Usuario  @relation(fields: [medicoId], references: [id], onDelete: NoAction)
+  gestacao Gestacao @relation(fields: [gestacaoId], references: [id], onDelete: NoAction)
+  ubs              UBS?          @relation(fields: [ubsId], references: [id])
+  policlinica      Policlinica?  @relation(fields: [policlinicaId], references: [id])
+
+  @@index([medicoId])
+  @@index([gestacaoId])
+  @@map("atendimentos")
+}
+
+
+model AtendimentoArquivo {
+  id            String      @id @default(uuid()) @db.Uuid
+  atendimentoId String      @db.Uuid
+  arquivoUrl    String
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  atendimento   Atendimento @relation(fields: [atendimentoId], references: [id], onDelete: Cascade)
+
+  @@map("atendimentos_arquivos")
+  @@index([atendimentoId], name: "idx_arquivo_atendimento_id")
 }
