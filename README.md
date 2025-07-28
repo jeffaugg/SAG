@@ -30,17 +30,17 @@
 
 ## 🎯 Sobre o Projeto
 
-Este projeto foi desenvolvido como parte do Projeto Integrado II e visa resolver um problema crítico na coordenação do cuidado pré-natal de alto risco[cite: 8].
+Este projeto foi desenvolvido como parte do Projeto Integrado II e visa resolver um problema crítico na coordenação do cuidado pré-natal de alto risco.
 
 ### O Problema
 
-Atualmente, o encaminhamento de gestantes de alto risco das Unidades Básicas de Saúde (UBS) para a Policlínica é feito por meio de uma ficha de referência em papel[cite: 22, 23]. [cite_start]Esse método apresenta diversas falhas: os documentos são frequentemente perdidos, danificados ou não são atualizados após as consultas especializadas[cite: 24].
+Atualmente, o encaminhamento de gestantes de alto risco das Unidades Básicas de Saúde (UBS) para a Policlínica é feito por meio de uma ficha de referência em papel. Esse método apresenta diversas falhas: os documentos são frequentemente perdidos, danificados ou não são atualizados após as consultas especializadas.
 
-[cite_start]Essa lacuna na comunicação impede que os profissionais de saúde tenham acesso a informações críticas sobre o histórico da paciente, tratamentos prescritos e a evolução do caso, comprometendo a continuidade e a segurança do cuidado[cite: 25, 26].
+Essa lacuna na comunicação impede que os profissionais de saúde tenham acesso a informações críticas sobre o histórico da paciente, tratamentos prescritos e a evolução do caso, comprometendo a continuidade e a segurança do cuidado.
 
 ### A Solução
 
-[cite_start]O **SAG (Sistema de Apoio à Gestante)** é um sistema integrado que centraliza os dados das gestantes, permitindo uma comunicação eficiente e em tempo real entre os profissionais da UBS e da Policlínica[cite: 27]. [cite_start]O objetivo é garantir que as informações sejam sempre acessíveis e atualizadas, melhorando a qualidade e a coordenação do atendimento pré-natal[cite: 27].
+O **SAG (Sistema de Apoio à Gestante)** é um sistema integrado que centraliza os dados das gestantes, permitindo uma comunicação eficiente e em tempo real entre os profissionais da UBS e da Policlínica. O objetivo é garantir que as informações sejam sempre acessíveis e atualizadas, melhorando a qualidade e a coordenação do atendimento pré-natal.
 
 ---
 
@@ -49,11 +49,11 @@ Atualmente, o encaminhamento de gestantes de alto risco das Unidades Básicas de
 O sistema foi projetado com base nas necessidades dos profissionais de saúde e gestores, incluindo:
 
 * **👤 Gestão de Usuários (Admin):**
-    * [cite_start]Cadastrar novos usuários (Médicos, Enfermeiros, ADMs) através de um sistema de convites[cite: 46].
-    * [cite_start]Listar todos os usuários com filtros por cargo ou município[cite: 104, 117].
-    * [cite_start]Excluir usuários, garantindo a integridade dos registros vinculados[cite: 86, 103].
+    * Cadastrar novos usuários (Médicos, Enfermeiros, ADMs) através de um sistema de convites.
+    * Listar todos os usuários com filtros por cargo ou município.
+    * Excluir usuários, garantindo a integridade dos registros vinculados.
 * **🔑 Autenticação e Perfis:**
-    * [cite_start]Login seguro para todos os perfis de usuário[cite: 121].
+    * Login seguro para todos os perfis de usuário.
     * [cite_start]Atualização de informações pessoais no perfil do usuário[cite: 68].
 * **👩‍⚕️ Gestão de Pacientes e Atendimentos:**
     * [cite_start]Cadastro de novas pacientes, com verificação de duplicidade por CPF[cite: 170, 182].
