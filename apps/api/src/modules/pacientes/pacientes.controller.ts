@@ -1,3 +1,4 @@
+// Importações dos módulos e tipos necessários do NestJS e do domínio de pacientes
 import {
     Controller,
     Get,
@@ -20,8 +21,13 @@ import { IGestacaoService } from '../gestacoes/interface/gestacoes-service.inter
 import { organizationInfo } from 'src/shared/decorators/organizationInfo';
 import { OrganizacaoInfo } from 'src/shared/types';
 
+
+// Controller responsável pelas rotas relacionadas a pacientes
 @Controller('pacientes')
 export class PacientesController {
+    /**
+     * Injeta os serviços de pacientes e gestações necessários para as operações do controller
+     */
     constructor(
         @Inject(PACIENTES_SERVICE)
         private readonly pacientesService: IPacienteService,
@@ -29,6 +35,11 @@ export class PacientesController {
         private readonly gestacaoService: IGestacaoService,
     ) {}
 
+
+    /**
+     * Cria um novo paciente na organização informada
+     * Rota: POST /pacientes
+     */
     @Post()
     create(
         @Body() createPacienteDto: CreatePacienteDto,
@@ -37,6 +48,11 @@ export class PacientesController {
         return this.pacientesService.create(createPacienteDto, orgInfo);
     }
 
+
+    /**
+     * Lista todos os pacientes (apenas para administradores, com paginação)
+     * Rota: GET /pacientes
+     */
     @Get()
     @IsAdm()
     @IsPaginated()
@@ -44,6 +60,11 @@ export class PacientesController {
         return this.pacientesService.findAll(paginacaoDto);
     }
 
+
+    /**
+     * Lista pacientes da organização do usuário (com paginação)
+     * Rota: GET /pacientes/organizacao
+     */
     @Get('organizacao')
     @IsPaginated()
     findAllByOrganization(
@@ -56,11 +77,21 @@ export class PacientesController {
         );
     }
 
+
+    /**
+     * Busca um paciente pelo ID
+     * Rota: GET /pacientes/:id
+     */
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.pacientesService.findOne(id);
     }
 
+
+    /**
+     * Atualiza os dados de um paciente pelo ID
+     * Rota: PUT /pacientes/:id
+     */
     @Put(':id')
     update(
         @Param('id') id: string,
@@ -69,11 +100,21 @@ export class PacientesController {
         return this.pacientesService.update(id, updatePoliclinicaDto);
     }
 
+
+    /**
+     * Remove um paciente pelo ID
+     * Rota: DELETE /pacientes/:id
+     */
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.pacientesService.remove(id);
     }
 
+
+    /**
+     * Associa um paciente a uma organização
+     * Rota: POST /pacientes/:cpf/associar
+     */
     @Post(':cpf/associar')
     associationOrganization(
         @Param('cpf') pacienteCpf: string,
@@ -82,6 +123,10 @@ export class PacientesController {
         return this.pacientesService.association(pacienteCpf, orgInfo);
     }
 
+    /**
+     * Lista as gestações de um paciente (apenas para administradores, com paginação)
+     * Rota: GET /pacientes/:id/gestacoes
+     */
     @Get(':id/gestacoes')
     @IsAdm()
     @IsPaginated()
