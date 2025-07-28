@@ -54,13 +54,13 @@ O sistema foi projetado com base nas necessidades dos profissionais de saúde e 
     * Excluir usuários, garantindo a integridade dos registros vinculados.
 * **🔑 Autenticação e Perfis:**
     * Login seguro para todos os perfis de usuário.
-    * [cite_start]Atualização de informações pessoais no perfil do usuário[cite: 68].
+    * Atualização de informações pessoais no perfil do usuário.
 * **👩‍⚕️ Gestão de Pacientes e Atendimentos:**
-    * [cite_start]Cadastro de novas pacientes, com verificação de duplicidade por CPF[cite: 170, 182].
-    * [cite_start]Registro detalhado de atendimentos clínicos (diagnóstico, exames, prescrições)[cite: 139].
-    * [cite_start]Encaminhamento seguro de atendimentos e informações clínicas entre unidades[cite: 157].
+    * Cadastro de novas pacientes, com verificação de duplicidade por CPF.
+    * Registro detalhado de atendimentos clínicos (diagnóstico, exames, prescrições).
+    * Encaminhamento seguro de atendimentos e informações clínicas entre unidades.
 * **🏥 Gestão de Unidades de Saúde (Admin):**
-    * [cite_start]CRUD completo para Policlínicas e Unidades Básicas de Saúde (UBS)[cite: 188, 259].
+    * CRUD completo para Policlínicas e Unidades Básicas de Saúde (UBS).
 
 ---
 
