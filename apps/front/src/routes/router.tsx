@@ -73,43 +73,6 @@ const Router = () => {
                     }
                 />
                 <Route
-                    path="/gestacoes/cadastrar"
-                    element={
-                        <ProtectedRoute
-                            requiredRoles={["Enfermeiro", "Medico"]}
-                        >
-                            <MainLayout>
-                                <WorkInProgress
-                                    pageName="Cadastro de Gestações"
-                                    estimatedCompletion="até o final do próximo sprint"
-                                    features={[
-                                        "Formulário de cadastro com validações",
-                                        "Cálculo automático da data provável do parto",
-                                        "Seleção da paciente via pesquisa",
-                                        "Registro de informações básicas do primeiro atendimento",
-                                    ]}
-                                />
-                            </MainLayout>
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/gestacoes/:id"
-                    element={
-                        <ProtectedRoute
-                            requiredRoles={["Enfermeiro", "Medico", "ADM"]}
-                        >
-                            <MainLayout>
-                                <WorkInProgress
-                                    pageName="Detalhes da Gestação"
-                                    estimatedCompletion="até o final do próximo sprint"
-                                />
-                            </MainLayout>
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
                     path="/pacientes"
                     element={
                         <ProtectedRoute
