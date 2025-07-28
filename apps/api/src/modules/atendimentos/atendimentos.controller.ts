@@ -1,3 +1,4 @@
+// Importações dos módulos e tipos necessários do NestJS, Express e domínio de atendimentos
 import {
     Controller,
     Get,
@@ -31,8 +32,13 @@ import {
     OrganizationGuard,
 } from 'src/shared/decorators/currentOrganization';
 
+
+// Controller responsável pelas rotas relacionadas a atendimentos
 @Controller('atendimentos')
 export class AtendimentosController {
+    /**
+     * Injeta os serviços de atendimentos e S3 necessários para as operações do controller
+     */
     constructor(
         @Inject('ATENDIMENTOS_SERVICE')
         private readonly atendimentosService: IAtendimentosService,
@@ -40,6 +46,11 @@ export class AtendimentosController {
         private readonly s3: S3Service,
     ) {}
 
+
+    /**
+     * Cria um novo atendimento, recebendo arquivos PDF e dados do usuário/organização
+     * Rota: POST /atendimentos
+     */
     @Post()
     @PdfFiles('file', 5, 10)
     @UseGuards(OrganizationGuard)
@@ -65,6 +76,11 @@ export class AtendimentosController {
         );
     }
 
+
+    /**
+     * Faz o streaming de um PDF armazenado no S3
+     * Rota: GET /atendimentos/pdf/:url
+     */
     @Get('pdf/:url')
     async streamPdf(@Param('url') url: string, @Res() res: Response) {
         let stream: Readable;
@@ -78,6 +94,11 @@ export class AtendimentosController {
         stream.pipe(res);
     }
 
+
+    /**
+     * Lista todos os atendimentos (apenas para administradores, com paginação)
+     * Rota: GET /atendimentos
+     */
     @Get()
     @IsPaginated()
     @IsAdm()
@@ -85,11 +106,21 @@ export class AtendimentosController {
         return this.atendimentosService.findAll(paginacaoDto);
     }
 
+
+    /**
+     * Busca um atendimento pelo ID
+     * Rota: GET /atendimentos/:id
+     */
     @Get(':id')
     findById(@Param('id') id: string) {
         return this.atendimentosService.findById(id);
     }
 
+
+    /**
+     * Atualiza um atendimento pelo ID
+     * Rota: PATCH /atendimentos/:id
+     */
     @Patch(':id')
     update(
         @Param('id') id: string,
@@ -98,6 +129,11 @@ export class AtendimentosController {
         return this.atendimentosService.update(id, updateAtendimentoDto);
     }
 
+
+    /**
+     * Remove um atendimento pelo ID
+     * Rota: DELETE /atendimentos/:id
+     */
     @Delete(':id')
     @HttpCode(204)
     remove(@Param('id') id: string) {
