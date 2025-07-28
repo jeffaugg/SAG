@@ -99,4 +99,8 @@ export class AtendimentosService implements IAtendimentosService {
             throw new InternalServerErrorException();
         }
     }
+
+    async findByGestacaoId(gestacaoId: string, options: PaginacaoDto) {
+        return this.atendimentoRepository.findByGestacaoId(gestacaoId, options);
+    }
 }

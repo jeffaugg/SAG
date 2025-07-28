@@ -15,6 +15,14 @@ const Policlinicas = lazy(
 );
 const UBS = lazy(() => import("../modules/ubs/pages/UBS"));
 
+const Dashboard = lazy(
+    () => import("../modules/pacientes/pages/dashboard"),
+);
+
+const PacienteDetails = lazy(
+    () => import("../modules/pacientes/pages/pacienteDetails/wrapper"),
+);
+
 const SuspenseLoading = () => (
     <LoadingSpinner fullScreen message="Carregando aplicação..." />
 );
@@ -65,92 +73,27 @@ const Router = () => {
                     }
                 />
                 <Route
-                    path="/gestacoes/cadastrar"
-                    element={
-                        <ProtectedRoute
-                            requiredRoles={["Enfermeiro", "Medico"]}
-                        >
-                            <MainLayout>
-                                <WorkInProgress
-                                    pageName="Cadastro de Gestações"
-                                    estimatedCompletion="até o final do próximo sprint"
-                                    features={[
-                                        "Formulário de cadastro com validações",
-                                        "Cálculo automático da data provável do parto",
-                                        "Seleção da paciente via pesquisa",
-                                        "Registro de informações básicas do primeiro atendimento",
-                                    ]}
-                                />
-                            </MainLayout>
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/gestacoes/:id"
-                    element={
-                        <ProtectedRoute
-                            requiredRoles={["Enfermeiro", "Medico", "ADM"]}
-                        >
-                            <MainLayout>
-                                <WorkInProgress
-                                    pageName="Detalhes da Gestação"
-                                    estimatedCompletion="até o final do próximo sprint"
-                                />
-                            </MainLayout>
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
                     path="/pacientes"
                     element={
                         <ProtectedRoute
                             requiredRoles={["Enfermeiro", "Medico", "ADM"]}
                         >
                             <MainLayout>
-                                <WorkInProgress
-                                    pageName="Pacientes"
-                                    estimatedCompletion="na próxima semana"
-                                    features={[
-                                        "Listagem completa de pacientes",
-                                        "Busca por nome, CPF ou cartão SUS",
-                                        "Filtros por UBS e status",
-                                        "Histórico de atendimentos e gestações",
-                                    ]}
-                                />
+                                <Dashboard />
                             </MainLayout>
                         </ProtectedRoute>
                     }
                 />
-                <Route
-                    path="/pacientes/cadastrar"
-                    element={
-                        <ProtectedRoute requiredRoles={["Enfermeiro", "ADM"]}>
-                            <MainLayout>
-                                <WorkInProgress
-                                    pageName="Cadastro de Pacientes"
-                                    estimatedCompletion="na próxima semana"
-                                />
-                            </MainLayout>
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
+               <Route
                     path="/pacientes/:id"
                     element={
-                        <ProtectedRoute
-                            requiredRoles={["Enfermeiro", "Medico", "ADM"]}
-                        >
-                            <MainLayout>
-                                <WorkInProgress
-                                    pageName="Detalhes do Paciente"
-                                    estimatedCompletion="na próxima semana"
-                                />
-                            </MainLayout>
+                        <ProtectedRoute requiredRoles={["Enfermeiro", "Medico", "ADM"]}>
+                        <MainLayout>
+                            <PacienteDetails />
+                        </MainLayout>
                         </ProtectedRoute>
                     }
                 />
-
                 <Route
                     path="/ubs"
                     element={

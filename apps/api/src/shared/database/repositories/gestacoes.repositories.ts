@@ -8,26 +8,14 @@ import { Gestacao } from '@prisma/client';
 @Injectable()
 export class GestacoesRepository implements IGestacoesRepository {
     constructor(private readonly prismaService: PrismaService) {}
-    async findByPaciente(
-        id: string,
-        { skip, limit }: PaginacaoDto,
-    ): Promise<{ items: Gestacao[]; total: number }> {
-        const where = {
-            id,
-            deletedAt: null,
-        };
-
-        const [total, items] = await this.prismaService.$transaction([
-            this.prismaService.gestacao.count({ where }),
-            this.prismaService.gestacao.findMany({
-                where,
-                orderBy: { inicio: 'asc' },
-                skip,
-                take: limit,
-            }),
-        ]);
-
-        return { items, total };
+    async findByPaciente(id: string): Promise<Gestacao[]> {
+        return this.prismaService.gestacao.findMany({
+            where: {
+                pacienteId: id,
+                deletedAt: null,
+            },
+            orderBy: { inicio: 'asc' },
+        });
     }
     async create(createGestacaoDto: CreateGestacaoDto) {
         return await this.prismaService.gestacao.create({

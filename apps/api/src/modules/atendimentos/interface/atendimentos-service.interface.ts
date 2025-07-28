@@ -49,4 +49,8 @@ export interface IAtendimentosService {
      * @param id ID do atendimento
      */
     remove(id: string): Promise<void>;
+    findByGestacaoId(
+        gestacaoId: string,
+        options: PaginacaoDto,
+    ): Promise<{ items: Atendimento[]; total: number }>;
 }

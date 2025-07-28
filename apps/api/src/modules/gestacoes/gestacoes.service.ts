@@ -27,17 +27,8 @@ export class GestacaoService implements IGestacaoService {
         @Inject(GESTACOES_REPOSITORY)
         private readonly gestacoesRepository: IGestacoesRepository,
     ) {}
-
-    /**
-     * Lista as gestações de um paciente, com paginação
-     * @param id ID do paciente
-     * @param options Opções de paginação
-     */
-    async findByPaciente(
-        id: string,
-        options: PaginacaoDto,
-    ): Promise<{ items: Gestacao[]; total: number }> {
-        return this.gestacoesRepository.findByPaciente(id, options);
+    async findByPaciente(id: string): Promise<Gestacao[]> {
+        return this.gestacoesRepository.findByPaciente(id);
     }
 
     /**
@@ -48,10 +39,9 @@ export class GestacaoService implements IGestacaoService {
         const [erro, gestacao] = await catchError(
             this.gestacoesRepository.create(createGestacaoDto),
         );
-        if (erro) {
-            console.error('Erro ao criar gestação:', erro);
-            throw new ConflictException('Erro ao criar gestação');
-        }
+
+        if (erro) throw new ConflictException('Gestação já cadastrada');
+
         return gestacao;
     }
 

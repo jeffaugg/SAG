@@ -1,6 +1,6 @@
 // Importações de decoradores e utilitários para validação e transformação de dados
 import { ApiHideProperty } from '@nestjs/swagger';
-import { Expose, Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { IsOptional, Min } from 'class-validator';
 
 
@@ -14,7 +14,7 @@ export class PaginacaoDto {
     @IsOptional()
     @Type(() => Number)
     @Min(1)
-    page = 1;
+    page: number = 1;
 
     /**
      * Quantidade de itens por página (opcional, padrão 10)
@@ -22,16 +22,14 @@ export class PaginacaoDto {
     @IsOptional()
     @Type(() => Number)
     @Min(1)
-    limit = 10;
+    limit: number = 10;
 
     /**
      * Quantidade de itens a pular (calculado automaticamente)
      * Escondido na documentação Swagger
      */
     @ApiHideProperty()
-    @Expose()
-    @Transform(({ obj }: { obj: PaginacaoDto }) => (obj.page - 1) * obj.limit, {
-        toClassOnly: true,
-    })
-    skip: number;
+    get skip(): number {
+        return (this.page - 1) * this.limit;
+    }
 }

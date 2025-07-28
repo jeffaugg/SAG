@@ -56,7 +56,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         />
                     </div>
                 </Sider>
-                <Layout>
+                <Layout className="!bg-grey-100">
                     <Header
                         style={{
                             padding: 0,
@@ -99,7 +99,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        <div className="min-h-[calc(100vh-200px)]">
+                        <div className="h-[calc(100vh-200px)]">
                             {children}
                         </div>
                     </Content>

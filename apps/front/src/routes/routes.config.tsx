@@ -1,3 +1,4 @@
+
 import {
     DashboardOutlined,
     HomeOutlined,
@@ -21,47 +22,11 @@ export const routes: RouteDefinition[] = [
         path: "/gestacoes",
         label: "Gestações",
         icon: <MedicineBoxOutlined />,
-        children: [
-            {
-                path: "/gestacoes",
-                label: "Todas Gestações",
-                requiredRoles: ALL_ROLES,
-            },
-            {
-                path: "/gestacoes/cadastrar",
-                label: "Cadastrar Gestação",
-                requiredRoles: CLINICAL_STAFF,
-            },
-            {
-                path: "/gestacoes/:id",
-                label: "Detalhes da Gestação",
-                requiredRoles: ALL_ROLES,
-                isVisible: false,
-            },
-        ],
     },
     {
         path: "/pacientes",
         label: "Pacientes",
         icon: <TeamOutlined />,
-        children: [
-            {
-                path: "/pacientes",
-                label: "Todos Pacientes",
-                requiredRoles: ALL_ROLES,
-            },
-            {
-                path: "/pacientes/cadastrar",
-                label: "Cadastrar Paciente",
-                requiredRoles: [ROLES.ENFERMEIRO, ROLES.ADMIN],
-            },
-            {
-                path: "/pacientes/:id",
-                label: "Detalhes do Paciente",
-                requiredRoles: ALL_ROLES,
-                isVisible: false,
-            },
-        ],
     },
     {
         path: "/",

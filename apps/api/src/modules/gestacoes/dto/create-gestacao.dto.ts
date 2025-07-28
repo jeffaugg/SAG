@@ -1,8 +1,11 @@
-
-// Importa decoradores de validação e enum de status para o DTO de gestação
-import { IsDateString, IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
 import { Status } from '@prisma/client';
-
+import {
+    IsDateString,
+    IsEnum,
+    IsNotEmpty,
+    IsOptional,
+    IsUUID,
+} from 'class-validator';
 
 /**
  * DTO para criação de uma gestação
@@ -15,9 +18,7 @@ export class CreateGestacaoDto {
     @IsNotEmpty()
     inicio: string;
 
-    /**
-     * Data de término da gestação (opcional, string ISO date)
-     */
+    @IsOptional()
     @IsDateString()
     fim?: string;
 

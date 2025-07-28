@@ -16,13 +16,12 @@ async function bootstrap() {
     app.enableCors();
     app.useGlobalPipes(
         new ValidationPipe({
+            whitelist: true,
             transform: true,
-
-            transformOptions: {
-                enableImplicitConversion: true,
-            },
+            transformOptions: { enableImplicitConversion: true },
         }),
     );
+
     app.useGlobalInterceptors(new PaginateInterceptor(app.get(Reflector)));
 
     const swaggerConfig = new DocumentBuilder()
