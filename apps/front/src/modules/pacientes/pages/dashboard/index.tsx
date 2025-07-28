@@ -1,13 +1,13 @@
+import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Popconfirm, Space, Table, Typography } from "antd";
 import { useEffect, useMemo } from "react";
-import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined} from "@ant-design/icons";
-import { usePacienteForm } from "../../hooks/usePacienteForm";
-import { usePaciente } from "../../hooks/pacienteHooks";
+import { useNavigate } from "react-router-dom";
 import { handleError } from "../../../../utils/error-handler";
 import ToastService from "../../../../utils/toast-service";
-import type { Paciente } from "../../types";
+import { usePaciente } from "../../hooks/pacienteHooks";
+import { usePacienteForm } from "../../hooks/usePacienteForm";
 import PacienteModal from "../../modals/PacienteModal";
-import { useNavigate } from "react-router-dom";
+import type { Paciente } from "../../types";
 
 const { Title } = Typography;
 
