@@ -1,6 +1,6 @@
 # SAG (Sistema de Apoio à Gestante)
 
-![Capa do Projeto](URL_DA_IMAGEM_DE_CAPA) <p align="center">
+![Capa do Projeto](https://github.com/user-attachments/files/21458631/Documentacao.do.projeto.pdf) <p align="center">
   <img src="https://img.shields.io/badge/status-em--desenvolvimento-yellow" alt="Status do Projeto">
   <img src="https://img.shields.io/badge/licen%C3%A7a-MIT-blue" alt="Licença">
   </p>
