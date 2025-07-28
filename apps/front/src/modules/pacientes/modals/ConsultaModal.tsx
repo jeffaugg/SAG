@@ -65,7 +65,8 @@ const ConsultaModal: React.FC<ConsultaModalProps> = ({
                 </Form.Item>
                 <Form.Item 
                     label="Anexos"
-                    >
+                    extra="Você pode enviar até 5 arquivos no formato PDF."
+                >
                     <Upload
                         beforeUpload={() => false}
                         fileList={fileList}
@@ -75,7 +76,7 @@ const ConsultaModal: React.FC<ConsultaModalProps> = ({
                         maxCount={5}
                     >
                         <Button icon={<UploadOutlined />}>Upload</Button>
-                        </Upload>
+                    </Upload>
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
