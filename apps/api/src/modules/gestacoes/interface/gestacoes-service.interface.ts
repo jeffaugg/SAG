@@ -1,10 +1,8 @@
-
 // Importa os DTOs e tipos utilizados nos métodos do serviço de gestações
-import { CreateGestacaoDto } from '../dto/create-gestacao.dto';
-import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { Gestacao } from '@prisma/client';
+import { PaginacaoDto } from 'src/common/dto/pagination.dto';
+import { CreateGestacaoDto } from '../dto/create-gestacao.dto';
 import { UpdateGestacaoDto } from '../dto/update-gestacao.dto';
-
 
 /**
  * Interface que define o contrato do serviço de gestações
