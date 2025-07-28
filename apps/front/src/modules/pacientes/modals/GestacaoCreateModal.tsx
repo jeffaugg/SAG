@@ -47,7 +47,9 @@ const GestacaoCreateModal: React.FC<GestacaoModalProps> = ({
             destroyOnClose
         >
             <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-                <Form.Item label="Data de Início" required={true}>
+                <Form.Item label="Data de Início" required={true}
+                validateStatus={errors.inicio ? "error" : ""}
+                help={errors.inicio?.message}>
                     <Controller
                         name="inicio"
                         control={control}
