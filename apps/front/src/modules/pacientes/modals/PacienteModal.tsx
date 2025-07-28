@@ -1,7 +1,7 @@
+import { Button, Form, Input, Modal } from "antd";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { PacienteFormData } from "../types";
-import React from "react";
-import { Button, Form, Input, Modal } from "antd";
 
 interface PacienteModalProps {
     visible: boolean;
@@ -68,7 +68,7 @@ const PacienteModal: React.FC <PacienteModalProps> = ({
                         name="cpf"
                         control={control}
                         render={({ field }) => (
-                            <Input {...field} placeholder="CPF do Paciente" />
+                            <Input {...field} placeholder="CPF do Paciente" maxLength={11} />
                         )}
                     />
                 </Form.Item>
