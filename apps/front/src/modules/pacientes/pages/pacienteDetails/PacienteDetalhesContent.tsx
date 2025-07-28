@@ -1,29 +1,80 @@
-import React, { lazy, useMemo, Suspense } from "react";
-import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table, Typography, Spin } from "antd";
-import type { Consulta } from "../../types";
-import { usePacienteById } from "../../hooks/pacienteHooks";
+import { DeleteOutlined, EyeOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Input, Popconfirm, Space, Spin, Table, Typography } from "antd";
+import React, { lazy, Suspense, useMemo } from "react";
 import { useConsultasByGestacaoID, useGestacaoByPacienteID } from "../../hooks/gestacaoHooks";
+import { usePacienteById } from "../../hooks/pacienteHooks";
+import { useConsultaForm } from "../../hooks/useConsultaForm";
 import { usePacienteContext } from "../../hooks/useContext";
+import ConsultaDetailsModal from "../../modals/ConsultaDetailsModal";
+import ConsultaModal from "../../modals/ConsultaModal";
+import type { AtendimentoDetails, Consulta, GestacaoCreateFormData } from "../../types";
+
+import GestacaoCreateModal from "../../modals/GestacaoCreateModal";
 
 const { Title } = Typography;
+
 const PacientePerfil = lazy(() => import("../../components/PacientePerfil"));
 const GestacaoHistorico = lazy(() => import("../../components/GestacaoHistorico"));
-
 interface PacienteDetalhesContentProps {
   pacienteId: string;
 }
 
 const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({ pacienteId }) => {
+
+  const {
+    isModalVisible,
+    openModal,
+    closeModal,
+    pagination,
+    handleSubmit,
+    setPagination,
+    handleDelete,
+    handleGestacaoSubmit
+
+  } = useConsultaForm();
+ 
   const { gestacaoId } = usePacienteContext();
 
   const { data: gestacoesResponse } = useGestacaoByPacienteID(pacienteId);
   const { data: pacienteResponse } = usePacienteById(pacienteId);
   const { data: consultasResponse, isLoading } = useConsultasByGestacaoID({
     gestacaoId: gestacaoId ?? "",
-    page: 1,
-    limit: 10,
+    page: pagination.current,
+    limit: pagination.pageSize,
   });
+
+//   TODO: refactor
+// --- // 
+
+  const [isDetailsModalVisible, setIsDetailsModalVisible] = React.useState(false);
+  const [selectedConsulta, setSelectedConsulta] = React.useState<Consulta | null>(null);
+
+  const [isCreateGestacaoModalVisible, setIsCreateGestacaoModalVisible] = React.useState(false);
+
+  const openCreateGestacaoModal = () => {
+    setIsCreateGestacaoModalVisible(true);
+ };
+
+ const handleGestacaoSubmitWithPaciente = (data: GestacaoCreateFormData) => {
+  handleGestacaoSubmit({ ...data, pacienteId });
+};
+
+  const handleViewConsulta = (consulta: Consulta) => {
+    setSelectedConsulta(consulta);
+    setIsDetailsModalVisible(true);
+};
+
+const atendimentoDetails: AtendimentoDetails | undefined = selectedConsulta
+  ? {
+      data: selectedConsulta.createdAt,
+      medico: selectedConsulta.medico?.nome ?? "",
+      unidade: selectedConsulta.ubs?.nome || selectedConsulta.policlinica?.nome || "",
+      descricao: selectedConsulta.descricao ?? "",
+      file: selectedConsulta.AtendimentoArquivo?.map(a => a.arquivoUrl) ?? [],
+    }
+  : undefined;
+
+// --- // 
 
   const columns = useMemo(
     () => [
@@ -45,8 +96,9 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({ pacie
       },
       {
         title: "Unidade",
-        dataIndex: ["unidade", "nome"],
         key: "unidade",
+        render: (_: any, record: Consulta) =>
+        record.ubs?.nome || record.policlinica?.nome || "",
       },
       {
         title: "Ações",
@@ -55,8 +107,8 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({ pacie
         fixed: "right" as const,
         render: (_: unknown, record: Consulta) => (
           <Space size="middle">
-            <Button type="text" icon={<EditOutlined />} />
-            <Popconfirm title="Excluir consulta?" okText="Sim" cancelText="Não">
+            <Button onClick={() => handleViewConsulta(record)} type="text" icon={<EyeOutlined />} />
+            <Popconfirm title="Excluir consulta?" okText="Sim" cancelText="Não" onConfirm={() => handleDelete(record.id)}>
               <Button danger type="text" icon={<DeleteOutlined />} />
             </Popconfirm>
           </Space>
@@ -67,6 +119,7 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({ pacie
   );
 
   return (
+    
     <div className="flex h-full gap-4">
       <div className="w-80 flex flex-col bg-white rounded-md">
         <Suspense fallback={<Spin />}>
@@ -94,8 +147,11 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({ pacie
               allowClear
             />
             <Button type="default" icon={<SearchOutlined />} />
-            <Button type="primary" icon={<PlusOutlined />}>
-              Cadastrar Consulta
+            <Button type="primary" icon={<PlusOutlined />} onClick={openModal}>
+                Cadastrar Atendimento
+            </Button>
+            <Button type="primary" icon={<PlusOutlined />} onClick={openCreateGestacaoModal}>
+                Cadastrar Gestação
             </Button>
           </Space>
         </div>
@@ -104,10 +160,44 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({ pacie
             columns={columns}
             rowKey="id"
             loading={isLoading}
-            dataSource={consultasResponse?.data ?? []}
+            dataSource={consultasResponse?.data ?? [] }
+            pagination={{
+                    current: pagination.current,
+                    pageSize: pagination.pageSize,
+                    total: consultasResponse?.meta.totalItems,
+                    showSizeChanger: true,
+                    showTotal: (total, range) =>
+                            `${range[0]}-${range[1]} de ${total} Pacientes`,
+                    onChange: (page, pageSize) =>
+                            setPagination({ current: page, pageSize }),
+                        onShowSizeChange: (_, size) =>
+                            setPagination({ current: 1, pageSize: size }),
+                }}
           />
         </div>
       </div>
+
+        <GestacaoCreateModal
+            visible={isCreateGestacaoModalVisible}
+            onCancel={() => setIsCreateGestacaoModalVisible(false)}
+            onSubmit={handleGestacaoSubmitWithPaciente}
+            initialValues={undefined}
+        />
+
+      <ConsultaDetailsModal
+        visible={isDetailsModalVisible}
+        onCancel={() => setIsDetailsModalVisible(false)}
+        initialValues={atendimentoDetails}
+       />
+
+        <ConsultaModal
+         visible={isModalVisible}
+         onCancel={closeModal}
+         onSubmit={handleSubmit}
+         initialValues={undefined}
+        />
+
+
     </div>
   );
 };
