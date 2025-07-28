@@ -22,24 +22,6 @@ export const routes: RouteDefinition[] = [
         path: "/gestacoes",
         label: "Gestações",
         icon: <MedicineBoxOutlined />,
-        children: [
-            {
-                path: "/gestacoes",
-                label: "Todas Gestações",
-                requiredRoles: ALL_ROLES,
-            },
-            {
-                path: "/gestacoes/cadastrar",
-                label: "Cadastrar Gestação",
-                requiredRoles: CLINICAL_STAFF,
-            },
-            {
-                path: "/gestacoes/:id",
-                label: "Detalhes da Gestação",
-                requiredRoles: ALL_ROLES,
-                isVisible: false,
-            },
-        ],
     },
     {
         path: "/pacientes",
