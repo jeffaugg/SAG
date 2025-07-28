@@ -1,5 +1,5 @@
-import { Typography } from "antd";
-import { Tag } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Button, Popconfirm, Tag, Typography } from "antd";
 const { Title } = Typography;
 
 interface GestacaoInfoCardProps {
@@ -8,18 +8,20 @@ interface GestacaoInfoCardProps {
     inicio: string;
     fim: string;
     onClick: () => void;
+    onDelete: () => void;
 }
 
 
-const GestacaoInfoCard : React.FC<GestacaoInfoCardProps> = ({ numero, status, inicio, fim, onClick }) => {
+const GestacaoInfoCard : React.FC<GestacaoInfoCardProps> = ({ numero, status, inicio, fim, onClick, onDelete }) => {
 
     return (
         <div className="p-5 border-[1px] border-neutral-400/20 flex flex-col w-full gap-2.5 rounded-[4px]"
             onClick={onClick}
             style={{ cursor: "pointer" }}
+
         >
-           <div className="flex w-full justify-between">
-            <Title
+            <div className="flex w-full justify-between items-center">
+                <Title
                 level={5}
                 style={{
                     textAlign: "center",
@@ -34,7 +36,15 @@ const GestacaoInfoCard : React.FC<GestacaoInfoCardProps> = ({ numero, status, in
                 {numero}ª Gestação
             </Title>
 
-            <Tag className="!m-0" color="green">{status}</Tag>
+            <Popconfirm title="Excluir gestação?" okText="Sim" cancelText="Não" onConfirm={onDelete}>
+                <Button danger type="text" icon={<DeleteOutlined />} />
+            </Popconfirm>
+
+            </div>
+
+           <div className=" w-full text-center">            
+            
+                <Tag className="!m-0" color="green" style={{ width: "100%", textAlign: "center" }}>{status}</Tag>
            </div>
 
            <div className="flex w-full justify-between items-center">
