@@ -89,6 +89,9 @@ export interface Consulta {
     medico: Medico;
     gestacao: Gestacao;
     unidade: Unidade;
+    ubs?: { nome: string };
+    policlinica?: { nome: string };
+    AtendimentoArquivo?: { arquivoUrl: string }[] | undefined;
 }
 
 export interface ConsultasPaginatedResponse {
@@ -100,4 +103,32 @@ export interface ConsultasPaginatedResponse {
         totalPages: number;
         currentPage: number;
     };
+}
+
+// Alterar para colocar os dados da consulta
+export interface ConsultaFormData {
+//   gestacaoId: string;
+  descricao: string;
+  files?: File[];
+}
+
+export interface AtendimentoSearchParams {
+    page?: number;
+    limit?: number;
+    search?: string;
+}
+
+export interface AtendimentoDetails {
+    data: string;
+    medico: string;
+    unidade: string;
+    descricao: string;
+    file?: string[];
+}
+
+export interface GestacaoCreateFormData {
+    inicio: string;
+    fim?: string;
+    status: "Pendente";
+    pacienteId: string;
 }
