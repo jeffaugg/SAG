@@ -186,5 +186,6 @@ Este projeto é distribuído sob a licença MIT. Veja o arquivo `LICENSE` para m
 * Jeferson Augusto De Melo Gomes
 * Sheiely Do Ó Nascimento
 * Wendel Rodrigues Viana
+* Ana Julia Chaves
 
 Link do Repositório: [https://github.com/jeffaugg/sag](https://github.com/jeffaugg/sag)
