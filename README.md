@@ -30,11 +30,11 @@
 
 ## 🎯 Sobre o Projeto
 
-[cite_start]Este projeto foi desenvolvido como parte do Projeto Integrado II e visa resolver um problema crítico na coordenação do cuidado pré-natal de alto risco[cite: 8].
+Este projeto foi desenvolvido como parte do Projeto Integrado II e visa resolver um problema crítico na coordenação do cuidado pré-natal de alto risco[cite: 8].
 
 ### O Problema
 
-[cite_start]Atualmente, o encaminhamento de gestantes de alto risco das Unidades Básicas de Saúde (UBS) para a Policlínica é feito por meio de uma ficha de referência em papel[cite: 22, 23]. [cite_start]Esse método apresenta diversas falhas: os documentos são frequentemente perdidos, danificados ou não são atualizados após as consultas especializadas[cite: 24].
+Atualmente, o encaminhamento de gestantes de alto risco das Unidades Básicas de Saúde (UBS) para a Policlínica é feito por meio de uma ficha de referência em papel[cite: 22, 23]. [cite_start]Esse método apresenta diversas falhas: os documentos são frequentemente perdidos, danificados ou não são atualizados após as consultas especializadas[cite: 24].
 
 [cite_start]Essa lacuna na comunicação impede que os profissionais de saúde tenham acesso a informações críticas sobre o histórico da paciente, tratamentos prescritos e a evolução do caso, comprometendo a continuidade e a segurança do cuidado[cite: 25, 26].
 
