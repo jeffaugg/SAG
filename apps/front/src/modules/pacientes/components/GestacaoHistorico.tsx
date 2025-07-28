@@ -3,6 +3,7 @@ import GestacaoInfoCard from "./GestacaoInfoCard";
 import type { Gestacao } from "../types";
 import { usePacienteContext } from "../hooks/useContext";
 import {  useEffect } from "react";
+import { useDeleteGestacao } from "../hooks/gestacaoHooks";
 
 interface GestacaoHistoricoProps {
     gestacoes: Gestacao[];
@@ -10,6 +11,7 @@ interface GestacaoHistoricoProps {
 
 const GestacaoHistorico: React.FC<GestacaoHistoricoProps> = ({ gestacoes }) => {
   const { setGestacao } = usePacienteContext();
+  const deleteGestacao = useDeleteGestacao();
 
   useEffect(() => {
     if (gestacoes.length > 0) {
@@ -29,6 +31,7 @@ const GestacaoHistorico: React.FC<GestacaoHistoricoProps> = ({ gestacoes }) => {
             fim={gestacao.fim ?? ""}
             numero={index + 1}
             onClick={() => setGestacao(gestacao.id)}
+            onDelete={() => deleteGestacao.mutate(gestacao.id)}
           />
         ))}
       </div>
