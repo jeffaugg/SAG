@@ -1,35 +1,35 @@
 import {
-    Controller,
-    Get,
-    Post,
     Body,
-    Patch,
-    Param,
+    Controller,
     Delete,
-    Inject,
-    Query,
+    Get,
     HttpCode,
-    UploadedFiles,
-    Res,
+    Inject,
     NotFoundException,
+    Param,
+    Patch,
+    Post,
+    Query,
+    Res,
+    UploadedFiles,
     UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { IAtendimentosService } from './interface/atendimentos-service.interface';
-import { CreateAtendimentoDto } from './dto/create-atendimento.dto';
-import { UpdateAtendimentoDto } from './dto/update-atendimento.dto';
-import { IsAdm } from 'src/shared/decorators/isAdm';
-import { IsPaginated } from 'src/shared/decorators/Ispaginated';
-import { PaginacaoDto } from 'src/common/dto/pagination.dto';
-import { PdfFiles } from 'src/shared/decorators/pdf-files';
-import { S3Service } from 'src/shared/upload/s3.service';
-import { Readable } from 'stream';
 import { S3_SERVICE } from 'src/common/constants';
+import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { activeUserId } from 'src/shared/decorators/activeUserId';
 import {
     currentOrganization,
     OrganizationGuard,
 } from 'src/shared/decorators/currentOrganization';
+import { IsPaginated } from 'src/shared/decorators/Ispaginated';
+import { isPublic } from 'src/shared/decorators/isPublic';
+import { PdfFiles } from 'src/shared/decorators/pdf-files';
+import { S3Service } from 'src/shared/upload/s3.service';
+import { Readable } from 'stream';
+import { CreateAtendimentoDto } from './dto/create-atendimento.dto';
+import { UpdateAtendimentoDto } from './dto/update-atendimento.dto';
+import { IAtendimentosService } from './interface/atendimentos-service.interface';
 
 @Controller('atendimentos')
 export class AtendimentosController {
@@ -65,6 +65,7 @@ export class AtendimentosController {
         );
     }
 
+    @isPublic()
     @Get('pdf/:url')
     async streamPdf(@Param('url') url: string, @Res() res: Response) {
         let stream: Readable;
@@ -80,7 +81,6 @@ export class AtendimentosController {
 
     @Get()
     @IsPaginated()
-    @IsAdm()
     findAll(@Query() paginacaoDto: PaginacaoDto) {
         return this.atendimentosService.findAll(paginacaoDto);
     }
