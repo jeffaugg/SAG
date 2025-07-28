@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+import { Atendimento } from '@prisma/client';
+import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { CreateAtendimentoDto } from 'src/modules/atendimentos/dto/create-atendimento.dto';
 import { UpdateAtendimentoDto } from 'src/modules/atendimentos/dto/update-atendimento.dto';
-import { PaginacaoDto } from 'src/common/dto/pagination.dto';
+import { PrismaService } from '../prisma.service';
 import { IAtendimentoRepository } from './interface/atendimento-repository.interface';
-import { Atendimento } from '@prisma/client';
 
 @Injectable()
 export class AtendimentosRepository implements IAtendimentoRepository {
@@ -85,6 +85,8 @@ export class AtendimentosRepository implements IAtendimentoRepository {
     async findByGestacaoId(gestacaoId: string, { skip, limit }: PaginacaoDto) {
         const where = { gestacaoId, deletedAt: null };
 
+        console.log(gestacaoId, { skip, limit });
+
         const [total, items] = await this.prisma.$transaction([
             this.prisma.atendimento.count({ where }),
             this.prisma.atendimento.findMany({
@@ -92,11 +94,13 @@ export class AtendimentosRepository implements IAtendimentoRepository {
                 include: {
                     medico: true,
                     gestacao: true,
-                    unidade: true,
+                    AtendimentoArquivo: true,
+                    policlinica: true,
+                    ubs: true,
                 },
                 skip,
                 take: limit,
-                orderBy: { createdAt: 'asc' },
+                orderBy: { createdAt: 'desc' },
             }),
         ]);
 
