@@ -71,23 +71,30 @@ const Paciente : React.FC = () => {
                 render: (_: unknown, record: Paciente) => (
                     <Space size="middle">
                         <Button
-                            type="text"
-                            icon={<EditOutlined />}
-                            onClick={() => openEditModal(record)}
-                        />
-                        <Popconfirm
-                            title="Tem certeza que deseja excluir esta UBS?"
-                            onConfirm={() => handleDelete(record.id)}
-                            okText="Sim"
-                            cancelText="Não"
-                        >
-                            <Button
-                                danger
-                                type="text"
-                                icon={<DeleteOutlined />}
-                                loading={isDeleting}
-                            />
-                        </Popconfirm>
+  type="text"
+  icon={<EditOutlined />}
+  onClick={(e) => {
+    e.stopPropagation();
+    openEditModal(record);
+  }}
+/>
+<Popconfirm
+  title="Tem certeza que deseja excluir esta Paciente?"
+  onConfirm={(e) => {
+    e?.stopPropagation();
+    handleDelete(record.id);
+  }}
+  okText="Sim"
+  cancelText="Não"
+>
+  <Button
+    danger
+    type="text"
+    icon={<DeleteOutlined />}
+    loading={isDeleting}
+    onClick={(e) => e.stopPropagation()}
+  />
+</Popconfirm>
                     </Space>
                 ),
             },
