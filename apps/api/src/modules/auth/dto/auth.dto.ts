@@ -1,3 +1,4 @@
+// Importa decoradores de validação para as propriedades do DTO de autenticação
 import {
     IsNotEmpty,
     IsOptional,
@@ -6,7 +7,14 @@ import {
     MinLength,
 } from 'class-validator';
 
+
+/**
+ * DTO para autenticação de usuário
+ */
 export class AuthDto {
+    /**
+     * CPF do usuário (obrigatório, 11 caracteres)
+     */
     @IsString()
     @IsNotEmpty()
     @MinLength(11, {
@@ -17,6 +25,9 @@ export class AuthDto {
     })
     cpf: string;
 
+    /**
+     * Senha do usuário (obrigatório, mínimo 8 caracteres)
+     */
     @IsString()
     @IsNotEmpty()
     @MinLength(8, {
@@ -24,6 +35,9 @@ export class AuthDto {
     })
     senha: string;
 
+    /**
+     * CNES da organização (opcional, mas decorado como obrigatório para compatibilidade)
+     */
     @IsString()
     @IsNotEmpty()
     @IsOptional()
