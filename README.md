@@ -1,107 +1,190 @@
-# PI2 Monorepo
+# SAG (Sistema de Apoio à Gestante)
 
-Este projeto é um monorepo gerenciado com Turborepo, utilizando NestJS, Prisma, Docker, PostgreSQL e Infisical para gerenciamento de variáveis de ambiente.
+![Capa do Projeto](URL_DA_IMAGEM_DE_CAPA) <p align="center">
+  <img src="https://img.shields.io/badge/status-em--desenvolvimento-yellow" alt="Status do Projeto">
+  <img src="https://img.shields.io/badge/licen%C3%A7a-MIT-blue" alt="Licença">
+  </p>
 
-## Pré-requisitos
-
-- Node.js >= 22.15.0
-- npm >= 11.0
-- Docker e Docker Compose
-- [Infisical CLI](https://infisical.com/docs/cli/overview)
-
-## 1. Instalação e Configuração
-
-### 1.1. Clone o repositório
-
-```bash
-git clone <url-do-repositorio>
-cd PI2
-```
-
-### 1.2. Instale as dependências
-
-```bash
-npm install
-```
-
-### 1.3. Configure o Infisical
-
-1. Instale o CLI do Infisical (caso não tenha): https://infisical.com/docs/cli/overview
-2. Faça login:
-   ```bash
-   infisical login
-   ```
-
-## 2. Rodando o Projeto em Desenvolvimento
-
-### 2.1. Suba o banco de dados com Docker
-
-```bash
-npm run docker-compose up -d
-```
-
-- O banco PostgreSQL e Adminer serão iniciados.
-- Adminer disponível em: http://localhost:8080
-
-### 2.2. Gere o client do Prisma
-
-```bash
-npm run db:build
-```
-
-### 2.3. Execute as migrações do banco
-
-```bash
-npm run db:migrate:dev
-```
-
-### 2.4. Inicie o ambiente de desenvolvimento
-
-```bash
-npm run dev
-```
-
-- O backend será iniciado em modo watch.
-
-## 3. Prisma
-
-- Para abrir o Prisma Studio:
-  ```bash
-  cd apps/api
-  npx prisma studio
-  ```
-- Para criar uma nova migração:
-  ```bash
-  cd apps/api
-  npx prisma migrate dev --name nome_da_migracao
-  ```
-
-## 4. Criando Novos Módulos na API (NestJS CLI)
-
-Acesse a pasta `apps/api` e utilize o CLI do NestJS:
-
-```bash
-cd apps/api
-npx nest g resource nome-do-modulo
-```
-
-- Os arquivos serão criados em `src/modules/nome-do-modulo`.
-- Siga a estrutura de pastas e utilize DTOs para validação.
-
-## 5. Padrão de Commits
-
-Utilize o padrão de commits do [iuricode/padroes-de-commits](https://github.com/iuricode/padroes-de-commits):
-
-Exemplos:
-- `✨ feat: descrição do que foi feito` (nova funcionalidade)
-- `🐛 fix: descrição do bug corrigido`
-- `📚 docs: alteração na documentação`
-- `♻️ refactor: refatoração de código`
-- `✔️ test: adição ou alteração de testes`
-- `🔧 chore: tarefas de build, infra, etc.`
-
-Consulte a tabela completa no repositório oficial para mais exemplos e recomendações.
+> Um sistema integrado para otimizar o acompanhamento de gestantes de alto risco, melhorando a comunicação entre Unidades Básicas de Saúde (UBS) e Policlínicas.
 
 ---
 
-Dúvidas? Consulte a documentação de cada ferramenta.
+## 📋 Índice
+
+* [Sobre o Projeto](#-sobre-o-projeto)
+  * [O Problema](#o-problema)
+  * [A Solução](#a-solução)
+* [✨ Funcionalidades](#-funcionalidades)
+* [🚀 Tecnologias Utilizadas](#-tecnologias-utilizadas)
+* [🏁 Como Começar](#-como-começar)
+  * [Pré-requisitos](#pré-requisitos)
+  * [Instalação e Configuração](#instalação-e-configuração)
+* [🔧 Comandos Úteis](#-comandos-úteis)
+  * [Desenvolvimento](#desenvolvimento)
+  * [Banco de Dados e Prisma](#banco-de-dados-e-prisma)
+* [🤝 Contribuição](#-contribuição)
+* [📄 Licença](#-licença)
+* [📫 Contato](#-contato)
+
+---
+
+## 🎯 Sobre o Projeto
+
+[cite_start]Este projeto foi desenvolvido como parte do Projeto Integrado II e visa resolver um problema crítico na coordenação do cuidado pré-natal de alto risco[cite: 8].
+
+### O Problema
+
+[cite_start]Atualmente, o encaminhamento de gestantes de alto risco das Unidades Básicas de Saúde (UBS) para a Policlínica é feito por meio de uma ficha de referência em papel[cite: 22, 23]. [cite_start]Esse método apresenta diversas falhas: os documentos são frequentemente perdidos, danificados ou não são atualizados após as consultas especializadas[cite: 24].
+
+[cite_start]Essa lacuna na comunicação impede que os profissionais de saúde tenham acesso a informações críticas sobre o histórico da paciente, tratamentos prescritos e a evolução do caso, comprometendo a continuidade e a segurança do cuidado[cite: 25, 26].
+
+### A Solução
+
+[cite_start]O **SAG (Sistema de Apoio à Gestante)** é um sistema integrado que centraliza os dados das gestantes, permitindo uma comunicação eficiente e em tempo real entre os profissionais da UBS e da Policlínica[cite: 27]. [cite_start]O objetivo é garantir que as informações sejam sempre acessíveis e atualizadas, melhorando a qualidade e a coordenação do atendimento pré-natal[cite: 27].
+
+---
+
+## ✨ Funcionalidades
+
+O sistema foi projetado com base nas necessidades dos profissionais de saúde e gestores, incluindo:
+
+* **👤 Gestão de Usuários (Admin):**
+    * [cite_start]Cadastrar novos usuários (Médicos, Enfermeiros, ADMs) através de um sistema de convites[cite: 46].
+    * [cite_start]Listar todos os usuários com filtros por cargo ou município[cite: 104, 117].
+    * [cite_start]Excluir usuários, garantindo a integridade dos registros vinculados[cite: 86, 103].
+* **🔑 Autenticação e Perfis:**
+    * [cite_start]Login seguro para todos os perfis de usuário[cite: 121].
+    * [cite_start]Atualização de informações pessoais no perfil do usuário[cite: 68].
+* **👩‍⚕️ Gestão de Pacientes e Atendimentos:**
+    * [cite_start]Cadastro de novas pacientes, com verificação de duplicidade por CPF[cite: 170, 182].
+    * [cite_start]Registro detalhado de atendimentos clínicos (diagnóstico, exames, prescrições)[cite: 139].
+    * [cite_start]Encaminhamento seguro de atendimentos e informações clínicas entre unidades[cite: 157].
+* **🏥 Gestão de Unidades de Saúde (Admin):**
+    * [cite_start]CRUD completo para Policlínicas e Unidades Básicas de Saúde (UBS)[cite: 188, 259].
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+Este projeto é um monorepo que utiliza as seguintes tecnologias:
+
+* **Gerenciador do Monorepo:** [Turborepo](https://turbo.build/repo)
+* **Backend (`/apps/api`):**
+    * Framework: [NestJS](https://nestjs.com/)
+    * ORM: [Prisma](https://www.prisma.io/)
+    * Banco de Dados: [PostgreSQL](https://www.postgresql.org/)
+    * Autenticação: [JWT](https://jwt.io/)
+* **Frontend (`/apps/front`):**
+    * Framework: [React](https://react.dev/)
+    * Build Tool: [Vite](https://vitejs.dev/)
+    * Linguagem: [TypeScript](https://www.typescriptlang.org/)
+* **Infraestrutura e DevOps:**
+    * Containerização: [Docker](https://www.docker.com/)
+    * Gerenciamento de Segredos: [Infisical](https://infisical.com/)
+
+---
+
+## 🏁 Como Começar
+
+Siga os passos abaixo para configurar e executar o ambiente de desenvolvimento localmente.
+
+### Pré-requisitos
+
+* Node.js >= 22.15.0
+* npm >= 11.0
+* Docker e Docker Compose
+* [Infisical CLI](https://infisical.com/docs/cli/overview)
+
+### Instalação e Configuração
+
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/jeffaugg/sag.git](https://github.com/jeffaugg/sag.git)
+    cd sag
+    ```
+
+2.  **Instale as dependências:**
+    ```bash
+    npm install
+    ```
+
+3.  **Configure o Infisical:**
+    * Faça o login na sua conta Infisical:
+        ```bash
+        infisical login
+        ```
+    * Certifique-se de que o projeto está configurado corretamente conforme o arquivo `.infisical.json`.
+
+---
+
+## 🔧 Comandos Úteis
+
+### Desenvolvimento
+
+1.  **Suba o banco de dados com Docker:**
+    * Este comando iniciará os contêineres do PostgreSQL e do Adminer.
+    ```bash
+    npm run docker-compose up -d
+    ```
+    * O Adminer (gerenciador de banco de dados) estará disponível em `http://localhost:8080`.
+
+2.  **Gere o client do Prisma:**
+    ```bash
+    npm run db:build
+    ```
+
+3.  **Execute as migrações do banco de dados:**
+    ```bash
+    npm run db:migrate:dev
+    ```
+
+4.  **Inicie o ambiente de desenvolvimento:**
+    * Este comando usa o Infisical para injetar as variáveis de ambiente e inicia a API e o front-end.
+    ```bash
+    npm run dev
+    ```
+
+### Banco de Dados e Prisma
+
+* **Para abrir o Prisma Studio (visualizador de dados):**
+    ```bash
+    cd apps/api
+    npx prisma studio
+    ```
+* **Para criar uma nova migração:**
+    ```bash
+    cd apps/api
+    npx prisma migrate dev --name nome_da_migracao
+    ```
+
+---
+
+## 🤝 Contribuição
+
+Contribuições são bem-vindas! Para manter o histórico de commits limpo e organizado, por favor, siga o padrão de commits do **[Conventional Commits](https://www.conventionalcommits.org/)**.
+
+**Exemplos:**
+- `feat`: Uma nova funcionalidade (`✨ feat: Adiciona login com e-mail e senha`)
+- `fix`: Uma correção de bug (`🐛 fix: Corrige validação de CPF no cadastro`)
+- `docs`: Mudanças na documentação (`📚 docs: Atualiza o README com novas instruções`)
+- `refactor`: Refatoração de código que não altera a funcionalidade (`♻️ refactor: Otimiza a consulta de usuários`)
+- `test`: Adição ou correção de testes (`✔️ test: Adiciona testes para o módulo de autenticação`)
+- `chore`: Tarefas de build, configuração, etc. (`🔧 chore: Atualiza versão do NestJS`)
+
+---
+
+## 📄 Licença
+
+Este projeto é distribuído sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
+---
+
+## 📫 Contato
+
+* Danyel Lima Matos Granzotti
+* Guilherme Pereira Borges
+* Jeferson Augusto De Melo Gomes
+* Sheiely Do Ó Nascimento
+* Wendel Rodrigues Viana
+
+Link do Repositório: [https://github.com/jeffaugg/sag](https://github.com/jeffaugg/sag)
