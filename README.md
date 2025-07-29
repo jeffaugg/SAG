@@ -17,6 +17,7 @@
   * [A Solução](#a-solução)
 * [✨ Funcionalidades](#-funcionalidades)
 * [🚀 Tecnologias Utilizadas](#-tecnologias-utilizadas)
+* [📂 Documentação e Artefatos](#-documentação-e-artefatos)
 * [🏁 Como Começar](#-como-começar)
   * [Pré-requisitos](#pré-requisitos)
   * [Instalação e Configuração](#instalação-e-configuração)
@@ -24,6 +25,7 @@
   * [Desenvolvimento](#desenvolvimento)
   * [Banco de Dados e Prisma](#banco-de-dados-e-prisma)
 * [🤝 Contribuição](#-contribuição)
+* [👥 Autores](#-autores)
 * [📄 Licença](#-licença)
 * [📫 Contato](#-contato)
 
@@ -31,7 +33,7 @@
 
 ## 🎯 Sobre o Projeto
 
-Este projeto foi desenvolvido como parte do Projeto Integrado II e visa resolver um problema crítico na coordenação do cuidado pré-natal de alto risco.
+Este projeto foi desenvolvido no contexto do **Projeto Integrado II** do curso de Engenharia de Software - UFC, com o objetivo de resolver um problema real de comunicação entre unidades de saúde do município de Icó-CE, na coordenação do cuidado pré-natal de alto risco.
 
 ### O Problema
 
@@ -82,6 +84,15 @@ Este projeto é um monorepo que utiliza as seguintes tecnologias:
 * **Infraestrutura e DevOps:**
     * Containerização: [Docker](https://www.docker.com/)
     * Gerenciamento de Segredos: [Infisical](https://infisical.com/)
+
+---
+
+## 📂 Documentação e Artefatos
+
+Este repositório foca na implementação técnica. A documentação completa está disponível nos links abaixo:
+
+- 🔗 **Protótipo no Figma**: [Visualizar protótipo](https://www.figma.com/files/team/1331679110874083825/project/372532365/Projeto-Integrado-2?fuid=1254121760543219742)
+- 📚 **Documentos e Artefatos**: [Pasta no Google Drive](https://drive.google.com/drive/folders/14mtJAJ8NWnX8-yzEa5l_dEW2EzIcDsrZ)
 
 ---
 
@@ -174,6 +185,51 @@ Contribuições são bem-vindas! Para manter o histórico de commits limpo e org
 
 ---
 
+## 👥 Autores
+
+<table>
+  <tr>
+  <td align="center">
+      <a href="https://github.com/DanyelGranzotti">
+        <img src="https://avatars.githubusercontent.com/DanyelGranzotti" width="100px;" alt="Danyel"/>
+        <br /><sub><b>Danyel Granzotti</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/guilhermepereiraborges">
+        <img src="https://avatars.githubusercontent.com/guilhermepereiraborges" width="100px;" alt="Guilherme"/>
+        <br /><sub><b>Guilherme  Borges</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/jeffaugg">
+        <img src="https://avatars.githubusercontent.com/jeffaugg" width="100px;" alt="Jeferson"/>
+        <br /><sub><b>Jeferson Augusto de Melo</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/sheiely">
+        <img src="https://avatars.githubusercontent.com/sheiely" width="100px;" alt="Sheiely"/>
+        <br /><sub><b>Sheiely Nascimento</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/WendelRodriguesz">
+        <img src="https://avatars.githubusercontent.com/WendelRodriguesz" width="100px;" alt="Wendel"/>
+        <br /><sub><b>Wendel Rodrigues</b></sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/liapsps">
+        <img src="https://avatars.githubusercontent.com/liapsps" width="100px;" alt="Julia"/>
+        <br /><sub><b>Ana Julia Chaves</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## 📄 Licença
 
 Este projeto é distribuído sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
@@ -182,11 +238,11 @@ Este projeto é distribuído sob a licença MIT. Veja o arquivo `LICENSE` para m
 
 ## 📫 Contato
 
-* Danyel Lima Matos Granzotti
-* Guilherme Pereira Borges
-* Jeferson Augusto De Melo Gomes
-* Sheiely Do Ó Nascimento
-* Wendel Rodrigues Viana
-* Ana Julia Chaves Souto da Costa
-
-Link do Repositório: [https://github.com/jeffaugg/sag](https://github.com/jeffaugg/sag)
+- Projeto Integrado II – UFC – Engenharia de Software 
+* Danyel Granzotti — [danyel.granzotti17@gmail.com](mailto:danyel.granzotti17@gmail.com)
+* Guilherme Borges — [guilherme.pereira.borges.2004@gmail.com](mailto:guilherme.pereira.borges.2004@gmail.com)
+* Jeferson Augusto De Melo — [jefersonaugusto@alu.ufc.br](mailto:jefersonaugusto@alu.ufc.br)
+* Sheiely Nascimento — [sheielynascimento@gmail.com](mailto:sheielynascimento@gmail.com)
+* Wendel Rodrigues — [wendeldev2010@gmail.com](mailto:wendeldev2010@gmail.com)
+* Ana Julia Chaves — [lialilinbox@gmail.com](mailto:lialilinbox@gmail.com)
+- Repositório: [https://github.com/jeffaugg/sag](https://github.com/jeffaugg/sag)
