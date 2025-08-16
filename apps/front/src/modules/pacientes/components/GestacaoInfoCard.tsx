@@ -21,6 +21,17 @@ const GestacaoInfoCard: React.FC<GestacaoInfoCardProps> = ({
     onClick,
     onDelete,
 }) => {
+    const formatDate = (dateString: string): string => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
+    };
     return (
         <div
             className={`p-5 border-[1px] flex flex-col w-full gap-2.5 rounded-[4px] transition-all duration-200 ${
@@ -81,7 +92,7 @@ const GestacaoInfoCard: React.FC<GestacaoInfoCardProps> = ({
                         color: "#D9D9D9",
                     }}
                 >
-                    Início: {inicio}
+                    Início: {formatDate(inicio)}
                 </Title>
 
                 <Title
@@ -97,7 +108,7 @@ const GestacaoInfoCard: React.FC<GestacaoInfoCardProps> = ({
                         color: "#D9D9D9",
                     }}
                 >
-                    Fim: {fim}
+                    Fim: {formatDate(fim)}
                 </Title>
             </div>
         </div>

@@ -36,6 +36,11 @@ export const API_ENDPOINTS = {
     ATENDIMENTOS: {
         ROOT: "/atendimentos",
         BY_ID: (id: string) => `/atendimentos/${id}`,
-        GESTACAO: (gestacaoId: string) => `/atendimentos/gestacao/${gestacaoId}`,
-    }
+        GESTACAO: (gestacaoId: string) =>
+            `/atendimentos/gestacao/${gestacaoId}`,
+    },
+    MENSAGENS: {
+        ROOT: "/mensagens",
+        BY_GESTACAO: (gestacaoId: string) => `/mensagens/${gestacaoId}`,
+    },
 };

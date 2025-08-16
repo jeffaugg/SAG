@@ -30,6 +30,7 @@ import type {
 } from "../../types";
 
 import GestacaoCreateModal from "../../modals/GestacaoCreateModal";
+import ChatGestacao from "./ChatGestacao";
 
 const { Title } = Typography;
 
@@ -229,6 +230,7 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
                     />
                 </div>
             </div>
+            <ChatGestacao gestacaoId={gestacaoId} />
 
             <GestacaoCreateModal
                 visible={isCreateGestacaoModalVisible}
