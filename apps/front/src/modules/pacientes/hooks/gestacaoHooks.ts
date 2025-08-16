@@ -1,4 +1,3 @@
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Hooks customizados para manipulação de gestações e consultas usando React Query
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,7 +5,12 @@ import axiosInstance from "../../../api/axiosConfig";
 import { API_ENDPOINTS } from "../../../api/endpoints";
 import { handleError } from "../../../utils/error-handler";
 import ToastService from "../../../utils/toast-service";
-import type { ConsultasPaginatedResponse, ConsultasSearchParams, Gestacao, GestacaoCreateFormData } from "../types";
+import type {
+    ConsultasPaginatedResponse,
+    ConsultasSearchParams,
+    Gestacao,
+    GestacaoCreateFormData,
+} from "../types";
 
 /**
  * Hook para buscar todas as gestações de um paciente pelo ID.
@@ -15,12 +19,13 @@ import type { ConsultasPaginatedResponse, ConsultasSearchParams, Gestacao, Gesta
  * @returns Lista de gestações e estados de loading/erro
  */
 export const useGestacaoByPacienteID = (id: string) => {
-    console.log("useGestacaoByPacienteID", id);
     return useQuery<Gestacao[]>({
         queryKey: ["gestacao", id],
         queryFn: async (): Promise<Gestacao[]> => {
             try {
-                const response = await axiosInstance.get(API_ENDPOINTS.PACIENTES.GESTACOES(id));
+                const response = await axiosInstance.get(
+                    API_ENDPOINTS.PACIENTES.GESTACOES(id),
+                );
                 return response.data;
             } catch (error) {
                 throw new Error(`Erro ao carregar gestação: ${error}`);
@@ -30,7 +35,7 @@ export const useGestacaoByPacienteID = (id: string) => {
         retry: 2,
         staleTime: 5 * 60 * 1000,
     });
-}
+};
 
 /**
  * Hook para buscar consultas de uma gestação específica, com paginação.
@@ -38,7 +43,10 @@ export const useGestacaoByPacienteID = (id: string) => {
  * @param params Parâmetros de busca (página, limite, etc)
  * @returns Lista paginada de consultas e estados de loading/erro
  */
-export const useConsultasByGestacaoID = ({ gestacaoId, ...params }: ConsultasSearchParams) => {
+export const useConsultasByGestacaoID = ({
+    gestacaoId,
+    ...params
+}: ConsultasSearchParams) => {
     return useQuery({
         queryKey: ["atendimento", gestacaoId, params],
         queryFn: async (): Promise<ConsultasPaginatedResponse> => {
@@ -63,8 +71,7 @@ export const useConsultasByGestacaoID = ({ gestacaoId, ...params }: ConsultasSea
         retry: 2,
         staleTime: 5 * 60 * 1000,
     });
-}
-
+};
 
 /**
  * Hook para criar uma nova gestação.
@@ -81,38 +88,40 @@ export const useCreateGestacao = () => {
             const { inicio: dataInicio, fim: dataTermino, ...rest } = data;
 
             const dataInicioISO = new Date(dataInicio).toISOString();
-            const dataTerminoISO = dataTermino ? new Date(dataTermino).toISOString() : undefined;
+            const dataTerminoISO = dataTermino
+                ? new Date(dataTermino).toISOString()
+                : undefined;
 
             const payload: any = {
                 ...rest,
                 inicio: dataInicioISO,
             };
-            
+
             if (dataTermino) payload.fim = dataTerminoISO;
-            
 
             try {
-                const response = await axiosInstance.post(API_ENDPOINTS.GESTACOES.ROOT, payload);
+                const response = await axiosInstance.post(
+                    API_ENDPOINTS.GESTACOES.ROOT,
+                    payload,
+                );
                 return response.data;
             } catch (error) {
                 throw new Error(`Erro ao criar gestação: ${error}`);
             }
-    },
+        },
 
         onSuccess: () => {
             // Atualiza o cache das gestações após criar
             queryClient.invalidateQueries({ queryKey: ["gestacao"] });
             ToastService.success("Gestação criada com sucesso!");
-            
         },
         onError: (error) => {
             // Trata e exibe erro amigável
             const appError = handleError(error);
             ToastService.error(`Erro ao criar gestação: ${appError.message}`);
-        }
+        },
     });
 };
-
 
 /**
  * Hook para excluir uma gestação pelo ID.
@@ -140,6 +149,6 @@ export const useDeleteGestacao = () => {
             // Trata e exibe erro amigável
             const appError = handleError(error);
             ToastService.error(`Erro ao excluir gestação: ${appError.message}`);
-        }
+        },
     });
-}
+};

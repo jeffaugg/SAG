@@ -1,12 +1,11 @@
-
 // Importações dos módulos e serviços necessários para o módulo de mensagens
 import { Module } from '@nestjs/common';
-import { MensagensService } from './mensagens.service';
-import { MensagensController } from './mensagens.controller';
-import { MENSAGENS_SERVICE } from 'src/common/constants';
-import { Mensagem, MensagemSchema } from './mensagem';
 import { MongooseModule } from '@nestjs/mongoose';
-
+import { MENSAGENS_SERVICE } from 'src/common/constants';
+import { DatabaseModule } from 'src/shared/database/database.module';
+import { Mensagem, MensagemSchema } from './mensagem';
+import { MensagensController } from './mensagens.controller';
+import { MensagensService } from './mensagens.service';
 
 /**
  * Módulo responsável por agrupar as dependências, controllers e providers relacionados às mensagens.
@@ -17,6 +16,7 @@ import { MongooseModule } from '@nestjs/mongoose';
         MongooseModule.forFeature([
             { name: Mensagem.name, schema: MensagemSchema },
         ]),
+        DatabaseModule,
     ],
     // Define o controller responsável pelas rotas de mensagens
     controllers: [MensagensController],

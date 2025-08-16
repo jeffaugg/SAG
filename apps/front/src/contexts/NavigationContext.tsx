@@ -1,5 +1,7 @@
 import { createContext, type ReactNode, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import axiosInstance from "../api/axiosConfig";
+import { API_ENDPOINTS } from "../api/endpoints";
 import { useCurrentUser } from "../modules/auth/hooks/authHooks";
 import type { CargoType } from "../modules/auth/schemas/auth.schemas";
 
@@ -88,45 +90,69 @@ export const NavigationProvider = ({
 
         setSelectedKeys([location.pathname]);
 
-        const breadcrumbItems: BreadcrumbItem[] = [];
-        let currentPath = "";
-
-        breadcrumbItems.push({
-            path: "/",
-            label: "Home",
-            icon: routes.find((r) => r.path === "/")?.icon,
-        });
-
-        const findRouteByPath = (
-            routes: RouteDefinition[],
-            path: string,
-        ): RouteDefinition | undefined => {
-            for (const route of routes) {
-                if (route.path === path) return route;
-                if (route.children) {
-                    const childRoute = findRouteByPath(route.children, path);
-                    if (childRoute) return childRoute;
-                }
-            }
-            return undefined;
-        };
-
-        pathSegments.forEach((segment) => {
-            currentPath += `/${segment}`;
-
-            const route = findRouteByPath(routes, currentPath);
-            const label =
-                route?.label ||
-                segment.charAt(0).toUpperCase() + segment.slice(1);
+        const buildBreadcrumbs = async () => {
+            const breadcrumbItems: BreadcrumbItem[] = [];
+            let currentPath = "";
 
             breadcrumbItems.push({
-                path: currentPath,
-                label,
-                icon: route?.icon,
+                path: "/",
+                label: "Home",
+                icon: routes.find((r) => r.path === "/")?.icon,
             });
-        });
 
-        setBreadcrumbs(breadcrumbItems);
+            const findRouteByPath = (
+                routes: RouteDefinition[],
+                path: string,
+            ): RouteDefinition | undefined => {
+                for (const route of routes) {
+                    if (route.path === path) return route;
+                    if (route.children) {
+                        const childRoute = findRouteByPath(
+                            route.children,
+                            path,
+                        );
+                        if (childRoute) return childRoute;
+                    }
+                }
+                return undefined;
+            };
+
+            for (let i = 0; i < pathSegments.length; i++) {
+                const segment = pathSegments[i];
+                currentPath += `/${segment}`;
+
+                const route = findRouteByPath(routes, currentPath);
+                let label =
+                    route?.label ||
+                    segment.charAt(0).toUpperCase() + segment.slice(1);
+
+                if (
+                    pathSegments[0] === "pacientes" &&
+                    i === 1 &&
+                    segment !== "pacientes"
+                ) {
+                    try {
+                        const response = await axiosInstance.get(
+                            API_ENDPOINTS.PACIENTES.BY_ID(segment),
+                        );
+                        label = response.data.nome;
+                    } catch (error) {
+                        console.warn("Erro ao buscar nome do paciente:", error);
+                        label = segment;
+                    }
+                }
+
+                breadcrumbItems.push({
+                    path: currentPath,
+                    label,
+                    icon: route?.icon,
+                });
+            }
+
+            setBreadcrumbs(breadcrumbItems);
+        };
+
+        buildBreadcrumbs();
 
         if (pathSegments.length > 0) {
             let path = "";
