@@ -7,6 +7,7 @@ export interface Mensagem {
         texto: string;
     };
     remetente: string;
+    remetenteNome?: string;
     gestacao: string;
     tipo: string;
     createdAt: string;

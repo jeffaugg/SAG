@@ -132,6 +132,12 @@ const Chat: React.FC<ChatProps> = ({ gestacaoId, currentUserId }) => {
                         <div
                             className={`max-w-xs ${mensagem.remetente === currentUserId ? "ml-auto" : "mr-auto"}`}
                         >
+                            {mensagem.remetente !== currentUserId &&
+                                mensagem.remetenteNome && (
+                                    <Text className="text-xs font-medium text-gray-600 mb-1">
+                                        {mensagem.remetenteNome}
+                                    </Text>
+                                )}
                             <div
                                 className={`p-3 rounded-lg ${mensagem.remetente === currentUserId ? "bg-blue-500 text-white" : "bg-gray-100"}`}
                             >

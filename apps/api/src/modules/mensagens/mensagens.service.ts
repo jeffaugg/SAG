@@ -1,13 +1,13 @@
-
 // Importações necessárias para manipulação de mensagens e integração com o Mongoose
-import { Model } from 'mongoose';
-import { Mensagem, MensagemDocument } from './mensagem';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { USUARIO_REPOSITORY } from 'src/common/constants';
+import { PaginacaoDto } from 'src/common/dto/pagination.dto';
+import { IUsuarioRepository } from 'src/shared/database/repositories/interface/usuario-repository.interface';
 import { CreateMessageDto } from './dto/create-message';
 import { GetMessagesResponse } from './dto/get-messages-reponse';
-import { PaginacaoDto } from 'src/common/dto/pagination.dto';
-
+import { Mensagem, MensagemDocument } from './mensagem';
 
 /**
  * Serviço responsável pela lógica de negócio relacionada às mensagens.
@@ -21,6 +21,8 @@ export class MensagensService {
     constructor(
         @InjectModel(Mensagem.name)
         private readonly mensagemModel: Model<MensagemDocument>,
+        @Inject(USUARIO_REPOSITORY)
+        private readonly usuarioRepo: IUsuarioRepository,
     ) {}
 
     /**
@@ -55,7 +57,7 @@ export class MensagensService {
         const { limit, skip } = options;
 
         // Busca as mensagens e o total de registros em paralelo
-        const [data, total] = await Promise.all([
+        const [mensagens, total] = await Promise.all([
             this.mensagemModel
                 .find({ gestacao: gestacaoId })
                 .sort({ createdAt: -1 }) // Ordena por data de criação (mais recentes primeiro)
@@ -64,8 +66,22 @@ export class MensagensService {
                 .exec(),
             this.mensagemModel.countDocuments({ gestacao: gestacaoId }).exec(),
         ]);
+
+        // Busca informações dos usuários para cada mensagem
+        const mensagensComUsuario = await Promise.all(
+            mensagens.map(async (mensagem) => {
+                const usuario = await this.usuarioRepo.findById(
+                    mensagem.remetente,
+                );
+                return {
+                    ...mensagem.toObject(),
+                    remetenteNome: usuario?.nome || 'Usuário não encontrado',
+                };
+            }),
+        );
+
         return {
-            items: data,
+            items: mensagensComUsuario,
             total,
         };
     }
