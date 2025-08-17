@@ -1,10 +1,39 @@
-
 // Importa decoradores de validação, transformação e tipos para o DTO de criação de mensagem
-import { IsEnum, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import {
+    IsEnum,
+    IsNotEmpty,
+    IsString,
+    registerDecorator,
+    ValidateNested,
+    ValidationArguments,
+    ValidationOptions,
+} from 'class-validator';
 import { TipoMensagem } from '../entidade/tipo.mensagem';
 import { ConteudoDto } from './conteudo-dto';
 
+function IsContentValid(validationOptions?: ValidationOptions) {
+    return function (object: Object, propertyName: string) {
+        registerDecorator({
+            name: 'isContentValid',
+            target: object.constructor,
+            propertyName: propertyName,
+            options: validationOptions,
+            validator: {
+                validate(value: ConteudoDto, args: ValidationArguments) {
+                    return !!(
+                        value?.texto?.trim() ||
+                        value?.imagemUrl ||
+                        value?.arquivoUrl
+                    );
+                },
+                defaultMessage(args: ValidationArguments) {
+                    return 'Mensagem deve conter texto, imagem ou arquivo';
+                },
+            },
+        });
+    };
+}
 
 /**
  * DTO para criação de uma mensagem
@@ -29,5 +58,6 @@ export class CreateMessageDto {
      */
     @ValidateNested()
     @Type(() => ConteudoDto)
+    @IsContentValid()
     conteudo: ConteudoDto;
 }

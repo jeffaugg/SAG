@@ -42,6 +42,46 @@ export const useSocket = () => {
         }
     };
 
+    const sendMessageWithFile = async (
+        gestacaoId: string,
+        conteudo: string,
+        file: File,
+    ) => {
+        const formData = new FormData();
+        formData.append("gestacao", gestacaoId);
+        formData.append("tipo", "MIDIA");
+        formData.append("texto", conteudo);
+        formData.append("file", file);
+
+        const token = localStorage.getItem("access_token");
+
+        try {
+            const response = await fetch(
+                `${import.meta.env.VITE_API_END_POINT}/mensagens/with-file`,
+                {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+
+            if (response.ok) {
+                const mensagem = await response.json();
+                if (socketRef.current) {
+                    socketRef.current.emit("message-sent", {
+                        gestacaoId,
+                        mensagem,
+                    });
+                }
+                return mensagem;
+            }
+        } catch (error) {
+            console.error("Erro ao enviar mensagem com arquivo:", error);
+        }
+    };
+
     const onReceiveMessage = (callback: (mensagem: any) => void) => {
         if (socketRef.current) {
             socketRef.current.on("receive-message", callback);
@@ -58,6 +98,7 @@ export const useSocket = () => {
         isConnected,
         joinGestacao,
         sendMessage,
+        sendMessageWithFile,
         onReceiveMessage,
         offReceiveMessage,
     };

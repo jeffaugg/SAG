@@ -137,7 +137,6 @@ export const NavigationProvider = ({
                         );
                         label = response.data.nome;
                     } catch (error) {
-                        console.warn("Erro ao buscar nome do paciente:", error);
                         label = segment;
                     }
                 }

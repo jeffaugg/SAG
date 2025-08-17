@@ -1,18 +1,19 @@
+import { Inject, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import {
-    WebSocketGateway,
-    MessageBody,
     ConnectedSocket,
+    MessageBody,
     SubscribeMessage,
+    WebSocketGateway,
 } from '@nestjs/websockets';
+import { MENSAGENS_SERVICE, S3_SERVICE } from 'src/common/constants';
+import { ConteudoDto } from 'src/modules/mensagens/dto/conteudo-dto';
+import { CreateMessageDto } from 'src/modules/mensagens/dto/create-message';
+import { TipoMensagem } from 'src/modules/mensagens/entidade/tipo.mensagem';
+import { IMensagensService } from 'src/modules/mensagens/interface/mensagens.service.interface';
+import { S3Service } from 'src/shared/upload/s3.service';
 import { AbstractAuthenticatedGateway } from '../abstract.auth.gateway';
 import { AuthenticatedSocket } from '../interface/authenticated.socket';
-import { CreateMessageDto } from 'src/modules/mensagens/dto/create-message';
-import { MENSAGENS_SERVICE } from 'src/common/constants';
-import { Inject, Logger } from '@nestjs/common';
-import { IMensagensService } from 'src/modules/mensagens/interface/mensagens.service.interface';
-import { JwtService } from '@nestjs/jwt';
-import { TipoMensagem } from 'src/modules/mensagens/entidade/tipo.mensagem';
-import { ConteudoDto } from 'src/modules/mensagens/dto/conteudo-dto';
 
 @WebSocketGateway({ cors: { origin: '*' } }) //NECESSARIO ALTERAÇÃO
 export class ChatGateway extends AbstractAuthenticatedGateway {
@@ -20,6 +21,8 @@ export class ChatGateway extends AbstractAuthenticatedGateway {
     constructor(
         @Inject(MENSAGENS_SERVICE)
         private readonly mensagensService: IMensagensService,
+        @Inject(S3_SERVICE)
+        private readonly s3Service: S3Service,
         jwtService: JwtService,
     ) {
         super(jwtService);
@@ -56,5 +59,15 @@ export class ChatGateway extends AbstractAuthenticatedGateway {
         );
         client.to(gestacaoId).emit('receive-message', mensagem);
         return { status: 'sent', mensagem };
+    }
+
+    @SubscribeMessage('message-sent')
+    async handleMessageSent(
+        @ConnectedSocket() client: AuthenticatedSocket,
+        @MessageBody() payload: { gestacaoId: string; mensagem: any },
+    ) {
+        const { gestacaoId, mensagem } = payload;
+        client.to(gestacaoId).emit('receive-message', mensagem);
+        return { status: 'notified' };
     }
 }

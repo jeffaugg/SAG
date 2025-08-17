@@ -1,18 +1,16 @@
-
 // Importa decoradores de validação para as propriedades do DTO de conteúdo de mensagem
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-
+import { IsOptional, IsString } from 'class-validator';
 
 /**
  * DTO para o conteúdo de uma mensagem
  */
 export class ConteudoDto {
     /**
-     * Texto da mensagem (obrigatório, string)
+     * Texto da mensagem (opcional, string)
      */
-    @IsNotEmpty({ message: 'O texto da mensagem não pode estar vazio' })
+    @IsOptional()
     @IsString({ message: 'O texto da mensagem deve ser uma string' })
-    texto: string;
+    texto?: string;
 
     /**
      * URL da imagem (opcional, string)
@@ -20,4 +18,11 @@ export class ConteudoDto {
     @IsOptional()
     @IsString({ message: 'A URL da imagem deve ser uma string' })
     imagemUrl?: string;
+
+    /**
+     * URL do arquivo (opcional, string)
+     */
+    @IsOptional()
+    @IsString({ message: 'A URL do arquivo deve ser uma string' })
+    arquivoUrl?: string;
 }
