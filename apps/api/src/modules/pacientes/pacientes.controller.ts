@@ -1,4 +1,3 @@
-// Importações dos módulos e tipos necessários do NestJS e do domínio de pacientes
 import {
     Controller,
     Get,
@@ -20,8 +19,7 @@ import { IGestacaoService } from '../gestacoes/interface/gestacoes-service.inter
 import { organizationInfo } from 'src/shared/decorators/organizationInfo';
 import { OrganizacaoInfo } from 'src/shared/types';
 
-
-// Controller responsável pelas rotas relacionadas a pacientes
+// Controller responsável pelas rotas relacionadas a pacientes'
 @Controller('pacientes')
 export class PacientesController {
     /**
@@ -33,7 +31,6 @@ export class PacientesController {
         @Inject(GESTACOES_SERVICE)
         private readonly gestacaoService: IGestacaoService,
     ) {}
-
 
     /**
      * Cria um novo paciente na organização informada
@@ -47,23 +44,11 @@ export class PacientesController {
         return this.pacientesService.create(createPacienteDto, orgInfo);
     }
 
-
-    /**
-     * Lista todos os pacientes (apenas para administradores, com paginação)
-     * Rota: GET /pacientes
-     */
-    @Get()
-    @IsPaginated()
-    findAll(@Query() paginacaoDto: PaginacaoDto) {
-        return this.pacientesService.findAll(paginacaoDto);
-    }
-
-
     /**
      * Lista pacientes da organização do usuário (com paginação)
      * Rota: GET /pacientes/organizacao
      */
-    @Get('organizacao')
+    @Get()
     @IsPaginated()
     findAllByOrganization(
         @Query() paginacaoDto: PaginacaoDto,
@@ -75,7 +60,6 @@ export class PacientesController {
         );
     }
 
-
     /**
      * Busca um paciente pelo ID
      * Rota: GET /pacientes/:id
@@ -84,7 +68,6 @@ export class PacientesController {
     findOne(@Param('id') id: string) {
         return this.pacientesService.findOne(id);
     }
-
 
     /**
      * Atualiza os dados de um paciente pelo ID
@@ -98,7 +81,6 @@ export class PacientesController {
         return this.pacientesService.update(id, updatePoliclinicaDto);
     }
 
-
     /**
      * Remove um paciente pelo ID
      * Rota: DELETE /pacientes/:id
@@ -107,7 +89,6 @@ export class PacientesController {
     remove(@Param('id') id: string) {
         return this.pacientesService.remove(id);
     }
-
 
     /**
      * Associa um paciente a uma organização
