@@ -97,9 +97,9 @@ const WorkInProgress: React.FC<WorkInProgressProps> = ({
                         type="primary"
                         size="large"
                         icon={<HomeOutlined />}
-                        onClick={() => navigate("/")}
+                        onClick={() => navigate("/pacientes")}
                     >
-                        Ir para o Dashboard
+                        Ir para a página de Pacientes
                     </Button>
                 </Space>
             </div>
