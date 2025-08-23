@@ -14,6 +14,7 @@ import {
     Typography,
 } from "antd";
 import React, { lazy, Suspense, useMemo } from "react";
+import { useCurrentUser } from "../../../auth/hooks/authHooks";
 import {
     useConsultasByGestacaoID,
     useGestacaoByPacienteID,
@@ -45,6 +46,9 @@ interface PacienteDetalhesContentProps {
 const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
     pacienteId,
 }) => {
+    const { data: currentUser } = useCurrentUser();
+    const isAdmin = currentUser?.cargo === "ADM";
+    
     const {
         isModalVisible,
         openModal,
@@ -109,58 +113,81 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
     // --- //
 
     const columns = useMemo(
-        () => [
-            {
-                title: "Data",
-                dataIndex: "createdAt",
-                key: "createdAt",
-                render: (value: string) =>
-                    new Date(value).toLocaleString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                    }),
-            },
-            {
-                title: "Médico",
-                dataIndex: ["medico", "nome"],
-                key: "medico",
-            },
-            {
-                title: "Unidade",
-                key: "unidade",
-                render: (_: any, record: Consulta) =>
-                    record.ubs?.nome || record.policlinica?.nome || "",
-            },
-            {
-                title: "Ações",
-                key: "actions",
-                width: 150,
-                fixed: "right" as const,
-                render: (_: unknown, record: Consulta) => (
-                    <Space size="middle">
+        () => {
+            const baseColumns: any[] = [
+                {
+                    title: "Data",
+                    dataIndex: "createdAt",
+                    key: "createdAt",
+                    render: (value: string) =>
+                        new Date(value).toLocaleString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                        }),
+                },
+                {
+                    title: "Médico",
+                    dataIndex: ["medico", "nome"],
+                    key: "medico",
+                },
+                {
+                    title: "Unidade",
+                    key: "unidade",
+                    render: (_: any, record: Consulta) =>
+                        record.ubs?.nome || record.policlinica?.nome || "",
+                },
+            ];
+
+            // Apenas adiciona a coluna de ações se não for administrador
+            if (!isAdmin) {
+                baseColumns.push({
+                    title: "Ações",
+                    key: "actions",
+                    width: 150,
+                    fixed: "right" as const,
+                    render: (_: unknown, record: Consulta) => (
+                        <Space size="middle">
+                            <Button
+                                onClick={() => handleViewConsulta(record)}
+                                type="text"
+                                icon={<EyeOutlined />}
+                            />
+                            <Popconfirm
+                                title="Excluir consulta?"
+                                okText="Sim"
+                                cancelText="Não"
+                                onConfirm={() => handleDelete(record.id)}
+                            >
+                                <Button
+                                    danger
+                                    type="text"
+                                    icon={<DeleteOutlined />}
+                                />
+                            </Popconfirm>
+                        </Space>
+                    ),
+                });
+            } else {
+                // Para administradores, apenas mostra o botão de visualizar
+                baseColumns.push({
+                    title: "Ações",
+                    key: "actions",
+                    width: 80,
+                    fixed: "right" as const,
+                    render: (_: unknown, record: Consulta) => (
                         <Button
                             onClick={() => handleViewConsulta(record)}
                             type="text"
                             icon={<EyeOutlined />}
                         />
-                        <Popconfirm
-                            title="Excluir consulta?"
-                            okText="Sim"
-                            cancelText="Não"
-                            onConfirm={() => handleDelete(record.id)}
-                        >
-                            <Button
-                                danger
-                                type="text"
-                                icon={<DeleteOutlined />}
-                            />
-                        </Popconfirm>
-                    </Space>
-                ),
-            },
-        ],
-        [],
+                    ),
+                });
+            }
+
+            return baseColumns;
+        },
+        [isAdmin, handleViewConsulta, handleDelete],
     );
 
     return (
@@ -193,20 +220,24 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
                             allowClear
                         />
                         <Button type="default" icon={<SearchOutlined />} />
-                        <Button
-                            type="primary"
-                            icon={<PlusOutlined />}
-                            onClick={openModal}
-                        >
-                            Cadastrar Atendimento
-                        </Button>
-                        <Button
-                            type="primary"
-                            icon={<PlusOutlined />}
-                            onClick={openCreateGestacaoModal}
-                        >
-                            Cadastrar Gestação
-                        </Button>
+                        {!isAdmin && (
+                            <>
+                                <Button
+                                    type="primary"
+                                    icon={<PlusOutlined />}
+                                    onClick={openModal}
+                                >
+                                    Cadastrar Atendimento
+                                </Button>
+                                <Button
+                                    type="primary"
+                                    icon={<PlusOutlined />}
+                                    onClick={openCreateGestacaoModal}
+                                >
+                                    Cadastrar Gestação
+                                </Button>
+                            </>
+                        )}
                     </Space>
                 </div>
                 <div className="flex-1 overflow-auto p-4">
@@ -232,24 +263,28 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
             </div>
             <ChatGestacao gestacaoId={gestacaoId} />
 
-            <GestacaoCreateModal
-                visible={isCreateGestacaoModalVisible}
-                onCancel={() => setIsCreateGestacaoModalVisible(false)}
-                onSubmit={handleGestacaoSubmitWithPaciente}
-                initialValues={undefined}
-            />
+            {!isAdmin && (
+                <>
+                    <GestacaoCreateModal
+                        visible={isCreateGestacaoModalVisible}
+                        onCancel={() => setIsCreateGestacaoModalVisible(false)}
+                        onSubmit={handleGestacaoSubmitWithPaciente}
+                        initialValues={undefined}
+                    />
+
+                    <ConsultaModal
+                        visible={isModalVisible}
+                        onCancel={closeModal}
+                        onSubmit={handleSubmit}
+                        initialValues={undefined}
+                    />
+                </>
+            )}
 
             <ConsultaDetailsModal
                 visible={isDetailsModalVisible}
                 onCancel={() => setIsDetailsModalVisible(false)}
                 initialValues={atendimentoDetails}
-            />
-
-            <ConsultaModal
-                visible={isModalVisible}
-                onCancel={closeModal}
-                onSubmit={handleSubmit}
-                initialValues={undefined}
             />
         </div>
     );
