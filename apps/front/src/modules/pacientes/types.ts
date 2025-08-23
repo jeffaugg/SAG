@@ -21,6 +21,19 @@ export interface PacienteSearchParams {
     limit?: number;
     search?: string;
 }
+export type GestacoesPaginatedResponse = {
+  data: Gestacao[];
+  meta: {
+    totalItems: number,
+  };
+};
+
+export type GestacoesSearchParams = {
+  status?: 'Pendente' | 'Fechado';
+  page?: number;   // 1-based
+  limit?: number;  // itens por página
+  isAdmin: boolean;
+};
 
 export interface PacientePaginatedResponse {
     data: Paciente[];
