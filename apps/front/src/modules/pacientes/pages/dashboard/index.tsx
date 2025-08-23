@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Space, Table, Typography } from "antd";
+import { Button, Input, Popconfirm, Space, Table, Typography, Card, Statistic } from "antd";
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleError } from "../../../../utils/error-handler";
@@ -8,6 +8,11 @@ import { usePaciente } from "../../hooks/pacienteHooks";
 import { usePacienteForm } from "../../hooks/usePacienteForm";
 import PacienteModal from "../../modals/PacienteModal";
 import type { Paciente } from "../../types";
+import { useGestacoesSearch } from "../../hooks/gestacaoHooks";
+import { checkPermission } from "../../../../utils/permission-utils";
+import { useCurrentUser } from "../../../auth/hooks/authHooks";
+import { cargoSchema } from "../../../../types";
+import { boolean } from "zod";
 
 const { Title } = Typography;
 
@@ -40,8 +45,23 @@ const Paciente : React.FC = () => {
         search: searchQuery,
     });
 
+    const { data: currentUser} = useCurrentUser();
+    let isAdmin = false;
+    if(currentUser?.cargo == "ADM")isAdmin = true;
+    
+    const { data: pendData, isLoading: pendLoading} =
+    useGestacoesSearch({ status: 'Pendente', isAdmin});
+
+    const { data: fechadData, isLoading: fechadLoading} =
+    useGestacoesSearch({ status: 'Fechado', isAdmin});
+    
+    const totalPendentes = isAdmin ? (pendData?.meta?.totalItems ?? 0) : 0;
+    const totalFechados  = isAdmin ? (fechadData?.meta?.totalItems ?? 0) : 0;
+
     const pacientesList = pacientes?.data || [];
     const meta = pacientes?.meta;
+
+
 
     useEffect(() => {
             if (error) {
@@ -126,8 +146,16 @@ const Paciente : React.FC = () => {
                 </Button>
         </Space>
       </div>
-
-      
+      {isAdmin && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Card styles={{ body: { padding: 5 } }} loading={pendLoading}>
+                <Statistic title="Gestações pendentes" value={totalPendentes} />
+            </Card>
+            <Card styles={{ body: { padding: 5 } }} loading={fechadLoading}>
+                <Statistic title="Gestações fechadas" value={totalFechados} />
+            </Card>
+        </div>
+      )}
         {(!pacientesList.length && !isLoading) ? (
           <Typography.Text type="secondary">
             Nenhum paciente encontrado.

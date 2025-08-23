@@ -16,7 +16,6 @@ export class CreatePacienteDto {
 
     @IsNotEmpty({ message: 'O CPF não pode estar vazio' })
     @IsString({ message: 'O CPF deve ser uma String' })
-    @Length(11, 11, { message: 'CPF deve conter exatamente 11 dígitos' })
     cpf: string;
 
     @IsOptional()

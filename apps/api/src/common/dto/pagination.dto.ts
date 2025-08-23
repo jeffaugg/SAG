@@ -3,7 +3,6 @@ import { ApiHideProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsOptional, Min } from 'class-validator';
 
-
 /**
  * DTO para paginação de resultados em endpoints
  */

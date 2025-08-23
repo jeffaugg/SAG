@@ -10,6 +10,8 @@ import type {
     ConsultasSearchParams,
     Gestacao,
     GestacaoCreateFormData,
+    GestacoesPaginatedResponse,
+    GestacoesSearchParams,
 } from "../types";
 
 /**
@@ -151,4 +153,38 @@ export const useDeleteGestacao = () => {
             ToastService.error(`Erro ao excluir gestação: ${appError.message}`);
         },
     });
+};
+
+export const useGestacoesSearch = (params: GestacoesSearchParams) => {
+  return useQuery<GestacoesPaginatedResponse>({
+    queryKey: ["gestacao", "search", params],
+    queryFn: async (): Promise<GestacoesPaginatedResponse> => {
+      const searchParams = new URLSearchParams();
+
+      if (params?.status) {
+        searchParams.append("status", params.status);
+      }
+      if (params?.page && params.page > 0) {
+        searchParams.append("page", String(params.page));
+      }
+      if (params?.limit && params.limit > 0) {
+        searchParams.append("limit", String(params.limit));
+      }
+
+      const url = `${API_ENDPOINTS.GESTACOES.ROOT}/filtrar${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+
+      try {
+        const response = await axiosInstance.get(url);
+        return response.data as GestacoesPaginatedResponse;
+      } catch (error) {
+        // deixe o componente pai decidir como exibir o erro (toast, etc.)
+        throw new Error(`Erro ao pesquisar gestações: ${error}`);
+      }
+    },
+    // habilita se não tiver nada para pesquisar? sim, mas você pode condicionar:
+    // enabled: !!params?.status,
+    retry: 2,
+    staleTime: 5 * 60 * 1000,
+    enabled: params.isAdmin,
+  });
 };
