@@ -152,3 +152,37 @@ export const useDeleteGestacao = () => {
         },
     });
 };
+
+export const useUpdateGestacao = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            id,
+            data,
+        }: {
+            id: string;
+            data: GestacaoCreateFormData;
+        }) => {
+            try {
+                const response = await axiosInstance.put(
+                    API_ENDPOINTS.GESTACOES.BY_ID(id),
+                    data,
+                );
+                return response.data;
+            } catch (error) {
+                throw new Error(`Erro ao atualizar gestação: ${error}`);
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["gestacao"] });
+            ToastService.success("Gestação atualizada com sucesso!");
+        },
+        onError: (error) => {
+            const appError = handleError(error);
+            ToastService.error(
+                `Erro ao atualizar gestação: ${appError.message}`,
+            );
+        },
+    });
+};
