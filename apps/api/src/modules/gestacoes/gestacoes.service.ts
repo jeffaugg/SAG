@@ -1,4 +1,3 @@
-
 // Importações dos módulos, tipos e utilitários necessários para a lógica de gestações
 import {
     ConflictException,
@@ -15,7 +14,7 @@ import { catchError } from 'src/shared/erro/catch-errors';
 import { CreateGestacaoDto } from './dto/create-gestacao.dto';
 import { UpdateGestacaoDto } from './dto/update-gestacao.dto';
 import { IGestacaoService } from './interface/gestacoes-service.interface';
-
+import { GestacaoFiltroDto } from './dto/filtro-gestacao.dto';
 
 // Serviço responsável pela lógica de criação, busca, atualização e remoção de gestações
 @Injectable()
@@ -83,5 +82,11 @@ export class GestacaoService implements IGestacaoService {
     async remove(id: string) {
         const [erro] = await catchError(this.gestacoesRepository.delete(id));
         if (erro) throw new NotFoundException('Gestação não encontrada');
+    }
+
+    async search(
+        filtro: GestacaoFiltroDto,
+    ): Promise<{ items: Gestacao[]; total: number }> {
+        return this.gestacoesRepository.search(filtro);
     }
 }

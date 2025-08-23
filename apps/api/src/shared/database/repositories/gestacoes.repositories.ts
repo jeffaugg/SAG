@@ -3,11 +3,35 @@ import { PrismaService } from '../prisma.service';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { Injectable } from '@nestjs/common';
 import { IGestacoesRepository } from './interface/gestacoes-repository.interface';
-import { Gestacao } from '@prisma/client';
+import { Gestacao, Prisma } from '@prisma/client';
+import { GestacaoFiltroDto } from 'src/modules/gestacoes/dto/filtro-gestacao.dto';
 
 @Injectable()
 export class GestacoesRepository implements IGestacoesRepository {
     constructor(private readonly prismaService: PrismaService) {}
+
+    async search(
+        filtros: GestacaoFiltroDto,
+    ): Promise<{ items: any[]; total: number }> {
+        const { status, skip, limit } = filtros;
+
+        const where: Prisma.GestacaoWhereInput = { deletedAt: null };
+        console.log(status);
+        if (status) where.status = status;
+
+        const [total, items] = await this.prismaService.$transaction([
+            this.prismaService.gestacao.count({ where }),
+            this.prismaService.gestacao.findMany({
+                where,
+                orderBy: { inicio: 'asc' },
+                skip,
+                take: limit,
+            }),
+        ]);
+
+        return { items, total };
+    }
+
     async findByPaciente(id: string): Promise<Gestacao[]> {
         return this.prismaService.gestacao.findMany({
             where: {
