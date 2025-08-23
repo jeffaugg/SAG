@@ -13,16 +13,16 @@ const ALL_ROLES = [ROLES.ADMIN, ROLES.MEDICO, ROLES.ENFERMEIRO];
 const CLINICAL_STAFF = [ROLES.MEDICO, ROLES.ENFERMEIRO];
 
 export const routes: RouteDefinition[] = [
-    {
-        path: "/",
-        label: "Dashboard",
-        icon: <DashboardOutlined />,
-    },
-    {
-        path: "/gestacoes",
-        label: "Gestações",
-        icon: <MedicineBoxOutlined />,
-    },
+    // {
+    //     path: "/",
+    //     label: "Dashboard",
+    //     icon: <DashboardOutlined />,
+    // },
+    // {
+    //     path: "/gestacoes",
+    //     label: "Gestações",
+    //     icon: <MedicineBoxOutlined />,
+    // },
     {
         path: "/pacientes",
         label: "Pacientes",

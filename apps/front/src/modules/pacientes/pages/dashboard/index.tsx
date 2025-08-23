@@ -2,6 +2,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant
 import { Button, Input, Popconfirm, Space, Table, Typography } from "antd";
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCurrentUser } from "../../../auth/hooks/authHooks";
 import { handleError } from "../../../../utils/error-handler";
 import ToastService from "../../../../utils/toast-service";
 import { usePaciente } from "../../hooks/pacienteHooks";
@@ -13,6 +14,9 @@ const { Title } = Typography;
 
 const Paciente : React.FC = () => {
     const navigate = useNavigate();
+    const { data: currentUser } = useCurrentUser();
+    const isAdmin = currentUser?.cargo === "ADM";
+    
     const {
         pagination,
         searchText,
@@ -51,48 +55,56 @@ const Paciente : React.FC = () => {
         }, [error]);
 
     const columns = useMemo(
-        () => [
-            { title: "Nome", dataIndex: "nome", key: "nome" },
-            { title: "CPF", dataIndex: "cpf", key: "cpf"},
-            {
-                title: "Telefone",
-                dataIndex: "telefone",
-                key: "telefone",
-            },
-            {
-                title: "Endereço",
-                dataIndex: "endereco",
-                key: "endereco",
-            },
-            {
-                title: "Ações",
-                key: "actions",
-                width: 150,
-                render: (_: unknown, record: Paciente) => (
-                    <Space size="middle">
-                        <Button
-                            type="text"
-                            icon={<EditOutlined />}
-                            onClick={() => openEditModal(record)}
-                        />
-                        <Popconfirm
-                            title="Tem certeza que deseja excluir esta UBS?"
-                            onConfirm={() => handleDelete(record.id)}
-                            okText="Sim"
-                            cancelText="Não"
-                        >
+        () => {
+            const baseColumns: any[] = [
+                { title: "Nome", dataIndex: "nome", key: "nome" },
+                { title: "CPF", dataIndex: "cpf", key: "cpf"},
+                {
+                    title: "Telefone",
+                    dataIndex: "telefone",
+                    key: "telefone",
+                },
+                {
+                    title: "Endereço",
+                    dataIndex: "endereco",
+                    key: "endereco",
+                },
+            ];
+
+            // Apenas adiciona a coluna de ações se NÃO for administrador
+            if (!isAdmin) {
+                baseColumns.push({
+                    title: "Ações",
+                    key: "actions",
+                    width: 150,
+                    render: (_: unknown, record: Paciente) => (
+                        <Space size="middle">
                             <Button
-                                danger
                                 type="text"
-                                icon={<DeleteOutlined />}
-                                loading={isDeleting}
+                                icon={<EditOutlined />}
+                                onClick={() => openEditModal(record)}
                             />
-                        </Popconfirm>
-                    </Space>
-                ),
-            },
-        ],
-        [ openEditModal, handleDelete, isDeleting ],
+                            <Popconfirm
+                                title="Tem certeza que deseja excluir este paciente?"
+                                onConfirm={() => handleDelete(record.id)}
+                                okText="Sim"
+                                cancelText="Não"
+                            >
+                                <Button
+                                    danger
+                                    type="text"
+                                    icon={<DeleteOutlined />}
+                                    loading={isDeleting}
+                                />
+                            </Popconfirm>
+                        </Space>
+                    ),
+                });
+            }
+
+            return baseColumns;
+        },
+        [ isAdmin, openEditModal, handleDelete, isDeleting ],
     );
 
 
@@ -117,13 +129,15 @@ const Paciente : React.FC = () => {
                     icon={<SearchOutlined />}
                     onClick={handleSearch}
                 />
-                <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={openModal}
-                >
-                    Cadastrar Paciente
-                </Button>
+                {!isAdmin && (
+                    <Button
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={openModal}
+                    >
+                        Cadastrar Paciente
+                    </Button>
+                )}
         </Space>
       </div>
 
@@ -150,29 +164,31 @@ const Paciente : React.FC = () => {
                         onShowSizeChange: (_, size) =>
                             setPagination({ current: 1, pageSize: size }),
                 }}
-                onRow={(record) => ({
+                onRow={!isAdmin ? (record) => ({
                     onClick: () => navigate(`/pacientes/${record.id}`),
-                })}
+                }) : undefined}
             />
         )}
 
-        <PacienteModal
-                visible={isModalVisible}
-                editingId={editingPaciente?.id || null}
-                onCancel={closeModal}
-                onSubmit={handleSubmit}
-                loading={isSubmitting}
-                initialValues={
-                    editingPaciente
-                        ? {
-                              cpf: editingPaciente.cpf,
-                              nome: editingPaciente.nome,
-                              endereco: editingPaciente.endereco,
-                              telefone: editingPaciente.telefone,
-                          }
-                        : undefined
-                }
-            />
+        {!isAdmin && (
+            <PacienteModal
+                    visible={isModalVisible}
+                    editingId={editingPaciente?.id || null}
+                    onCancel={closeModal}
+                    onSubmit={handleSubmit}
+                    loading={isSubmitting}
+                    initialValues={
+                        editingPaciente
+                            ? {
+                                  cpf: editingPaciente.cpf,
+                                  nome: editingPaciente.nome,
+                                  endereco: editingPaciente.endereco,
+                                  telefone: editingPaciente.telefone,
+                              }
+                            : undefined
+                    }
+                />
+        )}
       </div>
   );
 };
