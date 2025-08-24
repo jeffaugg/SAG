@@ -1,4 +1,4 @@
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Tag, Typography } from "antd";
 const { Title } = Typography;
 
@@ -10,6 +10,7 @@ interface GestacaoInfoCardProps {
     isSelected?: boolean;
     onClick: () => void;
     onDelete: () => void;
+    onUpdate: () => void;
 }
 
 const GestacaoInfoCard: React.FC<GestacaoInfoCardProps> = ({
@@ -20,6 +21,7 @@ const GestacaoInfoCard: React.FC<GestacaoInfoCardProps> = ({
     isSelected = false,
     onClick,
     onDelete,
+    onUpdate,
 }) => {
     const formatDate = (dateString: string): string => {
         if (!dateString) return "";
@@ -43,29 +45,25 @@ const GestacaoInfoCard: React.FC<GestacaoInfoCardProps> = ({
             style={{ cursor: "pointer" }}
         >
             <div className="flex w-full justify-between items-center">
-                <Title
-                    level={5}
-                    style={{
-                        textAlign: "center",
-                        fontFamily: "Roboto",
-                        fontSize: 16,
-                        fontStyle: "normal",
-                        fontWeight: 400,
-                        lineHeight: "24px",
-                    }}
-                    className="!m-0 text-black"
-                >
+                <Title level={5} className="!m-0 text-black">
                     {numero}ª Gestação
                 </Title>
 
-                <Popconfirm
-                    title="Excluir gestação?"
-                    okText="Sim"
-                    cancelText="Não"
-                    onConfirm={onDelete}
-                >
-                    <Button danger type="text" icon={<DeleteOutlined />} />
-                </Popconfirm>
+                <div>
+                    <Button
+                        type="text"
+                        icon={<EditOutlined />}
+                        onClick={onUpdate}
+                    />
+                    <Popconfirm
+                        title="Excluir gestação?"
+                        okText="Sim"
+                        cancelText="Não"
+                        onConfirm={onDelete}
+                    >
+                        <Button danger type="text" icon={<DeleteOutlined />} />
+                    </Popconfirm>
+                </div>
             </div>
 
             <div className=" w-full text-center">

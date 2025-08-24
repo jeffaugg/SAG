@@ -1,18 +1,5 @@
-import {
-    DeleteOutlined,
-    EyeOutlined,
-    PlusOutlined,
-    SearchOutlined,
-} from "@ant-design/icons";
-import {
-    Button,
-    Input,
-    Popconfirm,
-    Space,
-    Spin,
-    Table,
-    Typography,
-} from "antd";
+import { DeleteOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Popconfirm, Space, Spin, Table, Typography } from "antd";
 import React, { lazy, Suspense, useMemo } from "react";
 import {
     useConsultasByGestacaoID,
@@ -23,13 +10,8 @@ import { useConsultaForm } from "../../hooks/useConsultaForm";
 import { usePacienteContext } from "../../hooks/useContext";
 import ConsultaDetailsModal from "../../modals/ConsultaDetailsModal";
 import ConsultaModal from "../../modals/ConsultaModal";
-import type {
-    AtendimentoDetails,
-    Consulta,
-    GestacaoCreateFormData,
-} from "../../types";
+import type { AtendimentoDetails, Consulta } from "../../types";
 
-import GestacaoCreateModal from "../../modals/GestacaoCreateModal";
 import ChatGestacao from "./ChatGestacao";
 
 const { Title } = Typography;
@@ -53,7 +35,6 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
         handleSubmit,
         setPagination,
         handleDelete,
-        handleGestacaoSubmit,
     } = useConsultaForm();
 
     const { gestacaoId } = usePacienteContext();
@@ -66,6 +47,19 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
         limit: pagination.pageSize,
     });
 
+    const gestacaoSelecionada = gestacoesResponse?.find(
+        (g) => g.id === gestacaoId,
+    );
+    const numeroGestacao = gestacoesResponse?.findIndex(
+        (g) => g.id === gestacaoId,
+    );
+    const tituloGestacao =
+        gestacaoSelecionada &&
+        numeroGestacao !== undefined &&
+        numeroGestacao >= 0
+            ? `Atendimentos - ${numeroGestacao + 1}ª Gestação`
+            : "Atendimentos";
+
     //   TODO: refactor
     // --- //
 
@@ -73,17 +67,6 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
         React.useState(false);
     const [selectedConsulta, setSelectedConsulta] =
         React.useState<Consulta | null>(null);
-
-    const [isCreateGestacaoModalVisible, setIsCreateGestacaoModalVisible] =
-        React.useState(false);
-
-    const openCreateGestacaoModal = () => {
-        setIsCreateGestacaoModalVisible(true);
-    };
-
-    const handleGestacaoSubmitWithPaciente = (data: GestacaoCreateFormData) => {
-        handleGestacaoSubmit({ ...data, pacienteId });
-    };
 
     const handleViewConsulta = (consulta: Consulta) => {
         setSelectedConsulta(consulta);
@@ -177,6 +160,7 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
                     <Suspense fallback={<Spin />}>
                         <GestacaoHistorico
                             gestacoes={gestacoesResponse ?? []}
+                            pacienteId={pacienteId}
                         />
                     </Suspense>
                 </div>
@@ -184,28 +168,14 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
 
             <div className="flex flex-col flex-1 bg-white rounded-lg ">
                 <div className="flex items-center justify-between px-4 py-4">
-                    <Title level={4}>Consultas</Title>
+                    <Title level={4}>{tituloGestacao}</Title>
                     <Space>
-                        <Input
-                            placeholder="Buscar por nome ou CPF..."
-                            prefix={<SearchOutlined />}
-                            style={{ width: 250 }}
-                            allowClear
-                        />
-                        <Button type="default" icon={<SearchOutlined />} />
                         <Button
                             type="primary"
                             icon={<PlusOutlined />}
                             onClick={openModal}
                         >
                             Cadastrar Atendimento
-                        </Button>
-                        <Button
-                            type="primary"
-                            icon={<PlusOutlined />}
-                            onClick={openCreateGestacaoModal}
-                        >
-                            Cadastrar Gestação
                         </Button>
                     </Space>
                 </div>
@@ -231,13 +201,6 @@ const PacienteDetalhesContent: React.FC<PacienteDetalhesContentProps> = ({
                 </div>
             </div>
             <ChatGestacao gestacaoId={gestacaoId} />
-
-            <GestacaoCreateModal
-                visible={isCreateGestacaoModalVisible}
-                onCancel={() => setIsCreateGestacaoModalVisible(false)}
-                onSubmit={handleGestacaoSubmitWithPaciente}
-                initialValues={undefined}
-            />
 
             <ConsultaDetailsModal
                 visible={isDetailsModalVisible}

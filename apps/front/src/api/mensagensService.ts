@@ -5,6 +5,8 @@ export interface Mensagem {
     _id: string;
     conteudo: {
         texto: string;
+        imagemUrl?: string;
+        arquivoUrl?: string;
     };
     remetente: string;
     remetenteNome?: string;

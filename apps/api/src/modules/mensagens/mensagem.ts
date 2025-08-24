@@ -32,11 +32,13 @@ export class Mensagem {
         type: {
             texto: String,
             imagemUrl: String,
+            arquivoUrl: String,
         },
     })
     conteudo: {
         texto: string;
         imagemUrl?: string;
+        arquivoUrl?: string;
     };
 
     createdAt?: Date;

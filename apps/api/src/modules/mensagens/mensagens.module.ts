@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MENSAGENS_SERVICE } from 'src/common/constants';
 import { DatabaseModule } from 'src/shared/database/database.module';
+import { S3Module } from 'src/shared/upload/s3.module';
 import { Mensagem, MensagemSchema } from './mensagem';
 import { MensagensController } from './mensagens.controller';
 import { MensagensService } from './mensagens.service';
@@ -17,6 +18,7 @@ import { MensagensService } from './mensagens.service';
             { name: Mensagem.name, schema: MensagemSchema },
         ]),
         DatabaseModule,
+        S3Module,
     ],
     // Define o controller responsável pelas rotas de mensagens
     controllers: [MensagensController],

@@ -1,14 +1,14 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { Readable } from 'stream';
 import {
-    S3Client,
-    HeadBucketCommand,
     CreateBucketCommand,
-    PutObjectCommand,
     GetObjectCommand,
+    HeadBucketCommand,
+    PutObjectCommand,
+    S3Client,
 } from '@aws-sdk/client-s3';
-import { v4 as uuid } from 'uuid';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { S3_CLIENT } from 'src/common/constants';
+import { Readable } from 'stream';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class S3Service implements OnModuleInit {
@@ -20,11 +20,6 @@ export class S3Service implements OnModuleInit {
     ) {}
 
     async onModuleInit() {
-        console.log(
-            'Bucket configurado em S3Service:',
-            process.env.AWS_S3_BUCKET,
-        );
-
         try {
             await this.s3Client.send(
                 new HeadBucketCommand({ Bucket: this.bucket }),
