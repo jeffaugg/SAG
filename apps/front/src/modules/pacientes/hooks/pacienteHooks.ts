@@ -127,8 +127,6 @@ export const useAssociarPacienteUbs = () => {
             cnes: string;
             usuarioCpf: string;
         }): Promise<void> => {
-            console.log('entrei em ubs')
-            console.log(cnes, usuarioCpf)
             await axiosInstance.post(
                 API_ENDPOINTS.PACIENTES.ENCAMINHAR(usuarioCpf),
                 {
@@ -161,7 +159,6 @@ export const useAssociarPacientePoliclinica = () => {
             cnes: string;
             usuarioCpf: string;
         }): Promise<void> => {
-            console.log({ cnes, usuarioCpf });
             await axiosInstance.post(
                 API_ENDPOINTS.PACIENTES.ENCAMINHAR(usuarioCpf),
                 {

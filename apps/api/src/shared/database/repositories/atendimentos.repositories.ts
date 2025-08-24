@@ -85,8 +85,6 @@ export class AtendimentosRepository implements IAtendimentoRepository {
     async findByGestacaoId(gestacaoId: string, { skip, limit }: PaginacaoDto) {
         const where = { gestacaoId, deletedAt: null };
 
-        console.log(gestacaoId, { skip, limit });
-
         const [total, items] = await this.prisma.$transaction([
             this.prisma.atendimento.count({ where }),
             this.prisma.atendimento.findMany({
