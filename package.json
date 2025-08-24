@@ -6,6 +6,7 @@
     "dev": "cross-env INFISICAL_DISABLE_UPDATE_CHECK=true infisical run -- turbo run dev --env-mode loose --no-daemon",
     "db:build": "cross-env INFISICAL_DISABLE_UPDATE_CHECK=true infisical run -- turbo run db:build --env-mode loose --no-daemon",
     "db:migrate:dev": "cross-env INFISICAL_DISABLE_UPDATE_CHECK=true infisical run -- turbo run db:migrate:dev --env-mode loose --no-daemon",
+    "seed": "cross-env INFISICAL_DISABLE_UPDATE_CHECK=true infisical run -- sh -c 'cd apps/api && npx prisma db seed'",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
@@ -17,6 +18,7 @@
     "@types/multer": "^2.0.0",
     "cross-env": "^7.0.3",
     "prettier": "^3.5.3",
+    "tsx": "^4.20.5",
     "turbo": "^2.5.3",
     "typescript": "5.8.2"
   },
