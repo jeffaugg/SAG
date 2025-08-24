@@ -115,3 +115,66 @@ export const useDeletePaciente = () => {
         }
     });
 }
+
+export const useAssociarPacienteUbs = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            cnes,
+            usuarioCpf,
+        }: {
+            cnes: string;
+            usuarioCpf: string;
+        }): Promise<void> => {
+            await axiosInstance.post(
+                API_ENDPOINTS.PACIENTES.ENCAMINHAR(usuarioCpf),
+                {
+                    cnes,
+                    organizacao: 'ubs',
+                }
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["encaminhar"] });
+            ToastService.success("Paciente encaminhado à UBS com sucesso!");
+        },
+        onError: () => {
+            ToastService.error(
+                `Paciente já está vinculado à Policlínica`,
+            );
+        },
+    });
+};
+
+
+export const useAssociarPacientePoliclinica = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            cnes,
+            usuarioCpf,
+        }: {
+            cnes: string;
+            usuarioCpf: string;
+        }): Promise<void> => {
+            await axiosInstance.post(
+                API_ENDPOINTS.PACIENTES.ENCAMINHAR(usuarioCpf),
+                {
+                    cnes,
+                    organizacao: 'policlinica'
+                }
+            );
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["encaminhar"] });
+            ToastService.success("Paciente encaminhado à Policlínica com sucesso!");
+        },
+        onError: () => {
+            ToastService.error(
+                `Paciente já está vinculado à Policlínica`,
+            );
+        },
+    });
+};

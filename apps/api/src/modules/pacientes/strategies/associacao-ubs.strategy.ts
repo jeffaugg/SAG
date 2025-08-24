@@ -17,4 +17,13 @@ export class AssociacaoUbsStrategy implements IAssociacaoStrategy {
             },
         });
     }
+
+    async forwarding(cnes: string, pacienteCpf: string) {
+        await this.prisma.permissoesUbs.create({
+            data: {
+                ubsCNES: cnes,
+                pacienteCpf: pacienteCpf,
+            },
+        });
+    }
 }

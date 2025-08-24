@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
         ROOT: "/pacientes",
         BY_ID: (id: string) => `/pacientes/${id}`,
         GESTACOES: (id: string) => `/pacientes/${id}/gestacoes`,
+        ENCAMINHAR: (cpf: string) => `/pacientes/${cpf}/encaminhar`,
     },
     POLICLINICAS: {
         ROOT: "/policlinicas",

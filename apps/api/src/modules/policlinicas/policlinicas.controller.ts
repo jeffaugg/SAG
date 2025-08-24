@@ -51,7 +51,6 @@ export class PoliclinicasController {
     }
 
     @Get()
-    @IsAdm()
     @IsPaginated()
     findAll(@Query() paginacaoDto: PaginacaoDto) {
         return this.policlinicasService.findAll(paginacaoDto);

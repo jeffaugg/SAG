@@ -158,10 +158,9 @@ export const useVincularUsuarioUbs = () => {
             queryClient.invalidateQueries({ queryKey: ["usuarios"] });
             ToastService.success("Usuário vinculado à UBS com sucesso!");
         },
-        onError: (error) => {
-            const appError = handleError(error);
+        onError: () => {
             ToastService.error(
-                `Erro ao vincular usuário à UBS: ${appError.message}`,
+                `Usuário já vinculado à UBS`,
             );
         },
     });
@@ -191,10 +190,9 @@ export const useVincularUsuarioPoliclinica = () => {
                 "Usuário vinculado à Policlínica com sucesso!",
             );
         },
-        onError: (error) => {
-            const appError = handleError(error);
+        onError: () => {
             ToastService.error(
-                `Erro ao vincular usuário à Policlínica: ${appError.message}`,
+                `Usuário já vinculado à Policlínica`,
             );
         },
     });

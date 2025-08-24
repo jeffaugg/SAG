@@ -111,13 +111,15 @@ const Usuarios: React.FC = () => {
                                 loading={isDeleting}
                             />
                         </Popconfirm>
-                        <Button
-                            color="primary"
-                            variant="text"
-                            icon={<LinkOutlined />}
-                            onClick={() => openVincularModal(record)}
-                            title="Vincular usuário"
-                        />
+                        {record.cargo !== "ADM" && (
+                            <Button
+                                color="primary"
+                                variant="text"
+                                icon={<LinkOutlined />}
+                                onClick={() => openVincularModal(record)}
+                                title="Vincular usuário"
+                            />
+                        )}
                     </Space>
                 ),
             },
@@ -210,20 +212,24 @@ const Usuarios: React.FC = () => {
                     )}
                 </>
             )}
-            <VincularUsuarioModal
-                visible={isModalVisible && !!selectedUsuario}
-                usuarioId={selectedUsuario?.id || null}
-                onCancel={closeModal}
-                onSubmit={handleVincular}
-                loading={isSubmitting}
-            />
-            <UsuarioModal
-                visible={isModalVisible && !selectedUsuario}
-                editingId={null}
-                onCancel={closeModal}
-                onSubmit={handleCreate}
-                loading={isSubmitting}
-            />
+            {isModalVisible && !!selectedUsuario && (
+                <VincularUsuarioModal
+                    visible={true}
+                    usuarioId={selectedUsuario?.id || null}
+                    onCancel={closeModal}
+                    onSubmit={handleVincular}
+                    loading={isSubmitting}
+                />
+            )}
+            {isModalVisible && !selectedUsuario && (
+                <UsuarioModal
+                    visible={true}
+                    editingId={null}
+                    onCancel={closeModal}
+                    onSubmit={handleCreate}
+                    loading={isSubmitting}
+                />
+            )}
         </div>
     );
 };

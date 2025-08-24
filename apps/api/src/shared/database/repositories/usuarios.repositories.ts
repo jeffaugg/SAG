@@ -80,15 +80,24 @@ export class UsuarioRepository implements IUsuarioRepository {
         const result = await this.prismaService.usuario.findUnique({
             where: {
                 cpf: usuarioCpf,
-                deletedAt: null,
             },
             include: {
                 usuarioPoliclinicas: {
-                    where: { deletedAt: null },
+                    where: {
+                        deletedAt: null,
+                        policlinica: {
+                            is: {
+                                deletedAt: null,
+                            },
+                        },
+                    },
                     include: { policlinica: true },
                 },
                 usuarioUbs: {
-                    where: { deletedAt: null },
+                    where: {
+                        deletedAt: null,
+                        ubs: { is: { deletedAt: null } },
+                    },
                     include: { ubs: true },
                 },
             },

@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LinkOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Popconfirm, Space, Table, Typography } from "antd";
 import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { usePaciente } from "../../hooks/pacienteHooks";
 import { usePacienteForm } from "../../hooks/usePacienteForm";
 import PacienteModal from "../../modals/PacienteModal";
 import type { Paciente } from "../../types";
+import EncaminharPacienteModal from "../../modals/EncaminharPacienteModal";
 
 const { Title } = Typography;
 
@@ -25,12 +26,16 @@ const Paciente : React.FC = () => {
         clearSearch,
         handleDelete,
         isDeleting,
+        openEncaminharModal,
         isSubmitting,
+        isModalEncaminharVisible,
         isModalVisible,
         closeModal,
         editingPaciente,
+        selectedPaciente,
         handleSubmit,
-
+        handleEncaminhar,
+        closeEncaminharModal
     } = usePacienteForm();
 
 
@@ -69,30 +74,45 @@ const Paciente : React.FC = () => {
                 key: "actions",
                 width: 150,
                 render: (_: unknown, record: Paciente) => (
-                    <Space size="middle">
+                    <Space size="middle" onClick={(e) => e.stopPropagation()}>
                         <Button
                             type="text"
                             icon={<EditOutlined />}
-                            onClick={() => openEditModal(record)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                openEditModal(record);
+                            }}
                         />
                         <Popconfirm
                             title="Tem certeza que deseja excluir esta UBS?"
                             onConfirm={() => handleDelete(record.id)}
                             okText="Sim"
                             cancelText="Não"
+                            onCancel={(e) => e?.stopPropagation()}
                         >
                             <Button
                                 danger
                                 type="text"
                                 icon={<DeleteOutlined />}
                                 loading={isDeleting}
+                                onClick={(e) => e.stopPropagation()}
                             />
                         </Popconfirm>
+                        <Button
+                            color="primary"
+                            variant="text"
+                            icon={<LinkOutlined />}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                openEncaminharModal(record);
+                            }}
+                            title="Vincular usuário"
+                        />
                     </Space>
                 ),
             },
         ],
-        [ openEditModal, handleDelete, isDeleting ],
+        [ openEditModal, handleDelete, isDeleting, openEncaminharModal ],
     );
 
 
@@ -172,6 +192,13 @@ const Paciente : React.FC = () => {
                           }
                         : undefined
                 }
+            />
+
+        <EncaminharPacienteModal
+                visible={isModalEncaminharVisible && !!selectedPaciente}
+                onCancel={closeEncaminharModal}
+                onSubmit={handleEncaminhar}
+                loading={isSubmitting}
             />
       </div>
   );

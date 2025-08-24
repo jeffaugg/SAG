@@ -21,7 +21,6 @@ import { UBS_SERVICE } from 'src/common/constants';
 import { OrganizacaoInfo } from 'src/shared/types';
 import { organizationInfo } from 'src/shared/decorators/organizationInfo';
 
-
 // Controller responsável pelas rotas relacionadas a UBS (Unidades Básicas de Saúde)
 @Controller('ubs')
 export class UbsController {
@@ -32,7 +31,6 @@ export class UbsController {
         @Inject(UBS_SERVICE)
         private readonly ubsService: IUbsService,
     ) {}
-
 
     /**
      * Lista pacientes vinculados à UBS da organização informada (com paginação)
@@ -47,7 +45,6 @@ export class UbsController {
         return this.ubsService.listPatients(orgInfo, paginacaoDto);
     }
 
-
     /**
      * Busca paciente da UBS pelo CPF (com paginação)
      * Rota: GET /ubs/pacientes/cpf/:cpf
@@ -61,7 +58,6 @@ export class UbsController {
         return this.ubsService.getPatientByCpf(pacienteCpf, orgInfo);
     }
 
-
     /**
      * Cria uma nova UBS (apenas para administradores)
      * Rota: POST /ubs
@@ -72,18 +68,15 @@ export class UbsController {
         return this.ubsService.create(dto);
     }
 
-
     /**
      * Lista todas as UBS (apenas para administradores, com paginação)
      * Rota: GET /ubs
      */
     @Get()
-    @IsAdm()
     @IsPaginated()
     findAll(@Query() paginacaoDto: PaginacaoDto) {
         return this.ubsService.findAll(paginacaoDto);
     }
-
 
     /**
      * Busca uma UBS pelo ID (apenas para administradores)
@@ -95,7 +88,6 @@ export class UbsController {
         return this.ubsService.findById(id);
     }
 
-
     /**
      * Atualiza uma UBS pelo ID (apenas para administradores)
      * Rota: PUT /ubs/:id
@@ -105,7 +97,6 @@ export class UbsController {
     update(@Param('id') id: string, @Body() dto: UpdateUbsDto) {
         return this.ubsService.update(id, dto);
     }
-
 
     /**
      * Remove uma UBS pelo ID (apenas para administradores)
@@ -118,7 +109,6 @@ export class UbsController {
         return this.ubsService.remove(id);
     }
 
-
     /**
      * Associa um usuário a uma UBS (apenas para administradores)
      * Rota: POST /ubs/:id/usuarios/:usuarioId
@@ -128,7 +118,6 @@ export class UbsController {
     createUser(@Param('id') id: string, @Param('usuarioId') usuarioId: string) {
         return this.ubsService.createUser(usuarioId, id);
     }
-
 
     /**
      * Lista usuários vinculados a uma UBS pelo CNES (apenas para administradores, com paginação)

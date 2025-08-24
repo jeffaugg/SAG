@@ -16,4 +16,13 @@ export class AssociacaoPoliclinicaStrategy implements IAssociacaoStrategy {
             },
         });
     }
+
+    async forwarding(cnes: string, pacienteCpf: string) {
+        await this.prisma.permissoesPoliclinica.create({
+            data: {
+                policlinicaCNES: cnes,
+                pacienteCpf: pacienteCpf,
+            },
+        });
+    }
 }

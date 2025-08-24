@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { useSearchForm } from "../../../hooks/useSearchForm";
 import type { Paciente, PacienteFormData } from "../types";
-import { useCreatePaciente, useDeletePaciente, useUpdatePaciente } from "./pacienteHooks";
+import { useAssociarPacientePoliclinica, useAssociarPacienteUbs, useCreatePaciente, useDeletePaciente, useUpdatePaciente } from "./pacienteHooks";
 
 export const usePacienteForm = () => {
     const createMutation = useCreatePaciente();
     const updateMutation = useUpdatePaciente();
     const deleteMutation = useDeletePaciente();
+    const associarPacientePoliclinica = useAssociarPacientePoliclinica();
+    const associarPacienteUbs = useAssociarPacienteUbs();
+    const [selectedPaciente, setSelectedPaciente] = useState<Paciente | null>(null);
+    const [isModalEncaminharVisible, setIsModalEncaminharVisible] = useState(false);
+
 
     const {
         isModalVisible,
@@ -38,8 +44,37 @@ export const usePacienteForm = () => {
         closeModal();
     };
 
+    const openEncaminharModal = (paciente: Paciente) => {
+            setSelectedPaciente(paciente);
+            setIsModalEncaminharVisible(true);
+    };
+
+    const closeEncaminharModal = () => {
+        setIsModalEncaminharVisible(false);
+        setSelectedPaciente(null);
+    };
+
+    const handleEncaminhar = async (data: { tipo: "ubs" | "policlinica"; cnes: string; }) => {
+        if(!selectedPaciente) return;
+
+        if (data.tipo === "ubs") {
+            await associarPacienteUbs.mutateAsync({
+                cnes: data.cnes,
+                usuarioCpf: selectedPaciente.cpf,
+            });
+        } else {
+            await associarPacientePoliclinica.mutateAsync({
+                cnes: data.cnes,
+                usuarioCpf: selectedPaciente.cpf,
+            });
+        }
+        
+        closeEncaminharModal();
+    };
+
     return {
         isModalVisible,
+        isModalEncaminharVisible,
         editingPaciente,
         isSubmitting,
         isDeleting,
@@ -55,5 +90,9 @@ export const usePacienteForm = () => {
         setSearchText,
         handleSearch,
         clearSearch,
+        selectedPaciente,
+        openEncaminharModal,
+        handleEncaminhar,
+        closeEncaminharModal
     };
 }

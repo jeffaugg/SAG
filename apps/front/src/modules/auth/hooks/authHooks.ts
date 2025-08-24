@@ -77,6 +77,9 @@ export const useLogin = () => {
             queryClient.invalidateQueries({ queryKey: ["authStatus"] });
             ToastService.success("Login realizado com sucesso!");
         },
+        onError: () => {
+            ToastService.error("Credenciais inválidas");
+        }
     });
 };
 
