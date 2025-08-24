@@ -18,6 +18,7 @@ import { IPacientesRepository } from 'src/shared/database/repositories/interface
 import { IPacienteService } from './interface/pacientes-service.interface';
 import { OrganizacaoInfo } from 'src/shared/types';
 import { IAssociacaoStrategy } from './strategies/interface/associacao-strategy.interface';
+import { ForwardingPacienteDto } from './dto/forwarding-paciente.dto';
 
 // Serviço responsável pela lógica de cadastro, busca, atualização e associação de pacientes
 @Injectable()
@@ -135,5 +136,37 @@ export class PacientesService implements IPacienteService {
     async remove(id: string) {
         const [erro] = await catchError(this.pacientesRepository.delete(id));
         if (erro) throw new NotFoundException('Paciente não encontrado');
+    }
+
+    async encaminhar(
+        pacienteCpf: string,
+        dadosEncaminhamento: ForwardingPacienteDto,
+    ) {
+        const paciente = await this.pacientesRepository.findByCpf(pacienteCpf);
+
+        if (!paciente) throw new NotFoundException('Paciente não encontrado');
+
+        if (dadosEncaminhamento.organizacao) {
+            const strategy = this.associacaoStrategies.get(
+                dadosEncaminhamento.organizacao,
+            );
+            if (!strategy) {
+                throw new NotFoundException(
+                    `Strategy não implementada para ${dadosEncaminhamento.organizacao}`,
+                );
+            }
+
+            const [error] = await catchError(
+                strategy.forwarding(dadosEncaminhamento.cnes, paciente.cpf),
+            );
+
+            console.log({ error });
+
+            if (error) {
+                throw new ConflictException(
+                    'Erro ao encaminhar paciente para organização',
+                );
+            }
+        }
     }
 }

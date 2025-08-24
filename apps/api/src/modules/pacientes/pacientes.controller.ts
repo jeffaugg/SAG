@@ -18,6 +18,7 @@ import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { IGestacaoService } from '../gestacoes/interface/gestacoes-service.interface';
 import { organizationInfo } from 'src/shared/decorators/organizationInfo';
 import { OrganizacaoInfo } from 'src/shared/types';
+import { ForwardingPacienteDto } from './dto/forwarding-paciente.dto';
 
 // Controller responsável pelas rotas relacionadas a pacientes'
 @Controller('pacientes')
@@ -100,6 +101,17 @@ export class PacientesController {
         @organizationInfo() orgInfo: OrganizacaoInfo,
     ) {
         return this.pacientesService.association(pacienteCpf, orgInfo);
+    }
+
+    @Post(':cpf/encaminhar')
+    encaminharPaciente(
+        @Param('cpf') pacienteCpf: string,
+        @Body() dadosEncaminhamento: ForwardingPacienteDto,
+    ) {
+        return this.pacientesService.encaminhar(
+            pacienteCpf,
+            dadosEncaminhamento,
+        );
     }
 
     /**

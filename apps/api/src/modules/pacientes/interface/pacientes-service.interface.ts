@@ -3,6 +3,7 @@ import { UpdatePacienteDto } from '../dto/update-paciente.dto';
 import { PaginacaoDto } from 'src/common/dto/pagination.dto';
 import { Paciente } from '@prisma/client';
 import { OrganizacaoInfo } from 'src/shared/types';
+import { ForwardingPacienteDto } from '../dto/forwarding-paciente.dto';
 
 export interface IPacienteService {
     create(dto: CreatePacienteDto, orgInfo: OrganizacaoInfo): Promise<Paciente>;
@@ -17,4 +18,8 @@ export interface IPacienteService {
         options: PaginacaoDto,
         orgInfo: OrganizacaoInfo,
     ): Promise<{ items: Paciente[]; total: number }>;
+    encaminhar(
+        pacienteCpf: string,
+        dadosEncaminhamento: ForwardingPacienteDto,
+    ): Promise<void>;
 }
