@@ -54,6 +54,14 @@ export class EnvironmentVariables {
     @Expose()
     @IsString()
     S3_FORCE_PATH_STYLE: string;
+
+    @Expose()
+    @IsString()
+    ADM_PASSWORD: string;
+
+    @Expose()
+    @IsString()
+    ADM_CPF: string;
 }
 
 const validateEnvironmentsVariables = (): EnvironmentVariables => {
