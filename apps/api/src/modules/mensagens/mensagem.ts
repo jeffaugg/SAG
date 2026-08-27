@@ -1,4 +1,3 @@
-
 // Importa decoradores do Mongoose/NestJS e tipos auxiliares
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
@@ -6,7 +5,7 @@ import { TipoMensagem } from './entidade/tipo.mensagem';
 
 export type MensagemDocument = HydratedDocument<Mensagem>;
 
-@Schema({ collection: 'mensagens' })
+@Schema({ collection: 'mensagens', timestamps: true })
 export class Mensagem {
     /**
      * Tipo da mensagem (TEXTO ou MIDIA)
@@ -33,14 +32,18 @@ export class Mensagem {
         type: {
             texto: String,
             imagemUrl: String,
+            arquivoUrl: String,
         },
     })
     conteudo: {
         texto: string;
         imagemUrl?: string;
+        arquivoUrl?: string;
     };
-}
 
+    createdAt?: Date;
+    updatedAt?: Date;
+}
 
 // Cria o schema do Mongoose para a classe Mensagem
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

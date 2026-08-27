@@ -1,4 +1,3 @@
-// Importa componentes do Ant Design, utilitários de data e hooks do React
 import { Button, DatePicker, Form, Modal } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -6,31 +5,18 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import type { GestacaoCreateFormData } from "../types";
 
-// Extende o dayjs para aceitar formatos customizados de data
 dayjs.extend(customParseFormat);
 
-// Formato padrão das datas exibidas no formulário
 const dateFormat = "DD/MM/YYYY";
 
-/**
- * Props do modal de criação de gestação
- * - visible: controla a exibição do modal
- * - onCancel: função chamada ao fechar o modal
- * - onSubmit: função chamada ao submeter o formulário
- * - initialValues: valores iniciais do formulário (edição ou reset)
- */
-interface GestacaoModalProps {
+interface GestacaoEditModalProps {
     visible: boolean;
     onCancel: () => void;
     onSubmit: (data: GestacaoCreateFormData) => void;
     initialValues?: GestacaoCreateFormData;
 }
 
-/**
- * Modal para criação de uma nova gestação.
- * Utiliza React Hook Form para controle do formulário e validação.
- */
-const GestacaoCreateModal: React.FC<GestacaoModalProps> = ({
+const GestacaoEditModal: React.FC<GestacaoEditModalProps> = ({
     visible,
     onCancel,
     onSubmit,
@@ -44,15 +30,17 @@ const GestacaoCreateModal: React.FC<GestacaoModalProps> = ({
     } = useForm<GestacaoCreateFormData>();
 
     React.useEffect(() => {
-        if (visible) {
-            reset(
-                initialValues || {
-                    inicio: "",
-                    fim: "",
-                    status: "Pendente",
-                    pacienteId: "",
-                },
-            );
+        if (visible && initialValues) {
+            const formattedValues = {
+                ...initialValues,
+                inicio: initialValues.inicio
+                    ? dayjs(initialValues.inicio).format(dateFormat)
+                    : "",
+                fim: initialValues.fim
+                    ? dayjs(initialValues.fim).format(dateFormat)
+                    : "",
+            };
+            reset(formattedValues);
         }
     }, [visible, initialValues, reset]);
 
@@ -69,15 +57,13 @@ const GestacaoCreateModal: React.FC<GestacaoModalProps> = ({
 
     return (
         <Modal
-            title="Criar Gestação"
+            title="Editar Gestação"
             open={visible}
             onCancel={onCancel}
             footer={null}
             destroyOnClose
         >
-            {/* Formulário vertical com validação e integração ao React Hook Form */}
             <Form layout="vertical" onFinish={handleSubmit(handleFormSubmit)}>
-                {/* Campo de data de início, obrigatório */}
                 <Form.Item
                     label="Data de Início"
                     required={true}
@@ -130,7 +116,7 @@ const GestacaoCreateModal: React.FC<GestacaoModalProps> = ({
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit">
-                        Criar Gestação
+                        Atualizar Gestação
                     </Button>
                 </Form.Item>
             </Form>
@@ -138,4 +124,4 @@ const GestacaoCreateModal: React.FC<GestacaoModalProps> = ({
     );
 };
 
-export default GestacaoCreateModal;
+export default GestacaoEditModal;

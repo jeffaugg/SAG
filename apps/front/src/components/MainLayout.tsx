@@ -1,6 +1,7 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, theme } from "antd";
 import { useState, type ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import { NavigationProvider } from "../contexts/NavigationContext";
 import { useCurrentUser, useLogout } from "../modules/auth/hooks/authHooks";
 import routes from "../routes/routes.config";
@@ -18,9 +19,15 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     const logout = useLogout();
     const { data: user, isLoading } = useCurrentUser();
     const [collapsed, setCollapsed] = useState(false);
+    const location = useLocation();
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+
+    const isPacienteDetailsPage =
+        /^\/pacientes\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+            location.pathname,
+        );
 
     return (
         <NavigationProvider routes={routes}>
@@ -94,14 +101,14 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     <Content
                         style={{
                             margin: "24px 16px",
-                            padding: 24,
-                            background: colorBgContainer,
+                            padding: isPacienteDetailsPage ? 0 : 24,
+                            background: isPacienteDetailsPage
+                                ? "transparent"
+                                : colorBgContainer,
                             borderRadius: borderRadiusLG,
                         }}
                     >
-                        <div className="h-[calc(100vh-200px)]">
-                            {children}
-                        </div>
+                        <div className="h-[calc(100vh-200px)]">{children}</div>
                     </Content>
                     <Footer className="text-center text-gray-500">
                         SAG ©{new Date().getFullYear()} - Todos os direitos

@@ -85,7 +85,6 @@ export class PacientesService implements IPacienteService {
             );
     }
 
-
     /**
      * Lista pacientes de uma organização específica, com paginação.
      */
@@ -93,12 +92,14 @@ export class PacientesService implements IPacienteService {
         options: PaginacaoDto,
         orgInfo: OrganizacaoInfo,
     ) {
+        if (!orgInfo) {
+            return this.pacientesRepository.findAll(options);
+        }
         return this.pacientesRepository.findAllByOrganization(
             options,
             orgInfo.cnes,
         );
     }
-
 
     /**
      * Lista todos os pacientes, com paginação.
@@ -106,7 +107,6 @@ export class PacientesService implements IPacienteService {
     async findAll(options: PaginacaoDto) {
         return this.pacientesRepository.findAll(options);
     }
-
 
     /**
      * Busca um paciente pelo ID. Lança exceção se não encontrar.
@@ -116,7 +116,6 @@ export class PacientesService implements IPacienteService {
         if (!paciente) throw new NotFoundException('Paciente não encontrado');
         return paciente;
     }
-
 
     /**
      * Atualiza os dados de um paciente pelo ID.

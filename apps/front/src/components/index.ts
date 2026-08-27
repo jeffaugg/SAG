@@ -1,3 +1,4 @@
+export { default as Chat } from "./Chat";
 export { default as CpfHookFormInput } from "./CpfHookFormInput";
 export { default as LoadingSpinner } from "./LoadingSpinner";
 export { default as MainLayout } from "./MainLayout";
