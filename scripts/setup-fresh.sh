@@ -27,5 +27,8 @@ log "Subindo toda a stack..."
 $COMPOSE up -d
 
 wait_for_api
-create_admin_user
+
+log "Populando banco com dados de exemplo (seed)..."
+"$SCRIPT_DIR/seed.sh"
+
 print_ready_message

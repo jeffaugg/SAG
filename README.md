@@ -160,7 +160,7 @@ Siga os passos abaixo para configurar e executar o ambiente de desenvolvimento l
 
 Como alternativa ao fluxo com Infisical, é possível subir toda a stack (front, API, Postgres, Mongo, Redis, MinIO e Adminer) usando apenas o arquivo `.env` local. Os scripts abaixo buildam as imagens, sobem os contêineres, aplicam as migrations e já deixam um usuário administrador criado (com o CPF e senha definidos em `ADM_CPF`/`ADM_PASSWORD` no `.env`).
 
-* **`./scripts/setup-fresh.sh`** — Start do zero. **Apaga todos os dados** dos bancos locais (Postgres, Mongo, Redis, MinIO), recria os contêineres, reaplica as migrations e cria o usuário admin. Use quando quiser um ambiente limpo.
+* **`./scripts/setup-fresh.sh`** — Start do zero. **Apaga todos os dados** dos bancos locais (Postgres, Mongo, Redis, MinIO), recria os contêineres, reaplica as migrations e roda o seed completo (`scripts/seed.sh`), populando o banco com dados de exemplo já prontos para uso. Use quando quiser um ambiente limpo.
     ```bash
     ./scripts/setup-fresh.sh
     ```
@@ -170,7 +170,12 @@ Como alternativa ao fluxo com Infisical, é possível subir toda a stack (front,
     ./scripts/setup-restart.sh
     ```
 
-Ao final, o terminal mostra as URLs de cada serviço (front, API, Swagger, Adminer, MinIO) e as credenciais do usuário admin.
+* **`./scripts/seed.sh`** — Popula o banco via chamadas à API cobrindo todas as entidades e os principais fluxos do sistema: usuário admin, um médico e um enfermeiro (cada um vinculado a uma unidade), uma Policlínica e uma UBS, dois pacientes (um vinculado a múltiplas unidades), gestações em diferentes status, atendimentos com anexos PDF reais (baixados de fontes públicas, com fallback local se não houver rede) e mensagens de chat, incluindo uma com imagem anexada — para já exercitar upload, exibição e download de documentos assim que o ambiente sobe. É chamado automaticamente pelo `setup-fresh.sh`; espera um banco vazio, então rodá-lo isoladamente só é seguro logo após um `setup-fresh.sh`.
+    ```bash
+    ./scripts/seed.sh
+    ```
+
+Ao final, o terminal mostra as URLs de cada serviço (front, API, Swagger, Adminer, MinIO) e as credenciais de todos os usuários criados (admin, médico e enfermeiro).
 
 ### Banco de Dados e Prisma
 
