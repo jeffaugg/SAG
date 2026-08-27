@@ -156,6 +156,22 @@ Siga os passos abaixo para configurar e executar o ambiente de desenvolvimento l
     npm run dev
     ```
 
+### Ambiente Local via Docker (usando `.env`)
+
+Como alternativa ao fluxo com Infisical, é possível subir toda a stack (front, API, Postgres, Mongo, Redis, MinIO e Adminer) usando apenas o arquivo `.env` local. Os scripts abaixo buildam as imagens, sobem os contêineres, aplicam as migrations e já deixam um usuário administrador criado (com o CPF e senha definidos em `ADM_CPF`/`ADM_PASSWORD` no `.env`).
+
+* **`./scripts/setup-fresh.sh`** — Start do zero. **Apaga todos os dados** dos bancos locais (Postgres, Mongo, Redis, MinIO), recria os contêineres, reaplica as migrations e cria o usuário admin. Use quando quiser um ambiente limpo.
+    ```bash
+    ./scripts/setup-fresh.sh
+    ```
+
+* **`./scripts/setup-restart.sh`** — Reinicia o ambiente **sem apagar dados existentes**. Sobe/atualiza os contêineres e garante que o usuário admin existe. Use para reiniciar o sistema no dia a dia, sem perder o que já está no banco.
+    ```bash
+    ./scripts/setup-restart.sh
+    ```
+
+Ao final, o terminal mostra as URLs de cada serviço (front, API, Swagger, Adminer, MinIO) e as credenciais do usuário admin.
+
 ### Banco de Dados e Prisma
 
 * **Para abrir o Prisma Studio (visualizador de dados):**
