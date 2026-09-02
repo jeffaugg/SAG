@@ -74,7 +74,7 @@ const ConsultaDetailsModal: React.FC<ConsultaDetailsModalProps> = ({
                             {initialValues.file.map((url, idx) => (
                                 <li key={url}>
                                     <a
-                                    href={`http://localhost:3000/atendimentos/pdf/${url}`}
+                                    href={`${import.meta.env.VITE_API_END_POINT}/atendimentos/pdf/${url}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
