@@ -19,5 +19,11 @@ export default defineConfig(({ mode }) => {
         build: {
             sourcemap: true,
         },
+        server: {
+            allowedHosts: [".trycloudflare.com", "bebesaude.site"],
+        },
+        preview: {
+            allowedHosts: [".trycloudflare.com", "bebesaude.site"],
+        },
     };
 });

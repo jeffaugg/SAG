@@ -19,6 +19,7 @@ FROM node:22-alpine
 WORKDIR /app
 
 COPY --from=build /repo/apps/front/package.json ./package.json
+COPY --from=build /repo/apps/front/vite.config.ts ./vite.config.ts
 COPY --from=build /repo/apps/front/dist ./dist
 RUN npm install --no-save vite
 

@@ -16,6 +16,7 @@ $COMPOSE build api front
 log "Subindo toda a stack (dados existentes preservados)..."
 $COMPOSE up -d
 
+ensure_cloudflare_tunnel
 wait_for_api
 create_admin_user
 print_ready_message

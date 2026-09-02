@@ -26,6 +26,7 @@ $COMPOSE build api front
 log "Subindo toda a stack..."
 $COMPOSE up -d
 
+ensure_cloudflare_tunnel
 wait_for_api
 
 log "Populando banco com dados de exemplo (seed)..."

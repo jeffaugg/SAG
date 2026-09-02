@@ -25,17 +25,24 @@ json_field() {
 
 post() {
     # $1 = path, $2 = json body, $3 = bearer token (opcional)
+    # O body vai por arquivo (--data-binary), não por argv: no Windows, o curl
+    # recebe argumentos de linha de comando já convertidos pelo codepage do
+    # console, o que corrompe acentos (UTF-8) passados via -d "...".
     local path="$1" body="$2" token="${3:-}"
+    local tmpfile
+    tmpfile="$(temp_file sag_body)"
+    printf '%s' "$body" > "$tmpfile"
     if [ -n "$token" ]; then
         curl -sf -X POST "${API}${path}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${token}" \
-            -d "$body"
+            --data-binary "@$tmpfile"
     else
         curl -sf -X POST "${API}${path}" \
             -H "Content-Type: application/json" \
-            -d "$body"
+            --data-binary "@$tmpfile"
     fi
+    rm -f "$tmpfile"
 }
 
 post_empty() {
@@ -51,10 +58,14 @@ register_and_login() {
     # (necessário para cargos não-ADM obterem um token com a organização).
     local nome="$1" cargo="$2" cpf="$3" senha="$4" cnes="${5:-}"
 
+    local tmpfile
+    tmpfile="$(temp_file sag_body)"
+    printf '{"nome":"%s","cargo":"%s","cpf":"%s","senha":"%s"}' "$nome" "$cargo" "$cpf" "$senha" > "$tmpfile"
     local register_resp
     register_resp=$(curl -s -X POST "${API}/auth/register" \
         -H "Content-Type: application/json" \
-        -d "{\"nome\":\"${nome}\",\"cargo\":\"${cargo}\",\"cpf\":\"${cpf}\",\"senha\":\"${senha}\"}")
+        --data-binary "@$tmpfile")
+    rm -f "$tmpfile"
 
     if [ -z "$cnes" ]; then
         local token
@@ -66,15 +77,16 @@ register_and_login() {
         # usuário já existia — cai para login (só é seguro para ADM, sem CNES)
     fi
 
-    local login_body
+    tmpfile="$(temp_file sag_body)"
     if [ -n "$cnes" ]; then
-        login_body="{\"cpf\":\"${cpf}\",\"senha\":\"${senha}\",\"organizacaoCNES\":\"${cnes}\"}"
+        printf '{"cpf":"%s","senha":"%s","organizacaoCNES":"%s"}' "$cpf" "$senha" "$cnes" > "$tmpfile"
     else
-        login_body="{\"cpf\":\"${cpf}\",\"senha\":\"${senha}\"}"
+        printf '{"cpf":"%s","senha":"%s"}' "$cpf" "$senha" > "$tmpfile"
     fi
     curl -sf -X POST "${API}/auth/login" \
         -H "Content-Type: application/json" \
-        -d "$login_body" | jq -r '.token'
+        --data-binary "@$tmpfile" | jq -r '.token'
+    rm -f "$tmpfile"
 }
 
 user_id_from_token() {
@@ -112,7 +124,7 @@ MEDICO_TOKEN_RAW=$(register_and_login "Dr. João Silva" "Medico" "$MEDICO_CPF" "
 MEDICO_ID=$(user_id_from_token "$MEDICO_TOKEN_RAW")
 
 log "Criando usuário Enfermeiro (Enf. Maria Souza)..."
-ENFERMEIRO_CPF="22233344497"
+ENFERMEIRO_CPF="02980948004"
 ENFERMEIRO_SENHA="enfermeiro1234"
 ENFERMEIRO_TOKEN_RAW=$(register_and_login "Enf. Maria Souza" "Enfermeiro" "$ENFERMEIRO_CPF" "$ENFERMEIRO_SENHA")
 ENFERMEIRO_ID=$(user_id_from_token "$ENFERMEIRO_TOKEN_RAW")
@@ -187,27 +199,34 @@ fallback_pdf() {
 }
 
 log "Baixando arquivos PDF de exemplo (fonte: w3.org)..."
-PDF1="/tmp/sag_seed_laudo_exames.pdf"
-PDF2="/tmp/sag_seed_ficha_prenatal.pdf"
+ATTACHMENTS_DIR="$(mktemp -d "$(temp_dir)/sag_seed.XXXXXX")"
+PDF1="$ATTACHMENTS_DIR/laudo_exames.pdf"
+PDF2="$ATTACHMENTS_DIR/ficha_prenatal.pdf"
 fetch_mock_file "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" "$PDF1" "fallback_pdf '$PDF1'"
 fetch_mock_file "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" "$PDF2" "fallback_pdf '$PDF2'"
 
 log "Criando atendimento com 2 anexos PDF para a gestação de Ana Pereira..."
+DESC1="$ATTACHMENTS_DIR/descricao1.txt"
+printf 'Consulta de pré-natal de rotina, sinais vitais normais. Exames e ficha em anexo.' >"$DESC1"
 curl -sf -X POST "${API}/atendimentos" \
     -H "Authorization: Bearer ${ENFERMEIRO_TOKEN}" \
     -F "gestacaoId=${GESTACAO1_ID}" \
-    -F "descricao=Consulta de pré-natal de rotina, sinais vitais normais. Exames e ficha em anexo." \
-    -F "file=@${PDF1};type=application/pdf;filename=laudo_exames.pdf" \
-    -F "file=@${PDF2};type=application/pdf;filename=ficha_prenatal.pdf" >/dev/null
+    -F "descricao=<$DESC1" \
+    -F "file=@${PDF1}" \
+    -F "file=@${PDF2}" >/dev/null
+rm -f "$DESC1"
 
 log "Criando atendimento com anexo PDF para a gestação de Beatriz Costa..."
-PDF3="/tmp/sag_seed_relatorio_parto.pdf"
+PDF3="$ATTACHMENTS_DIR/relatorio_parto.pdf"
 fetch_mock_file "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" "$PDF3" "fallback_pdf '$PDF3'"
+DESC2="$ATTACHMENTS_DIR/descricao2.txt"
+printf 'Encerramento de acompanhamento pré-natal, parto realizado sem intercorrências. Relatório em anexo.' >"$DESC2"
 curl -sf -X POST "${API}/atendimentos" \
     -H "Authorization: Bearer ${MEDICO_TOKEN}" \
     -F "gestacaoId=${GESTACAO2_ID}" \
-    -F "descricao=Encerramento de acompanhamento pré-natal, parto realizado sem intercorrências. Relatório em anexo." \
-    -F "file=@${PDF3};type=application/pdf;filename=relatorio_parto.pdf" >/dev/null
+    -F "descricao=<$DESC2" \
+    -F "file=@${PDF3}" >/dev/null
+rm -f "$DESC2"
 
 rm -f "$PDF1" "$PDF2" "$PDF3"
 
@@ -233,17 +252,19 @@ AQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX
 /9k=
 B64
 }
-IMG="/tmp/sag_seed_ultrassom.jpg"
+IMG="$ATTACHMENTS_DIR/ultrassom.jpg"
 fetch_mock_file "https://picsum.photos/seed/sag-prenatal/640/480" "$IMG" "fallback_jpg '$IMG'"
 
 log "Enviando mensagem com imagem anexada na gestação de Ana Pereira..."
+MSG_TXT="$ATTACHMENTS_DIR/mensagem.txt"
+printf 'Segue imagem do último ultrassom.' >"$MSG_TXT"
 curl -sf -X POST "${API}/mensagens/with-file" \
     -H "Authorization: Bearer ${MEDICO_TOKEN}" \
     -F "gestacao=${GESTACAO1_ID}" \
     -F "tipo=MIDIA" \
-    -F "texto=Segue imagem do último ultrassom." \
-    -F "file=@${IMG};type=image/jpeg;filename=ultrassom.jpg" >/dev/null
-rm -f "$IMG"
+    -F "texto=<$MSG_TXT" \
+    -F "file=@${IMG}" >/dev/null
+rm -f "$IMG" "$MSG_TXT"
 
 log "Enviando mensagem de texto na gestação de Beatriz Costa..."
 post "/mensagens" \
@@ -251,6 +272,7 @@ post "/mensagens" \
     "$MEDICO_TOKEN" >/dev/null
 
 log "Seed concluído. ✅"
+rm -rf "$ATTACHMENTS_DIR"
 cat <<EOF
 
   Usuários criados:
