@@ -94,7 +94,7 @@ const Login = () => {
                     <img
                         src="/img/sag_logo.svg"
                         alt="Logo do Sistema de Apoio a Gestante (SAG)"
-                        className="w-48 h-48 object-contain"
+                        className="w-full h-48 object-contain"
                     />
                 </div>
                 <div className="text-center ">

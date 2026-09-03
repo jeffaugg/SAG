@@ -43,7 +43,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         <img
                             src="/img/sag_logo.svg"
                             alt="Logo do Sistema de Apoio a Gestante (SAG)"
-                            className="w-2/5 h-auto object-contain p-2"
+                            className="w-full h-auto object-contain p-2"
                         />
                     </div>
                     <div className="overflow-auto">
@@ -54,9 +54,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                             type="text"
                             icon={
                                 collapsed ? (
-                                    <MenuUnfoldOutlined />
+                                    <MenuUnfoldOutlined style={{ fontSize: 20 }} />
                                 ) : (
-                                    <MenuFoldOutlined />
+                                    <MenuFoldOutlined style={{ fontSize: 20 }} />
                                 )
                             }
                             onClick={() => setCollapsed(!collapsed)}
